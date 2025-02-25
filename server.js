@@ -49,6 +49,21 @@ async function getRecommendedPublicCart() {
     // const selectedOrdersJsonData = ordersJsonData[Math.floor(Math.random() * cartJsonData.length)];
 
     const prompt = `
+    カートデータ ${cartJsonData} から無作為に1つのアイテムを選んでください。
+    注文履歴 ${ordersJsonData} からも無作為に1つのアイテムを選んでください。
+    
+    選ばれた2つのアイテムをもとに、公開カートリスト ${publicCartsJsonData} の中から1つのカートを推薦してください。
+    毎回のAPIリクエストで同じカートや注文履歴が繰り返し選ばれないようにランダム性を維持してください。
+    
+    JSON形式で回答してください。各フィールドの値は **1文、30文字以内** で記述してください。
+    {
+      "publicCartId": "公開カートID",
+      "reason": "公開カートを推薦する理由です。「最近のカートと購入履歴に○○が含まれているため、△△との関連性が高いです」の形式を守ってください。日本語で回答してください。**1文、50文字以内** で記述してください。",
+      "message": "ユーザーに対して公開カートを親しみやすく推薦するメッセージです。日本語で回答してください。**1文、30文字以内** で記述してください。"
+    }
+    `;
+    
+    /* const prompt = `
       장바구니 ${cartJsonData}에서 무작위로 하나의 항목을 선택해줘.
       주문 이력 ${ordersJsonData}에서 무작위로 하나의 항목을 선택해줘.
 
@@ -60,7 +75,7 @@ async function getRecommendedPublicCart() {
         "publicCartId": "공개장바구니아이디",
         "reason": "공개 장바구니를 추천하는 이유입니다. '최근 장바구니와 구매 내역에 OO가 포함되어 있어 XX와 높은 연관성이 있습니다'라는 형식을 지킵니다. 일본어로 답합니다. **한 문장, 50자 이내**로 작성합니다.",
         "message": "사용자에게 해당 공개 장바구니를 친근하게 권하는 멘트입니다. 일본어로 답합니다. **한 문장, 30자 이내**로 작성합니다."
-      }`;
+      }`; */
 
       /* **주의: "messageToCustomer" 필드는 반드시 포함시켜 줘!!**
 
