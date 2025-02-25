@@ -7,8 +7,8 @@ require("dotenv").config();
 const app = express();
 app.use(cors());
 
-const API_KEY = process.env.API_KEY;
-const genAI = new GoogleGenerativeAI(process.env.API_KEY)
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
 
 // Q. 2~3번째 응답부터 같은 장바구니만 계속 추천해주는 문제를 해결하려면?
 async function getRecommendedPublicCart() {
