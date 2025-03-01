@@ -10,7 +10,7 @@ app.use(cors());
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
 
-// Q. 2~3번째 응답부터 같은 장바구니만 계속 추천해주는 문제를 해결하려면?
+// Q. 2~3번째 응답부터 같은 장바구니만 계속 추천해주는 문제를 해결하려면? Google AI Studio상에서 structured output를 on으로 하고 get the code해서 얻은 코드를 써보는 건 어떨까?
 async function getRecommendedPublicCart() {
   try {
     /* const schema = {
