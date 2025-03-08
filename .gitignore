@@ -14,16 +14,16 @@
 # setting
 /.vscode
 
-# misc
-.DS_Store
+# security
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+cartconnectmarket-key.pem
 
+# misc
+.DS_Store
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-apikeys.js
