@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const { mysql } = require('./config/db');
+
 const app = express();
 const port = 4000;
 
@@ -33,6 +35,30 @@ app.use('/public-cart', publicCartRouter);
 // app.use('/log', logRouter);
 // app.use('/admin', adminRouter);
 
+const connectDB = async() => {
+  try {
+    await mysql.authenticate();
+    console.log('DB connection OK');
+  } catch (error) {
+    console.log('DB connection failed: ', error);
+  }
+};
+
+// Q. sync()의 역할?
+// A. This creates the table if it doesn't exist (and does nothing if it already exists)
+const syncDB = async () => {
+  try {
+    await mysql.sync();
+    console.log('All models are synced');
+    console.log('Models: ', mysql.models);
+  } catch (error) {
+    console.log('Model sync failed: ', error)
+  }
+};
+
+connectDB();
+syncDB();
+
 app.listen(port, () => {
   console.log(`Sever running on localhost:${port}`);
-})
+});
