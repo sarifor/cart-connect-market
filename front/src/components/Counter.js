@@ -8,6 +8,8 @@ export const Counter = () => {
   const dispatch = useDispatch();
 
   const onIncrement = () => {
+    console.log("Test printing environment variable in browser console: ", process.env.NEXT_PUBLIC_GEMINI_API_KEY);
+
     return dispatch({
       type: INCREMENT_ASYNC_REQUEST,
     });
