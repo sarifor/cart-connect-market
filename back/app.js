@@ -2,9 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const { mysql } = require('./config/db');
+require('dotenv').config();
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT;
+console.log("Assigned port: ", port);
 
 const { 
   userRouter,
