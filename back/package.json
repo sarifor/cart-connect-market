@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "20.11.1",
-    "npm": "10.2.4"
+    "node": "20.18.3",
+    "npm": "10.8.2"
   },
   "scripts": {
-    "dev": "nodemon app"
+    "dev": "nodemon app",
+    "start": "node app"
   },
   "dependencies": {
     "cors": "^2.8.5",
