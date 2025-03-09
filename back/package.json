@@ -7,11 +7,12 @@
     "npm": "10.8.2"
   },
   "scripts": {
-    "dev": "nodemon app",
-    "start": "node app"
+    "dev": "cross-env PORT=4000 nodemon app",
+    "start": "cross-env PORT=80 node app"
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "morgan": "^1.10.0",
