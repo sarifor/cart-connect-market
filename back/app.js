@@ -19,9 +19,9 @@ const {
 app.use(cors());
 app.use(morgan('dev'));
 
-// Q. 왜 JSON 응답을 파싱해주지 않지?
-// A. express.json은 '요청'의 JSON을 파싱해줌
-// app.use(express.json());
+// Q. 클라이언트에게서 받은 req에서 id 값과 password 값을 찾을 수가 없어
+// A. Express에서 POST 요청의 body 데이터를 읽으려면 express.json() 미들웨어를 추가해야 해 (ChatGPT)
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send('Hi!!');

@@ -1,0 +1,82 @@
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Menu, Row, Button, Drawer, Layout } from 'antd';
+import Link from 'next/link';
+
+const Header = Layout.Header;
+const Footer = Layout.Footer;
+
+const CommonLayout = ({ title, children }) => {
+  const [ open, setOpen ] = useState(false);
+  let { loginDone } = useSelector((state) => state.user);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <div>
+      <Menu 
+        mode="horizontal" 
+        style={{ 
+          top: 0,
+          left: 0,
+          position: "fixed",
+          width: "100%"
+        }}
+      >
+        <Menu.Item>
+          사이트 아이콘
+        </Menu.Item>
+
+        <Menu.Item>
+          Cart Connect Market
+        </Menu.Item>
+
+        <Menu.Item onClick={showDrawer}>
+          삼선 버튼
+        </Menu.Item>
+
+        <Menu.Item>
+          <Drawer onClose={onClose} open={open}>
+            {loginDone ? (
+              <div>
+                <p><Link href="">마이페이지</Link></p>
+                <p><Link href="">장바구니</Link></p>
+                <p><Link href="">검색</Link></p>
+                <p><Link href="">카테고리별 상품</Link></p>
+                <p><Link href="">로그아웃</Link></p>
+              </div>
+            ) : (
+              <div>
+                <p><Link href="/auth/login">로그인</Link> / <Link href="">회원가입</Link></p>
+                <p><Link href="">검색</Link></p>
+                <p><Link href="">카테고리별 상품</Link></p>
+              </div>
+            )}
+          </Drawer>
+        </Menu.Item>
+      </Menu>
+
+      <Row style={{ paddingTop: '60px', backgroundColor: 'skyblue' }}>
+        <Header style={{ backgroundColor: 'white' }}>
+          {title}
+        </Header>
+      </Row>
+
+      <Row>
+        {children}
+      </Row>
+
+      <Footer style={{ textAlign: 'center' }}>
+        ©2025 Sarifor. All rights reserved. [GitHub 링크] [Qiita 링크]
+      </Footer>
+    </div>
+  )
+};
+
+export default CommonLayout;
