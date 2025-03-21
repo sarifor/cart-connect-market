@@ -8,8 +8,10 @@ import {
 
 // Q. API에 데이터를 보내려면?
 // A. HTTP 메서드 POST 쓰기
+// Q. 브라우저가 서버로부터 받은 쿠키를 저장하지 못해 (개발자 도구 -> Application -> Cookies -> 저장된 값 없음)
+// A. CORS 환경에서는 기본적으로 브라우저가 쿠키를 차단함. withCredentials: true를 설정해야 브라우저가 쿠키를 저장할 수 있음 (ChatGPT)
 function loginAPI(data) {
-  const user = axios.post('http://localhost:4000/user/login', data);
+  const user = axios.post('http://localhost:4000/user/login', data, { withCredentials: true });
   return user;
 }
 
@@ -27,9 +29,8 @@ function* login(action) {
 
     const user = yield call(loginAPI, action.data);
 
-    console.log("saga login 함수:", user);
+    yield put(loginSuccess(user.data));
 
-    yield put(loginSuccess());
     // throw new Error("로그인에 실패하였습니다. 다시 시도해 주세요.");
   } catch (error) {
     console.log("catch 블럭 안의 에러: ", error);
