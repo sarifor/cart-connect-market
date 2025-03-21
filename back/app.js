@@ -30,6 +30,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use(session({
+  name: 'connect.sid',
   saveUninitialized: false,
   resave: false,
   secret: "test",

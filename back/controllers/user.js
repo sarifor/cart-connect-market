@@ -57,12 +57,22 @@ const me = async (req, res, next) => {
   }
 };
 
-/* const logout = async (req, res, next) => {
-  try {
-    res.status(200).json("ok");
-  } catch (error) {
-    console.log(error);
-  }
-}; */
+const logout = (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("세션 삭제 실패: ", err);
+      return res.status(500).json({ message: "Failed to destroy session" });
+    }
 
-module.exports = { userTest, login, me };
+    res.clearCookie("connect.sid", { 
+      path: "/",
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    
+    return res.status(200).json({ data: null, message: "ok" });
+  });
+};
+
+module.exports = { userTest, login, me, logout };

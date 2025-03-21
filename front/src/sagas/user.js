@@ -33,7 +33,6 @@ function* login(action) {
 
     // throw new Error("로그인에 실패하였습니다. 다시 시도해 주세요.");
   } catch (error) {
-    console.log("catch 블럭 안의 에러: ", error);
     yield put(loginFailure(error.message));
   }
 }
@@ -41,18 +40,23 @@ function* login(action) {
 // Q. POST http://localhost:4000/user/logout 404 (Not Found) 이유?
 // A. 백엔드에 userRouter.get('/logout', logout);라고 되어 있으니 GET 요청을 보내야 함!
 function logoutAPI() {
-  const result = axios.get('http://localhost:4000/user/logout');
+  const result = axios.post('http://localhost:4000/user/logout', {}, { withCredentials: true });
   return result;
 }
 function* logout() {
   try {
+    yield delay(3000);
+
     const result = yield call(logoutAPI);
+    
     console.log(result);
 
     yield put(logoutSuccess());
+
+    // throw new Error("로그아웃에 실패하였습니다. 다시 시도해 주세요.");
+
   } catch (error) {
-    // yield put(logoutFailure(error));
-    yield put(logoutFailure());
+    yield put(logoutFailure(error.message));
   }
 }
 
@@ -61,7 +65,7 @@ function* watchLogin() {
 }
 
 function* watchLogout() {
-  // yield takeEvery(logoutRequest.type, logout);
+  yield takeEvery(logoutRequest.type, logout);
 }
 
 export default function* userSaga() {

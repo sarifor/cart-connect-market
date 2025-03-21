@@ -34,15 +34,24 @@ export const userSlice = createSlice({
       state.loginError = action.payload;
       state.me = null;
     },
+    logoutRequest: (state) => {
+      state.logoutLoading = true;
+      state.logoutDone = false;
+      state.logoutError = null;
+      state.me = state.me;
+    },
     logoutSuccess: (state) => {
       state.logoutLoading = false;
       state.logoutDone = true;
       state.logoutError = null;
+      state.loginDone = false;
+      state.me = null;
     },
-    logoutFailure: (state) => {
+    logoutFailure: (state, action) => {
       state.logoutLoading = false;
       state.logoutDone = false;
-      state.logoutFailure = "로그아웃에 실패하였습니다."
+      state.logoutError = action.payload;
+      state.me = state.me;
     }
   },
 });
@@ -51,6 +60,7 @@ export const {
   loginRequest,
   loginSuccess,
   loginFailure,
+  logoutRequest,
   logoutSuccess,
   logoutFailure,
 } = userSlice.actions;

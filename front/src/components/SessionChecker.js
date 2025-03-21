@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { loginSuccess } from '@/reducers/user';
+import { loginSuccess, logoutSuccess } from '@/reducers/user';
 
 // Q. /user/me의 Request Headers에 Cookie: connect.sid=... 항목이 없어
 // A. axios.post('/user/me', {}, { withCredentials: true })처럼 config 객체에 따로 설정해야 쿠키가 포함돼! (ChatGPT)
@@ -23,8 +23,10 @@ const SessionChecker = () => {
         };
 
         dispatch(loginSuccess(sessionObj));
+      } else {
+        dispatch(logoutSuccess());
       }
-    }
+    };
     checkSession();
   }, [dispatch]);
 

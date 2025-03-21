@@ -18,6 +18,7 @@ const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  // Q. CommonLayout.js에서 메뉴 구성이 바뀌는 기준을 me로 변경했으니, login.js도 그러는 게 좋지 않을까?
   useEffect(() => {
     if (loginDone) {
       router.push("/");

@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Menu, Row, Button, Drawer, Layout } from 'antd';
 import Link from 'next/link';
+import { logoutRequest } from '../reducers/user';
 
 const Header = Layout.Header;
 const Footer = Layout.Footer;
 
 const CommonLayout = ({ title, children }) => {
   const [ open, setOpen ] = useState(false);
-  let { loginDone } = useSelector((state) => state.user);
+  let { logoutLoading, logoutError, me } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
 
   const showDrawer = () => {
     setOpen(true);
@@ -16,6 +19,12 @@ const CommonLayout = ({ title, children }) => {
 
   const onClose = () => {
     setOpen(false);
+  };
+
+  const onLogout = () => {
+    dispatch({
+      type: logoutRequest.type,
+    });
   };
 
   return (
@@ -43,13 +52,17 @@ const CommonLayout = ({ title, children }) => {
 
         <Menu.Item>
           <Drawer onClose={onClose} open={open}>
-            {loginDone ? (
+            {me ? (
               <div>
                 <p><Link href="">마이페이지</Link></p>
                 <p><Link href="">장바구니</Link></p>
                 <p><Link href="">검색</Link></p>
                 <p><Link href="">카테고리별 상품</Link></p>
-                <p><Link href="">로그아웃</Link></p>
+                <div>
+                  <p onClick={onLogout}>로그아웃</p>
+                  {logoutLoading && (<p>Loading...</p>)}
+                  {logoutError && (<p>로그아웃 실패: {logoutError}</p>)} 
+                </div>                
               </div>
             ) : (
               <div>
