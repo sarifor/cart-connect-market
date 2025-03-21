@@ -39,6 +39,8 @@ function* login(action) {
 
 // Q. POST http://localhost:4000/user/logout 404 (Not Found) 이유?
 // A. 백엔드에 userRouter.get('/logout', logout);라고 되어 있으니 GET 요청을 보내야 함!
+// Q. 로그아웃 요청인데 쿠키를 전송할 필요가 있는 이유는?
+// A. 로그아웃 요청에서 쿠키(connect.sid)가 백엔드로 전달되지 않으면, req.session.destroy()가 동작하지 않아. 즉, 서버는 어떤 사용자의 세션을 삭제해야 하는지 알 수 없게 됨 (ChatGPT)
 function logoutAPI() {
   const result = axios.post('http://localhost:4000/user/logout', {}, { withCredentials: true });
   return result;

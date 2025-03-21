@@ -57,6 +57,8 @@ const me = async (req, res, next) => {
   }
 };
 
+// Q. 왜 req.session.destroy는 콜백 구조지?
+// A. req.session.destroy()는 비동기 작업이라, 세션이 완전히 삭제된 후에 res.clearCookie()가 실행되어야 해요. 그 순서를 보장하기 위해 destroy의 콜백 안에서 clearCookie()를 호출하는 거예요. (ChatGPT)
 const logout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {
