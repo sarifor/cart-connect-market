@@ -4,7 +4,7 @@ import { Form, Input, Button, Row } from 'antd';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginRequest } from '../../reducers/user';
+import { loginRequest } from '../../reducers/member';
 
 // Q. useEffect에서, deps 배열에 [loginDone]을 넣어서 loginDone이 false에서 true로 변할 때 메인 페이지로 리다이렉트되는 걸 의도했는데, 왜 로그인 화면 들어오자마자 다시 메인 페이지로 리다이렉트되는 거지?
 // A. useEffect가 처음 마운트될 때도 실행되므로, loginDone이 false일 때 실행될 수도 있어. loginDone이 false일 땐 아무 일도 하지 않고, true로 변할 때만 실행되도록 수정하자 (ChatGPT)
@@ -13,7 +13,7 @@ import { loginRequest } from '../../reducers/user';
 const Login = () => {
   const [ email, setEmail ] = useState(null);
   const [ password, setPassword ] = useState(null);
-  const { loginLoading, loginDone, loginError } = useSelector(state => state.user);
+  const { loginLoading, loginDone, loginError } = useSelector(state => state.member);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -26,7 +26,6 @@ const Login = () => {
   }, [loginDone]);
 
   const onSubmitForm = () => {
-    console.log(email, password);
     dispatch({
       type: loginRequest.type,
       data: { email, password },

@@ -7,10 +7,9 @@ require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT;
-console.log("Assigned port: ", port);
 
 const { 
-  userRouter,
+  memberRouter,
   cartRouter,
   orderRouter,
   productRouter,
@@ -46,7 +45,7 @@ app.get('/', (req, res) => {
   res.send('Hi!!');
 });
 
-app.use('/user', userRouter);
+app.use('/member', memberRouter);
 app.use('/cart', cartRouter);
 app.use('/order', orderRouter);
 app.use('/product', productRouter);

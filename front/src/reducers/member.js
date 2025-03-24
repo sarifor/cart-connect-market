@@ -4,8 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
 // A. 값이 변하지 않아도, 코드가 더 이해하기 쉬워지면 그대로 두는 게 좋아! 주석 없이도 한눈에 알아볼 수 있도록 정리하는 게 최선이야. (ChatGPT)
 // Q. 화면이나 saga에서 쓸 type은 어디서 얻을 수 있지?
 // A. 예: loginRequest.type
-export const userSlice = createSlice({
-  name: 'user',
+export const memberSlice = createSlice({
+  name: 'member',
   initialState: {
     loginLoading: false,
     loginDone: false,
@@ -63,8 +63,8 @@ export const {
   logoutRequest,
   logoutSuccess,
   logoutFailure,
-} = userSlice.actions;
+} = memberSlice.actions;
 
-const userReducer = userSlice.reducer;
+const memberReducer = memberSlice.reducer;
 
-export default userReducer;
+export default memberReducer;

@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Menu, Row, Button, Drawer, Layout } from 'antd';
 import Link from 'next/link';
-import { logoutRequest } from '../reducers/user';
+import { logoutRequest } from '../reducers/member';
 
 const Header = Layout.Header;
 const Footer = Layout.Footer;
 
 const CommonLayout = ({ title, children }) => {
   const [ open, setOpen ] = useState(false);
-  let { logoutLoading, logoutError, me } = useSelector((state) => state.user);
+  let { logoutLoading, logoutError, me } = useSelector((state) => state.member);
 
   const dispatch = useDispatch();
 

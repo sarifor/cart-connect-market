@@ -21,3 +21,9 @@ UPDATE food SET name = 'DeliCandy' WHERE name = 'Candy';
 
 # DELETE
 DELETE from food WHERE name = 'Sundae';
+
+# Insert member_tbl dummy data
+INSERT INTO member_tbl (family_name, first_name, nickname, email, password, created_at, updated_at) VALUES
+('さとう', 'たけし', 'たけちゃん', 'takeshi@example.com', 'hashed_pw1', NOW(), NOW()),
+('たなか', 'あゆみ', 'あゆぴ', 'ayumi@example.com', 'hashed_pw2', NOW(), NOW()),
+('みやざき', 'れん', 'れんれん', 'ren@example.com', 'hashed_pw3', NOW(), NOW());

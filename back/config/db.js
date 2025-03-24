@@ -9,20 +9,54 @@ const mysql = new Sequelize({
   dialect: 'mysql'
 })
 
-// Q. 모델을 별도 파일로 분리하려면? ../models/index.js 코드를 참고하면 해결될지도?
-const User = mysql.define(
-  'User',
+// Q. 모델을 별도 파일로 분리하려면? ../models/old/index.js 코드를 참고하면 해결될지도?
+const Member = mysql.define(
+  'Member',
   {
-    name: {
-      type: DataTypes.STRING,
-      defaultValue: 'No name yet',
-      allowNull: false,
-    },
-    age: {
+    member_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+      unique: true,
     },
+    family_name: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    first_name: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    nickname: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      unique: true,
+    },
+    email: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,      
+    },
+  },
+  {
+    tableName: 'member_tbl',
+    timestamps: false,
   },
 );
 
-module.exports = { mysql, User };
+module.exports = { mysql, Member };
