@@ -55,6 +55,8 @@ const me = async (req, res, next) => {
 
 // Q. 왜 req.session.destroy는 콜백 구조지?
 // A. req.session.destroy()는 비동기 작업이라, 세션이 완전히 삭제된 후에 res.clearCookie()가 실행되어야 해요. 그 순서를 보장하기 위해 destroy의 콜백 안에서 clearCookie()를 호출하는 거예요. (ChatGPT)
+// Q. 배포 상태에서 로그아웃했을 때 브라우저에서 쿠키가 사라지지 않는 문제가 있어
+// A. 로그아웃 시 clearCookie()에 domain 옵션이 없으면 브라우저는 도메인이 다른 쿠키로 인식해서 삭제하지 않음. res.clearCookie() 호출 시 domain을 명시해줘야 함 (ChatGPT)
 const logout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {
@@ -62,12 +64,22 @@ const logout = (req, res, next) => {
       return res.status(500).json({ message: "Failed to destroy session" });
     }
 
-    res.clearCookie("connect.sid", { 
-      path: "/",
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-    });
+    if (process.env.NODE_ENV === 'production') {
+      res.clearCookie("connect.sid", { 
+        path: "/",
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        domain: ".sarifor.net",
+      });
+    } else {
+      res.clearCookie("connect.sid", { 
+        path: "/",
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+    }
     
     return res.status(200).json({ data: null, message: "ok" });
   });
