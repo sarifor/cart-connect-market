@@ -18,28 +18,53 @@ const {
 
 // Q. origin엔 뭘 넣는 거야?
 // A. 허용할 클라이언트 주소 (ChatGPT)
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
-app.use(morgan('dev'));
+// Q. production 모드의 session/ cookie/ sameSite에는 lax? none?
+if (process.env.NODE_ENV === 'production') {
+  app.use(cors({
+    origin: 'http://ccm.sarifor.net',
+    credentials: true,
+  }));
+
+  app.use(morgan('combined'));
+
+  app.use(session({
+    name: 'connect.sid',
+    saveUninitialized: false,
+    resave: false,
+    secret: "test",
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24,
+      sameSite: "lax",
+      domain: '.sarifor.net',
+    }
+  }));
+} else {
+  app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }));
+
+  app.use(morgan('dev'));
+
+  app.use(session({
+    name: 'connect.sid',
+    saveUninitialized: false,
+    resave: false,
+    secret: "test",
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24,
+      sameSite: "lax"
+    }
+  }));
+}
 
 // Q. 클라이언트에게서 받은 req에서 id 값과 password 값을 찾을 수가 없어
 // A. Express에서 POST 요청의 body 데이터를 읽으려면 express.json() 미들웨어를 추가해야 해 (ChatGPT)
 app.use(express.json());
-
-app.use(session({
-  name: 'connect.sid',
-  saveUninitialized: false,
-  resave: false,
-  secret: "test",
-  cookie: {
-    httpOnly: true,
-    secure: false,
-    maxAge: 1000 * 60 * 60 * 24,
-    sameSite: "lax"
-  }
-}));
 
 app.get('/', (req, res) => {
   res.send('Hi!!');

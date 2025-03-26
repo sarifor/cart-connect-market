@@ -3,6 +3,14 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { loginSuccess, logoutSuccess } from '@/reducers/member';
 
+let backURL;
+
+if (process.env.NODE_ENV === 'production') {
+  backURL = 'http://ccm-api.sarifor.net';
+} else {
+  backURL = 'http://localhost:4000';
+}
+
 // Q. /member/me의 Request Headers에 Cookie: connect.sid=... 항목이 없어
 // A. axios.post('/member/me', {}, { withCredentials: true })처럼 config 객체에 따로 설정해야 쿠키가 포함돼! (ChatGPT)
 const SessionChecker = () => {
@@ -10,7 +18,7 @@ const SessionChecker = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const res = await axios.post('http://localhost:4000/member/me', {}, { withCredentials: true });
+      const res = await axios.post(`${backURL}/member/me`, {}, { withCredentials: true });
 
       if (res.status === 200 && res.data) {
         const sessionObj = {

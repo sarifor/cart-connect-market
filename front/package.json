@@ -8,14 +8,15 @@
   },
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "next build",
-    "start": "next start -p 80",
+    "build": "cross-env NODE_ENV=production next build",
+    "start": "cross-env NODE_ENV=production next start -p 80",
     "pm2-start": "npx pm2 start npm --name front -- start"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.0",
     "antd": "^5.24.2",
     "axios": "^1.8.1",
+    "cross-env": "^7.0.3",
     "next": "^15.2.0",
     "next-redux-wrapper": "^8.1.0",
     "pm2": "^5.4.3",

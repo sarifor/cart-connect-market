@@ -6,12 +6,20 @@ import {
   logoutRequest, loginFailure, logoutFailure,
 } from '@/reducers/member';
 
+let backURL;
+
+if (process.env.NODE_ENV === 'production') {
+  backURL = 'http://ccm-api.sarifor.net';
+} else {
+  backURL = 'http://localhost:4000';
+}
+
 // Q. API에 데이터를 보내려면?
 // A. HTTP 메서드 POST 쓰기
 // Q. 브라우저가 서버로부터 받은 쿠키를 저장하지 못해 (개발자 도구 -> Application -> Cookies -> 저장된 값 없음)
 // A. CORS 환경에서는 기본적으로 브라우저가 쿠키를 차단함. withCredentials: true를 설정해야 브라우저가 쿠키를 저장할 수 있음 (ChatGPT)
 function loginAPI(data) {
-  const member = axios.post('http://localhost:4000/member/login', data, { withCredentials: true });
+  const member = axios.post(`${backURL}/member/login`, data, { withCredentials: true });
   return member;
 }
 
@@ -44,7 +52,7 @@ function* login(action) {
 // Q. 로그아웃 요청인데 쿠키를 전송할 필요가 있는 이유는?
 // A. 로그아웃 요청에서 쿠키(connect.sid)가 백엔드로 전달되지 않으면, req.session.destroy()가 동작하지 않아. 즉, 서버는 어떤 사용자의 세션을 삭제해야 하는지 알 수 없게 됨 (ChatGPT)
 function logoutAPI() {
-  const result = axios.post('http://localhost:4000/member/logout', {}, { withCredentials: true });
+  const result = axios.post(`${backURL}/member/logout`, {}, { withCredentials: true });
   return result;
 }
 function* logout() {
