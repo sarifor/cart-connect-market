@@ -1,11 +1,13 @@
 # Cart Connect Market
 
 ## Overview
-
 Share carts each other!
 
-## How to run
+## Environment
+MySQL: 8.4 LTS <br>
+Ubuntu: 24.04.1 LTS (Noble Numbat)
 
+## How to run
 To be soon!
 
 <!--
