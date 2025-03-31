@@ -22,9 +22,7 @@ const SessionChecker = () => {
 
       if (res.status === 200 && res.data) {
         const sessionObj = {
-          id: res.data.id,
-          name: res.data.name,
-          address: res.data.address,
+          ...res.data,
           justCheck: "서버에서 가져온 세션 객체!"
         };
 

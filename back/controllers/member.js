@@ -1,4 +1,5 @@
-const { Member } = require('../config/db');
+const { Member, ShippingAddress } = require('../config/db');
+const bcrypt = require('bcrypt');
 
 /* # 로그인 처리 흐름
    이메일 검증 -> 비밀번호 검증 -> 비밀번호를 제외한 멤버 객체 생성
@@ -11,7 +12,9 @@ const { Member } = require('../config/db');
    Q. 회원 정보 조회 결과가 없을 때 어떤 응답 status가 적절할까?
    A. 401 Unauthorized (ChatGPT)
    Q. 유저 객체에서 비밀번호를 제외하고 리턴하려면?
-   A. member 객체에서 password 속성을 분리해 password 변수에 저장하고, 나머지 속성(id, name, email 등)은 새 객체에 담는 객체 구조 분해 할당 문법을 쓰면 됩니다 (ChatGPT) */
+   A. member 객체에서 password 속성을 분리해 password 변수에 저장하고, 나머지 속성(id, name, email 등)은 새 객체에 담는 객체 구조 분해 할당 문법을 쓰면 됩니다 (ChatGPT)
+   Q. login 함수의 res.status(200).json(member);에서 memberWithoutPassword 이걸 넘겨야 하는 거 아닌가?
+   Q. 유저 정보를 세션에 저장하고 클라이언트에 넘기는 부분을 함수로 따로 빼서 /signup 쪽에서도 같은 코드를 쓸 수 있게 하기? */
 const login = async (req, res, next) => {
   const reqEmail = req.body.email;
   const reqPassword = req.body.password;
@@ -85,4 +88,94 @@ const logout = (req, res, next) => {
   });
 };
 
-module.exports = { login, me, logout };
+// Q. 이미 가입한 경우의 response status?
+// Q. 회원 가입 처리 실패 시의 resposne status?
+// Q. status 200 vs 201 ?
+// A. 200 OK는 요청이 성공했다는 일반적인 의미고, 201 Created는 서버가 요청을 처리해 새로운 리소스를 생성했음을 나타내는 응답 코드입니다 (ChatGPT)
+// Q. memberWithoutPWwithShippingAddress에 ShippingAddress 모델의 정보가 안 담겨
+// A. db.js에서 Member.hasMany(ShippingAddress, { foreignKey: 'member_id' }); ShippingAddress.belongsTo(Member, { foreignKey: 'member_id' }); 설정 (ChatGPT)
+// Q. status 401 vs 409 ?
+const signup = async (req, res, next) => {
+  // 이메일로 가입 or 구글 계정으로 가입 판별
+  // TBD
+
+  const reqEmail = req.body.email;
+  const reqFamilyname = req.body.familyname;
+  const reqFirstname = req.body.firstname;
+  const reqNickname = req.body.nickname;
+  const reqPassword = req.body.password;
+  const reqReceiver = req.body.receiver;
+  const reqPostalnumber = req.body.postalnumber;
+  const reqAddress = req.body.address;
+
+  try {
+    // 이메일 존재?
+    const existingEmail = await Member.findOne({
+      where: {
+        email: reqEmail,
+      }
+    });
+
+    if (existingEmail) {
+      return res.status(409).json("이미 가입한 회원입니다.");
+    }
+
+    const existingNickname = await Member.findOne({
+      where: {
+        nickname: reqNickname,
+      }
+    });
+
+    if (existingNickname) {
+      return res.status(409).json("이미 있는 닉네임입니다. 다른 닉네임을 써 주세요.");
+    }
+
+    // 비밀번호 해싱
+    const hashedPassword = await bcrypt.hash(reqPassword, 12);
+
+    // 데이터베이스 저장
+    await Member.create({
+      email: reqEmail,
+      family_name: reqFamilyname,
+      first_name: reqFirstname,
+      nickname: reqNickname,
+      password: hashedPassword,
+    });
+
+    const newMember = await Member.findOne({
+      where: {
+        email: reqEmail,
+      }
+    });
+
+    const memberId = newMember.member_id;
+
+    await ShippingAddress.create({
+      member_id: memberId,
+      receiver: reqReceiver,
+      address: reqAddress,
+      postcode: reqPostalnumber,
+    });
+
+    // 비밀번호 제외한 유저 정보와 해당 유저의 배송 주소 정보를 한 객체에 담기
+    const memberWithoutPWwithShippingAddress = await Member.findOne({
+      where: { member_id: memberId },
+      attributes: { exclude: ['password'] },
+      include: [{
+        model: ShippingAddress,
+        attributes: ['shipping_address_id', 'receiver', 'address', 'postcode'],
+      }],
+    });
+     
+    // 로그인 처리
+    req.session.member = memberWithoutPWwithShippingAddress.dataValues;
+
+    await req.session.save();
+    
+    res.status(201).json(memberWithoutPWwithShippingAddress);
+  } catch (error) {
+    return res.status(401).json(`회원 가입에 실패하였습니다: ${error}`);
+  }
+};
+
+module.exports = { login, me, logout, signup };

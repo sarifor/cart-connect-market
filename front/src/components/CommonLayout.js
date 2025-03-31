@@ -66,7 +66,7 @@ const CommonLayout = ({ title, children }) => {
               </div>
             ) : (
               <div>
-                <p><Link href="/auth/login">로그인</Link> / <Link href="">회원가입</Link></p>
+                <p><Link href="/auth/login">로그인</Link> / <Link href="/auth/signup">회원가입</Link></p>
                 <p><Link href="">검색</Link></p>
                 <p><Link href="">카테고리별 상품</Link></p>
               </div>

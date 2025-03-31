@@ -4,6 +4,8 @@ import { delay, call, put, takeEvery, all, fork } from 'redux-saga/effects';
 import {
   loginRequest, loginSuccess, logoutSuccess,
   logoutRequest, loginFailure, logoutFailure,
+  signupRequest, signupSuccess, signupFailure,
+  resetState,
 } from '@/reducers/member';
 
 let backURL;
@@ -55,6 +57,7 @@ function logoutAPI() {
   const result = axios.post(`${backURL}/member/logout`, {}, { withCredentials: true });
   return result;
 }
+
 function* logout() {
   try {
     yield delay(3000);
@@ -71,6 +74,31 @@ function* logout() {
   }
 }
 
+// Q. 회원 가입 때 쿠키 전송이 필요한가?
+// A. 회원가입(signup) API 자체는 쿠키가 꼭 필요하지 않아. 하지만 회원가입 후 곧바로 로그인 시 세션을 생성한다면, withCredentials: true는 반드시 필요해 (ChatGPT)
+function signupAPI(data) {
+  const result = axios.post(`${backURL}/member/signup`, data, { withCredentials: true });
+  return result;
+}
+
+// Q. 다른 경우(로그인, 로그아웃 등)에도 resetState() 추가?
+function* signup(action) {
+  try {
+    yield put(resetState());
+    yield delay(3000);
+
+    const member = yield call(signupAPI, action.data);
+
+    if (member.status = 201) {
+      yield put(signupSuccess(member.data));
+    }
+
+    // throw new Error("테스트 중이에요~!");
+  } catch (error) {
+    yield put(signupFailure(error.response?.data || error.message));
+  }
+}
+
 function* watchLogin() {
   yield takeEvery(loginRequest.type, login);
 }
@@ -79,9 +107,14 @@ function* watchLogout() {
   yield takeEvery(logoutRequest.type, logout);
 }
 
+function* watchSignup() {
+  yield takeEvery(signupRequest.type, signup);
+}
+
 export default function* memberSaga() {
   yield all([
     fork(watchLogin),
     fork(watchLogout),
+    fork(watchSignup),
   ]);
 }

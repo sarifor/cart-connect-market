@@ -6,7 +6,7 @@ const orderRouter = express.Router();
 const productRouter = express.Router();
 const publicCartRouter = express.Router();
 
-const { login, me, logout } = require('../controllers/member');
+const { login, me, logout, signup } = require('../controllers/member');
 const { cartTest } = require('../controllers/cart');
 const { orderTest } = require('../controllers/order');
 const { productTest } = require('../controllers/product');
@@ -17,6 +17,7 @@ const { publicCartTest } = require('../controllers/public-cart');
 memberRouter.post('/login', login);
 memberRouter.post('/me', me);
 memberRouter.post('/logout', logout);
+memberRouter.post('/signup', signup);
 
 // /cart
 cartRouter.get('/', cartTest);

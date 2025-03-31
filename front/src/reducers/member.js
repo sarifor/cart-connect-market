@@ -1,20 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Q. state에 변화가 없는데 이해를 위해 일부러 명시해둔 부분이 있어. 이래도 돼? (예: 로그인 성공 시 state.loginError = null;)
-// A. 값이 변하지 않아도, 코드가 더 이해하기 쉬워지면 그대로 두는 게 좋아! 주석 없이도 한눈에 알아볼 수 있도록 정리하는 게 최선이야. (ChatGPT)
+const initialState = {
+  loginLoading: false,
+  loginDone: false,
+  loginError: null,
+  logoutLoading: false,
+  logoutDone: false,
+  logoutError: null,
+  signupLoading: false,
+  signupDone: false,
+  signupError: null,
+  me: null,
+};
+
 // Q. 화면이나 saga에서 쓸 type은 어디서 얻을 수 있지?
 // A. 예: loginRequest.type
 export const memberSlice = createSlice({
   name: 'member',
-  initialState: {
-    loginLoading: false,
-    loginDone: false,
-    loginError: null,
-    logoutLoading: false,
-    logoutDone: false,
-    logoutError: null,
-    me: null,
-  },
+  initialState,
   reducers: {
     loginRequest: (state) => {
       state.loginLoading = true;
@@ -52,6 +55,23 @@ export const memberSlice = createSlice({
       state.logoutDone = false;
       state.logoutError = action.payload;
       state.me = state.me;
+    },
+    signupRequest: (state) => {
+      state.signupLoading = true;
+    },
+    signupSuccess: (state, action) => {
+      state.signupLoading = false;
+      state.signupDone = true;
+      state.loginDone = true;
+      state.logoutDone = false;
+      state.me = action.payload;
+    },
+    signupFailure: (state, action) => {
+      state.signupLoading = false;
+      state.signupError = action.payload;
+    },
+    resetState: () => {
+      return initialState;
     }
   },
 });
@@ -63,6 +83,10 @@ export const {
   logoutRequest,
   logoutSuccess,
   logoutFailure,
+  signupRequest,
+  signupSuccess,
+  signupFailure,
+  resetState,
 } = memberSlice.actions;
 
 const memberReducer = memberSlice.reducer;

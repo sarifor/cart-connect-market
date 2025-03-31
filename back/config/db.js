@@ -61,4 +61,58 @@ const Member = mysql.define(
   },
 );
 
-module.exports = { mysql, Member };
+const ShippingAddress = mysql.define(
+  'ShippingAddress',
+  {
+    shipping_address_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+      unique: true,
+    },
+    member_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    receiver: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    address: {
+      type: DataTypes.STRING(200),
+      allowNull: false,
+    },
+    postcode: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    tableName: 'shipping_address_tbl',
+    timestamps: false,
+  }
+);
+
+/*
+  Q. 모델 간 관계 정의는, 모든 모델이 로드된 뒤 한 번만 실행되면 되니까 정적 메서드 안에 정의하는 게 좋을까?
+
+  A. 모델을 각각 파일로 나누고, models/index.js에서 전체 모델을 불러온 뒤 관계를 한 번에 설정하고 싶을 때,
+  또는 유지보수, 가독성, 순환 참조 방지 같은 구조적인 측면을 고려한다면
+  관계를 정적 메서드 안에 정의하는 것이 좋다.
+  다만, 그렇게 하는 것이 필수는 아니며, 프로젝트 규모나 스타일에 따라 자유롭게 선택할 수 있다. (ChatGPT)
+*/
+Member.hasMany(ShippingAddress, { foreignKey: 'member_id' });
+ShippingAddress.belongsTo(Member, { foreignKey: 'member_id' });
+
+module.exports = { mysql, Member, ShippingAddress };
