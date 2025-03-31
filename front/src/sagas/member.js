@@ -35,15 +35,18 @@ function loginAPI(data) {
 // A. 1안) login.js의 useEffect에서 setTimeout 사용  2안) delay(3000)을 사용하여 loginSuccess 또는 loginFailure가 실행되기 전에 3초 동안 대기하도록 변경 (ChatGPT)
 // Q. API에서 지정한 에러 메시지를 사용하려면?
 // A. error.response.data: 백엔드에서 res.json()으로 보낸 내용. error.message: axios의 기본 에러 메시지 (ChatGPT)
+// Q. resetState()를 delay(3000) 직전이 아닌 loginSuccess 직전으로 옮긴 이유?
+// A. delay(3000) 직전에 실행하면 loginLoading이 false로 바뀐 상태가 3초 동안 유지되어 UX가 어색해지기 때문 (ChatGPT)
 function* login(action) {
   try {
     yield delay(3000);
 
     const member = yield call(loginAPI, action.data);
 
+    yield put(resetState());
     yield put(loginSuccess(member.data));
 
-    // throw new Error("로그인에 실패하였습니다. 다시 시도해 주세요.");
+    throw new Error("로그인에 실패하였습니다. 다시 시도해 주세요.");
   } catch (error) {
     yield put(loginFailure(error.response?.data || error.message));
   }
@@ -66,6 +69,7 @@ function* logout() {
     
     if (res.status === 200) {
       yield put(logoutSuccess());
+      yield put(resetState());
     }
 
     // throw new Error("로그아웃에 실패하였습니다. 다시 시도해 주세요.");
@@ -74,22 +78,22 @@ function* logout() {
   }
 }
 
+// Q. Saga 쪽 에러로 인해 회원 가입 실패 시, 서버의 쿠키 삭제, 서버 데이터베이스의 회원 정보 삭제, 그 밖에 할 일?
 // Q. 회원 가입 때 쿠키 전송이 필요한가?
-// A. 회원가입(signup) API 자체는 쿠키가 꼭 필요하지 않아. 하지만 회원가입 후 곧바로 로그인 시 세션을 생성한다면, withCredentials: true는 반드시 필요해 (ChatGPT)
+// A. 회원 가입(signup) API 자체는 쿠키가 꼭 필요하지 않아. 하지만 회원 가입 후 곧바로 로그인 시 세션을 생성한다면, withCredentials: true는 반드시 필요해 (ChatGPT)
 function signupAPI(data) {
   const result = axios.post(`${backURL}/member/signup`, data, { withCredentials: true });
   return result;
 }
 
-// Q. 다른 경우(로그인, 로그아웃 등)에도 resetState() 추가?
 function* signup(action) {
   try {
-    yield put(resetState());
     yield delay(3000);
 
     const member = yield call(signupAPI, action.data);
 
     if (member.status = 201) {
+      yield put(resetState());
       yield put(signupSuccess(member.data));
     }
 

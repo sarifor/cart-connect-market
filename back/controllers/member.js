@@ -1,6 +1,25 @@
 const { Member, ShippingAddress } = require('../config/db');
 const bcrypt = require('bcrypt');
 
+const saveMemberInSession = async (memberId, req, res, next) => {
+  // 비밀번호 제외한 유저 정보와 해당 유저의 배송 주소 정보를 한 객체에 담기
+  const memberWithoutPWwithShippingAddress = await Member.findOne({
+    where: { member_id: memberId },
+    attributes: { exclude: ['password'] },
+    include: [{
+      model: ShippingAddress,
+      attributes: ['shipping_address_id', 'receiver', 'address', 'postcode'],
+    }],
+  });
+    
+  // 로그인 처리
+  req.session.member = memberWithoutPWwithShippingAddress.dataValues;
+
+  await req.session.save();
+
+  return memberWithoutPWwithShippingAddress.dataValues;
+};
+
 /* # 로그인 처리 흐름
    이메일 검증 -> 비밀번호 검증 -> 비밀번호를 제외한 멤버 객체 생성
 
@@ -9,8 +28,6 @@ const bcrypt = require('bcrypt');
    A. 백엔드에서는 status: 200과 함께 성공 응답을 보내고, 프론트엔드에서 리다이렉트 처리하는 것이 일반적임 (ChatGPT)
    Q. 처음 로그인했을 때 서버가 클라이언트에게 쿠키를 보내주는지 아닌지 확인하려면?
    A. 개발자 도구 (F12) -> Network 탭으로 이동 -> 로그인 요청 (/login)을 찾고 클릭 -> Response Headers에서 Set-Cookie 항목이 있는지 확인 (ChatGPT)
-   Q. 회원 정보 조회 결과가 없을 때 어떤 응답 status가 적절할까?
-   A. 401 Unauthorized (ChatGPT)
    Q. 유저 객체에서 비밀번호를 제외하고 리턴하려면?
    A. member 객체에서 password 속성을 분리해 password 변수에 저장하고, 나머지 속성(id, name, email 등)은 새 객체에 담는 객체 구조 분해 할당 문법을 쓰면 됩니다 (ChatGPT)
    Q. login 함수의 res.status(200).json(member);에서 memberWithoutPassword 이걸 넘겨야 하는 거 아닌가?
@@ -34,20 +51,16 @@ const login = async (req, res, next) => {
       return res.status(401).json("비밀번호가 일치하지 않습니다.");
     }
 
-    const { password, ...memberWithoutPassword } = member.dataValues;
+    const memberId = member.member_id;
 
-    req.session.member = memberWithoutPassword;
+    const savedMember = await saveMemberInSession(memberId, req, res, next);
 
-    await req.session.save();
-
-    res.status(200).json(member);
+    res.status(200).json(savedMember);
   } catch (error) {
     console.log(error);
   }
 };
 
-// Q. 첫 방문 시 로그인을 하지 않았다고 401 코드를 보내는 건 좀 아닌 것 같아
-// A. 첫 방문 시 로그인 여부만 확인하는 API에서는 204 No Content가 더 적절함! (ChatGPT)
 const me = async (req, res, next) => {
   if (!req.session.member) {
     return res.sendStatus(204);
@@ -88,13 +101,6 @@ const logout = (req, res, next) => {
   });
 };
 
-// Q. 이미 가입한 경우의 response status?
-// Q. 회원 가입 처리 실패 시의 resposne status?
-// Q. status 200 vs 201 ?
-// A. 200 OK는 요청이 성공했다는 일반적인 의미고, 201 Created는 서버가 요청을 처리해 새로운 리소스를 생성했음을 나타내는 응답 코드입니다 (ChatGPT)
-// Q. memberWithoutPWwithShippingAddress에 ShippingAddress 모델의 정보가 안 담겨
-// A. db.js에서 Member.hasMany(ShippingAddress, { foreignKey: 'member_id' }); ShippingAddress.belongsTo(Member, { foreignKey: 'member_id' }); 설정 (ChatGPT)
-// Q. status 401 vs 409 ?
 const signup = async (req, res, next) => {
   // 이메일로 가입 or 구글 계정으로 가입 판별
   // TBD
@@ -157,24 +163,11 @@ const signup = async (req, res, next) => {
       postcode: reqPostalnumber,
     });
 
-    // 비밀번호 제외한 유저 정보와 해당 유저의 배송 주소 정보를 한 객체에 담기
-    const memberWithoutPWwithShippingAddress = await Member.findOne({
-      where: { member_id: memberId },
-      attributes: { exclude: ['password'] },
-      include: [{
-        model: ShippingAddress,
-        attributes: ['shipping_address_id', 'receiver', 'address', 'postcode'],
-      }],
-    });
-     
-    // 로그인 처리
-    req.session.member = memberWithoutPWwithShippingAddress.dataValues;
-
-    await req.session.save();
+    const savedMember = await saveMemberInSession(memberId, req, res, next);
     
-    res.status(201).json(memberWithoutPWwithShippingAddress);
+    res.status(201).json(savedMember);
   } catch (error) {
-    return res.status(401).json(`회원 가입에 실패하였습니다: ${error}`);
+    return res.status(500).json(`회원 가입에 실패하였습니다: ${error}`);
   }
 };
 
