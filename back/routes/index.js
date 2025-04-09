@@ -9,7 +9,7 @@ const publicCartRouter = express.Router();
 const { login, me, logout, signup } = require('../controllers/member');
 const { cartTest } = require('../controllers/cart');
 const { orderTest } = require('../controllers/order');
-const { productTest } = require('../controllers/product');
+const { productTest, getCategories, getProductsByCategory } = require('../controllers/product');
 const { publicCartTest } = require('../controllers/public-cart');
 
 
@@ -27,6 +27,8 @@ orderRouter.get('/', orderTest);
 
 // /product
 productRouter.get('/', productTest);
+productRouter.get('/category', getCategories);
+productRouter.get('/category/:categoryId', getProductsByCategory);
 
 // public-cart
 publicCartRouter.get('/', publicCartTest);

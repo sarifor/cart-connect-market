@@ -46,7 +46,7 @@ function* login(action) {
     yield put(resetState());
     yield put(loginSuccess(member.data));
 
-    throw new Error("로그인에 실패하였습니다. 다시 시도해 주세요.");
+    // throw new Error("로그인에 실패하였습니다. 다시 시도해 주세요.");
   } catch (error) {
     yield put(loginFailure(error.response?.data || error.message));
   }

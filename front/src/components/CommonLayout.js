@@ -10,6 +10,12 @@ const Footer = Layout.Footer;
 const CommonLayout = ({ title, children }) => {
   const [ open, setOpen ] = useState(false);
   let { logoutLoading, logoutError, me } = useSelector((state) => state.member);
+  
+  let memberId;
+
+  if (me) {
+    memberId = me.member_id;
+  }
 
   const dispatch = useDispatch();
 
@@ -54,10 +60,10 @@ const CommonLayout = ({ title, children }) => {
           <Drawer onClose={onClose} open={open}>
             {me ? (
               <div>
-                <p><Link href="">마이페이지</Link></p>
+                <p><Link href={`/member/${memberId}`}>마이페이지</Link></p>
                 <p><Link href="">장바구니</Link></p>
                 <p><Link href="">검색</Link></p>
-                <p><Link href="">카테고리별 상품</Link></p>
+                <p><Link href="/product/category">카테고리</Link></p>
                 <div>
                   <p onClick={onLogout}>로그아웃</p>
                   {logoutLoading && (<p>Loading...</p>)}
@@ -68,7 +74,7 @@ const CommonLayout = ({ title, children }) => {
               <div>
                 <p><Link href="/auth/login">로그인</Link> / <Link href="/auth/signup">회원가입</Link></p>
                 <p><Link href="">검색</Link></p>
-                <p><Link href="">카테고리별 상품</Link></p>
+                <p><Link href="/product/category">카테고리</Link></p>
               </div>
             )}
           </Drawer>

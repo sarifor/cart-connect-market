@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const session = require('express-session');
+const path = require('path');
 const { mysql } = require('./config/db');
 require('dotenv').config();
 
@@ -79,6 +80,11 @@ app.use('/public-cart', publicCartRouter);
 // app.use('/notification', notificationRouter);
 // app.use('/log', logRouter);
 // app.use('/admin', adminRouter);
+
+// Q. 정적 파일 용도별로 디렉토리 분리 운영하려면?
+// A. 정적 리소스는 /assets/, 사용자 or 관리자 업로드는 /uploads/ (ChatGPT)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/static', express.static(path.join(__dirname, 'assets')));
 
 const connectDB = async() => {
   try {
