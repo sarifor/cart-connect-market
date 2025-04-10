@@ -28,8 +28,6 @@ function* loadProducts(action) {
   try {
     yield delay(3000);
 
-    console.log("action.data: ", action.data);
-
     const products = yield call(loadProductsAPI, action.data);
 
     if (products.data.length === 0 || products.data.length > 0) {

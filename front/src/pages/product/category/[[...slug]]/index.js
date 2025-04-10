@@ -124,7 +124,7 @@ const CategoryProductList = () => {
             <div>Categories Loading...</div>
           )}
           {loadCategoriesDone && (
-            <div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
               <Select
                 // defaultValue="lucy"
                 value={level1Selected}
