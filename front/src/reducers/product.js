@@ -7,8 +7,12 @@ const initialState = {
   loadProductsLoading: false,
   loadProductsDone: false,
   loadProductsError: null,
+  loadProductDetailLoading: false,
+  loadProductDetailDone: false,
+  loadProductDetailError: null,
   categories: null,
   products: null,
+  productDetail: null,
 };
 
 export const productSlice = createSlice({
@@ -39,6 +43,18 @@ export const productSlice = createSlice({
       state.loadProductsLoading = false;
       state.loadProductsError = action.payload;      
     },
+    loadProductDetailRequest: (state) => {
+      state.loadProductDetailLoading = true;
+    },
+    loadProductDetailSuccess: (state, action) => {
+      state.loadProductDetailLoading = false;
+      state.loadProductDetailDone = true;
+      state.productDetail = action.payload;
+    },
+    loadProductDetailFailure: (state, action) => {
+      state.loadProductDetailLoading = false;
+      state.loadProductDetailError = action.payload;      
+    },
     resetState: () => {
       return initialState;
     }
@@ -52,6 +68,9 @@ export const {
   loadProductsRequest,
   loadProductsSuccess,
   loadProductsFailure,
+  loadProductDetailRequest,
+  loadProductDetailSuccess,
+  loadProductDetailFailure,  
   resetState,
 } = productSlice.actions;
 

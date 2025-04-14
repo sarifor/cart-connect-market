@@ -19,6 +19,37 @@ const productTest = (req, res, next) => {
   }
 };
 
+const getProduct = async (req, res, next) => {
+  try {
+    const productId = req.params.productId;
+    
+    const productDetail = await Product.findOne({
+      where: {
+        product_id: productId
+      },
+      include: [{
+        model: ProductImage,
+        attributes: ['product_image_id', 'src', 'product_id'],
+      }]
+    });
+
+    const modifiedProductDetail = {
+      ...productDetail.toJSON(),
+      ProductImages: productDetail.ProductImages.map(img => {
+        const plainImage = img.toJSON();
+        return {
+          ...plainImage,
+          src: `${BASE_URL}${img.src}`,
+        };
+      }),
+    };
+
+    res.status(200).json(modifiedProductDetail);
+  } catch (error) {
+    res.status(500).json(error);    
+  }
+};
+
 const getCategories = async (req, res, next) => {
   try {
     const categories = await Category.findAll({ raw: true });
@@ -96,7 +127,8 @@ const getProductsByCategory = async (req, res, next) => {
 };
 
 module.exports = { 
-  productTest, 
+  productTest,
+  getProduct, 
   getCategories, 
   getProductsByCategory
 };
