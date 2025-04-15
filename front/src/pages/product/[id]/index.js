@@ -30,6 +30,10 @@ const ProductDetail = () => {
     }
   }, [productId]);
 
+  const handleAddClick = () => {
+    console.log(`productId: ${productId}, quantity: ${quantity}`);
+  };
+
   if (loadProductDetailLoading) {
     return <CommonLayout title="상품 상세">
       <div>Product Detail Loading...</div>
@@ -72,7 +76,7 @@ const ProductDetail = () => {
               <Button onClick={() => setQuantity(quantity - 1)} disabled={quantity <= 1}>-</Button>
                 {quantity}
               <Button onClick={() => setQuantity(quantity + 1)} disabled={quantity >= productDetail.stock}>+</Button><br/>
-              <Button type="primary" htmlType="submit">장바구니 담기</Button>
+              <Button type="primary" onClick={handleAddClick}>장바구니 담기</Button>
             </div>
           </div>
         </Col>
