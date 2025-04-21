@@ -235,6 +235,49 @@ const ProductImage = mysql.define(
   }
 );
 
+const Cart = mysql.define(
+  "Cart", 
+  {
+    cart_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+      unique: true,
+    },
+    member_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    product_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    quantity: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+    },
+    public_cart_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+  }, 
+  {
+    tableName: "cart_tbl",
+    timestamps: false,
+  });
+
 /*
   Q. 모델 간 관계 정의는, 모든 모델이 로드된 뒤 한 번만 실행되면 되니까 정적 메서드 안에 정의하는 게 좋을까?
 
@@ -262,4 +305,11 @@ ProductImage.belongsTo(Product, { foreignKey: 'product_id' });
 Category.hasMany(Category, { foreignKey: 'parent_category_id', as: 'subcategory'});
 Category.belongsTo(Category, { foreignKey: 'parent_category_id', as: 'parentcategory'});
 
-module.exports = { mysql, Member, ShippingAddress, Product, ProductImage, Category };
+// 회원-상품 관계(N:M)
+// - 회원 탈퇴나 상품 삭제 시, 연관된 장바구니 데이터도 삭제
+Cart.belongsTo(Member, { foreignKey: 'member_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Member.hasMany(Cart, { foreignKey: 'member_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Cart.belongsTo(Product, { foreignKey: 'product_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Product.hasMany(Cart, { foreignKey: 'product_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+module.exports = { mysql, Member, ShippingAddress, Product, ProductImage, Category, Cart };

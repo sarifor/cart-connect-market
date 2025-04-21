@@ -2,22 +2,39 @@ import React, { useState, useEffect } from 'react';
 import CommonLayout from '../../../components/CommonLayout';
 import { Col, Button } from 'antd';
 import { loadProductDetailRequest } from '../../../reducers/product';
+import { loadCartItemsRequest, addToCartRequest } from '../../../reducers/cart';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 
-// Q. 상품 재고 현황을 서버와 실시간 동기화시키려면?
 const ProductDetail = () => {
+  const { me } = useSelector(state => state.member);
+
   const { 
     loadProductDetailLoading, 
     loadProductDetailDone, 
     loadProductDetailError, 
     productDetail 
   } = useSelector(state => state.product);
+
+  const { 
+    loadCartItemsLoading,
+    loadCartItemsDone,
+    loadCartItemsError,
+    addToCartLoading,
+    addToCartDone,
+    addToCartError,
+    cartItems,
+  } = useSelector(state => state.cart);
+
   const [quantity, setQuantity] = useState(1);
+  
+  const [cartActionMessage, setCartActionMessage] = useState('');
 
   const dispatch = useDispatch();
   const router = useRouter();
   const productId = router.query.id;
+
+  let cartStatusMessage = null;
     
   useEffect(() => {
     if (productId) {
@@ -30,9 +47,57 @@ const ProductDetail = () => {
     }
   }, [productId]);
 
+  useEffect(() => {
+    if (me) {
+      dispatch(loadCartItemsRequest());
+    }
+  }, [me]);
+
+  useEffect(() => {
+    if (cartItems) {
+      console.log("장바구니 최신 상태: ", cartItems);
+    }
+  }, [cartItems]);
+
   const handleAddClick = () => {
-    console.log(`productId: ${productId}, quantity: ${quantity}`);
+    if (!me) {
+      setCartActionMessage("로그인이 필요합니다. 로그인 후 이용해 주세요.");
+    } else {
+      dispatch({
+        type: addToCartRequest.type,
+        data: { 
+          productId: productId,
+          quantity: quantity,
+        }
+      });
+    }
   };
+
+  useEffect(() => {
+    if (addToCartLoading) {
+      setCartActionMessage("장바구니에 담는 중...");
+    } else if (addToCartDone) {
+      setCartActionMessage("장바구니에 담겼습니다.");
+    } else if (addToCartError) {
+      setCartActionMessage(`장바구니 담기에 실패하였습니다: ${addToCartError}`);
+    }
+  }, [addToCartLoading, addToCartDone, addToCartError]);
+
+  if (!me) {
+    cartStatusMessage = "장바구니에 담겼는지 여부를 확인하려면 로그인을 해 주세요.";
+  } else {
+    if (loadCartItemsLoading) {
+      cartStatusMessage = "장바구니에 담겼는지 여부를 확인 중입니다.";    
+    } else if (loadCartItemsDone && cartItems && cartItems.length === 0) {
+      cartStatusMessage = "장바구니는 비어 있습니다.";     
+    } else if (loadCartItemsDone && cartItems && !cartItems.some(item => Number(item.product_id) === Number(productId))) {
+      cartStatusMessage = "장바구니에 담긴 적이 없는 상품입니다.";
+    } else if (loadCartItemsDone && cartItems && cartItems.some(item => Number(item.product_id) === Number(productId))) {
+      cartStatusMessage = "장바구니에 이미 담긴 상품입니다.";
+    } else if (loadCartItemsError) {
+      cartStatusMessage = `장바구니에 담겼는지 확인하는 과정에서 에러가 발생하였습니다: ${loadCartItemsError}`;
+    }
+  }
 
   if (loadProductDetailLoading) {
     return <CommonLayout title="상품 상세">
@@ -78,6 +143,16 @@ const ProductDetail = () => {
               <Button onClick={() => setQuantity(quantity + 1)} disabled={quantity >= productDetail.stock}>+</Button><br/>
               <Button type="primary" onClick={handleAddClick}>장바구니 담기</Button>
             </div>
+            { cartStatusMessage && (
+              <div>
+                {cartStatusMessage}
+              </div>
+            )}         
+            { cartActionMessage && (
+              <div>
+                {cartActionMessage}
+              </div>
+            )}    
           </div>
         </Col>
       </>

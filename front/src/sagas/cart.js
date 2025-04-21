@@ -1,0 +1,75 @@
+import axios from 'axios';
+import { delay, call, put, takeEvery, all, fork } from 'redux-saga/effects';
+
+import {
+  addToCartRequest,
+  addToCartSuccess,
+  addToCartFailure,
+  loadCartItemsRequest,
+  loadCartItemsSuccess,
+  loadCartItemsFailure,  
+  // resetState,
+} from '@/reducers/cart';
+
+let backURL;
+
+if (process.env.NODE_ENV === 'production') {
+  backURL = 'http://ccm-api.sarifor.net';
+} else {
+  backURL = 'http://localhost:4000';
+}
+
+function loadCartItemsAPI() {
+  const cartItems = axios.get(`${backURL}/cart`, { withCredentials: true });
+  return cartItems;
+}
+
+function* loadCartItems() {
+  try {
+    yield delay(4000);
+
+    const cartItems = yield call(loadCartItemsAPI);
+
+    // yield put(resetState());
+    yield put(loadCartItemsSuccess(cartItems.data));
+
+    // throw new Error("장바구니 가져오기에 실패하였습니다. 다시 시도해 주세요.");
+  } catch (error) {
+    yield put(loadCartItemsFailure(error.response?.data || error.message));
+  }
+}
+
+function addToCartAPI(data) {
+  const cartItems = axios.post(`${backURL}/cart/add`, data, { withCredentials: true });
+  return cartItems;
+}
+
+function* addToCart(action) {
+  try {
+    yield delay(2000);
+
+    const cartItems = yield call(addToCartAPI, action.data);
+
+    // yield put(resetState());
+    yield put(addToCartSuccess(cartItems.data));
+
+    // throw new Error("장바구니 가져오기에 실패하였습니다. 다시 시도해 주세요.");
+  } catch (error) {
+    yield put(addToCartFailure(error.response?.data?.message || error.message));
+  }
+}
+
+function* watchLoadCartItems() {
+  yield takeEvery(loadCartItemsRequest.type, loadCartItems);
+}
+
+function* watchAddToCart() {
+  yield takeEvery(addToCartRequest.type, addToCart);
+}
+
+export default function* productSaga() {
+  yield all([
+    fork(watchLoadCartItems),
+    fork(watchAddToCart),
+  ]);
+}

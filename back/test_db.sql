@@ -175,3 +175,25 @@ VALUES
 
 -- ファブリーズ (product_id = 8)
 (10, '/uploads/products/8/10.jpg', 8, NOW(), NOW());
+
+
+# Insert cart_tbl dummy data
+INSERT INTO cart_tbl (
+  member_id,
+  product_id,
+  quantity,
+  public_cart_id,
+  created_at,
+  updated_at
+) VALUES
+-- Takeshi (회원 ID: 1) - キャベツ 2개, 鶏もも肉 1개
+(1, 1, 2, NULL, NOW(), NOW()),
+(1, 3, 1, NULL, NOW(), NOW()),
+
+-- Ayumi (회원 ID: 2) - 辛ラーメン 5개, ファブリーズ 1개
+(2, 5, 5, NULL, NOW(), NOW()),
+(2, 8, 1, 2001, NOW(), NOW()),
+
+-- Ren (회원 ID: 3) - にんじん 3개, アタックゼロ 2개
+(3, 2, 3, NULL, NOW(), NOW()),
+(3, 7, 2, NULL, NOW(), NOW());
