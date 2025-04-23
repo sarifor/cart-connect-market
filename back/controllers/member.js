@@ -13,11 +13,11 @@ const saveMemberInSession = async (memberId, req, res, next) => {
   });
     
   // 로그인 처리
-  req.session.member = memberWithoutPWwithShippingAddress.dataValues;
+  req.session.member = memberWithoutPWwithShippingAddress.toJSON();
 
   await req.session.save();
 
-  return memberWithoutPWwithShippingAddress.dataValues;
+  return memberWithoutPWwithShippingAddress.toJSON();
 };
 
 /* # 로그인 처리 흐름
@@ -47,7 +47,7 @@ const login = async (req, res, next) => {
       return res.status(401).json("회원이 존재하지 않습니다.");
     }
 
-    if (reqPassword !== member.dataValues.password) {
+    if (reqPassword !== member.password) {
       return res.status(401).json("비밀번호가 일치하지 않습니다.");
     }
 

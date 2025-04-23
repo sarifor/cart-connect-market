@@ -50,17 +50,17 @@ const Profile = () => {
       {
         key: '1',
         label: '받는 사람',
-        children: me.ShippingAddresses[0].receiver,
+        children: me.ShippingAddresses[0]?.receiver || "미입력",
       },
       {
         key: '2',
         label: '우편번호',
-        children: me.ShippingAddresses[0].postcode,
+        children: me.ShippingAddresses[0]?.postcode || "미입력",
       },
       {
         key: '3',
         label: '주소',
-        children: me.ShippingAddresses[0].address,
+        children: me.ShippingAddresses[0]?.address || "미입력",
       },
     ];  
   }
