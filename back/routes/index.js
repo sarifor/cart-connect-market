@@ -2,13 +2,13 @@ const express = require('express');
 
 const memberRouter = express.Router();
 const cartRouter = express.Router();
-const orderRouter = express.Router();
+const checkoutRouter = express.Router();
 const productRouter = express.Router();
 const publicCartRouter = express.Router();
 
 const { login, me, logout, signup } = require('../controllers/member');
-const { getCart, addCart } = require('../controllers/cart');
-const { orderTest } = require('../controllers/order');
+const { getCart, addCart, decrementCart, deleteCart } = require('../controllers/cart');
+const { getShippingAddress, getServerTime } = require('../controllers/checkout');
 const { productTest, getProduct, getCategories, getProductsByCategory } = require('../controllers/product');
 const { publicCartTest } = require('../controllers/public-cart');
 
@@ -20,11 +20,15 @@ memberRouter.post('/logout', logout);
 memberRouter.post('/signup', signup);
 
 // /cart
+// Q. cartRouter.post('/increment', incrementCart);로 언제 수정할까?
 cartRouter.get('/', getCart);
 cartRouter.post('/add', addCart);
+cartRouter.patch('/decrement', decrementCart);
+cartRouter.delete('/delete', deleteCart);
 
-// /order
-orderRouter.get('/', orderTest);
+// /checkout
+checkoutRouter.get('/shipping-address', getShippingAddress);
+checkoutRouter.get('/server-time', getServerTime);
 
 // /product
 productRouter.get('/', productTest);
@@ -38,7 +42,7 @@ publicCartRouter.get('/', publicCartTest);
 const routers = {
   memberRouter,
   cartRouter,
-  orderRouter,
+  checkoutRouter,
   productRouter,
   publicCartRouter,
 }

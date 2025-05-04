@@ -3,6 +3,8 @@ require('dotenv').config();
 
 // Q. Sequelize 설정의 host란?
 // A. 데이터베이스 서버의 주소를 의미합니다. MySQL이 Node.js 서버와 같은 EC2 인스턴스에 설치되어 있다면, 배포 환경에서도 host: 'localhost' 그대로 사용해도 되고, 별도의 도메인이나 퍼블릭 IP로 변경할 필요는 없습니다 (ChatGPT)
+// Q. 각 모델의 필드마다 필요한 경우 comment로 보충 설명 달아놓을까? (예: Order 모델 status)
+// Q. Order, OrderDetail 외엔 아직 created_at과 updated_at에 현재 시간 기본값 설정이 제대로 안 되어 있다. Sequelize.literal을 사용해서 언제쯤 수정할까?
 const mysql = new Sequelize({
   database: 'testdb',
   username: 'root',
@@ -278,6 +280,114 @@ const Cart = mysql.define(
     timestamps: false,
   });
 
+const Order = mysql.define(
+  "Order", 
+  {
+    order_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+      unique: true,
+    },
+    member_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    payment: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      comment: '1: 신용카드, 2: 물건 수령 시 현금 결제, 3: 프로모션 코드, 4: 쿠폰',
+    },
+    receiver: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    address: {
+      type: DataTypes.STRING(200),
+      allowNull: false,
+    },
+    postcode: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+    },
+    shipping_fee: {
+      type: DataTypes.SMALLINT,
+      allowNull: false,
+    },
+    total: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      comment: '0: 주문 취소, 1: 결제 완료, 2: 배송 중, 3: 배송 완료',
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: mysql.literal('CURRENT_TIMESTAMP'),
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: mysql.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+    },
+  }, 
+  {
+    tableName: 'order_tbl',
+    timestamps: false,
+  });
+
+  const OrderDetail = mysql.define(
+    "OrderDetail",
+    {
+      order_detail_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
+        unique: true,
+      },
+      order_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      product_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      public_cart_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+      },
+      quantity: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+      },
+      purchase_price: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: mysql.literal('CURRENT_TIMESTAMP'),
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: mysql.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+      },
+    },
+    {
+      tableName: 'order_detail_tbl',
+      timestamps: false,
+    }
+  );
+
 /*
   Q. 모델 간 관계 정의는, 모든 모델이 로드된 뒤 한 번만 실행되면 되니까 정적 메서드 안에 정의하는 게 좋을까?
 
@@ -307,9 +417,22 @@ Category.belongsTo(Category, { foreignKey: 'parent_category_id', as: 'parentcate
 
 // 회원-상품 관계(N:M)
 // - 회원 탈퇴나 상품 삭제 시, 연관된 장바구니 데이터도 삭제
-Cart.belongsTo(Member, { foreignKey: 'member_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 Member.hasMany(Cart, { foreignKey: 'member_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-Cart.belongsTo(Product, { foreignKey: 'product_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Cart.belongsTo(Member, { foreignKey: 'member_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 Product.hasMany(Cart, { foreignKey: 'product_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Cart.belongsTo(Product, { foreignKey: 'product_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-module.exports = { mysql, Member, ShippingAddress, Product, ProductImage, Category, Cart };
+// 회원-주문 관계(1:N)
+// - 회원 탈퇴 시 soft delete로 처리하기 때문에 주문 데이터는 남아 있음
+Member.hasMany(Order, { foreignKey: 'member_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+Order.belongsTo(Member, { foreignKey: 'member_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+
+// 주문-상품 관계(N:M)
+// - 주문이나 상품 삭제 시 soft delete로 처리하기 때문에 주문 상세 데이터는 남아 있음
+// - 단, 미완료 주문을 삭제 시에는 hard delete이기 때문에, 이 경우엔 주문 상세 데이터를 먼저 삭제하고 주문 데이터 삭제
+Order.hasMany(OrderDetail, { foreignKey: 'order_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+OrderDetail.belongsTo(Order, { foreignKey: 'order_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+Product.hasMany(OrderDetail, { foreignKey: 'product_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+OrderDetail.belongsTo(Product, { foreignKey: 'product_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+
+module.exports = { mysql, Member, ShippingAddress, Product, ProductImage, Category, Cart, Order, OrderDetail };

@@ -8,6 +8,7 @@ const { Meta } = Card;
 const ProductList = (props) => {
   const { levelSelected, loadProductsLoading, loadProductsDone, loadProductsError, products } = props;
 
+  // Q. <Col md={18}>은 category\[[...slug]]\index.js로 이동? 그 편이 레이아웃 관리가 쉬울 것 같아서.
   return (
     <Col md={18}>
       {!levelSelected && (

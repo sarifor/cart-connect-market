@@ -17,6 +17,7 @@ const Profile = () => {
   let basicInfo;
   let shippingAddressInfo;
 
+  // Q. useEffect 처리 하는 게 좋을까? me.member_id가 확실히 있을 때 값이 들어오도록.
   if (Number(me && me.member_id) === Number(router.query.id)) {
     basicInfo = [
       {

@@ -10,6 +10,37 @@ if (process.env.NODE_ENV === 'production') {
   BASE_URL = 'http://localhost:4000';
 }
 
+const getModifiedCart = async (memberId) => {
+  try {
+    const cart = await Cart.findAll({
+      where: {
+        member_id: memberId,
+      },
+      include: [{
+        model: Product,
+        attributes: ['product_name', 'description', 'price', 'stock'],
+        include: [{
+          model: ProductImage,
+          attributes: ['product_image_id', 'src', 'product_id'],
+        }],
+      }],
+    });
+
+    const modifiedCart = cart.map(eachCart => {
+      let eachCartJson = eachCart.toJSON();
+      eachCartJson.Product.ProductImages = eachCartJson.Product.ProductImages.map(img => ({
+        ...img,
+        src: `${BASE_URL}${img.src}`
+      }));
+      return eachCartJson;
+    });
+
+    return modifiedCart;
+  } catch (error) {
+    throw new Error(`장바구니 조회 실패: ${error}`);
+  }
+};
+
 // Q. 에러 핸들링 중앙화?
 const getCart = async (req, res, next) => {
   try {
@@ -18,23 +49,17 @@ const getCart = async (req, res, next) => {
       return res.status(401).send("로그인이 필요합니다.");
     }
 
-    // 장바구니에 담긴 상품 목록을 조회하여,
-    const cartItems = await Cart.findAll({
-      where: {
-        member_id: req.session.member.member_id,
-      },
-      raw: true,
-    });
-    
-    // 결과 전송
-    if (cartItems.length >= 0) {
-      res.status(200).json(cartItems);
-    }
+    // 응답으로 장바구니 목록 반환
+    const modifiedCart = await getModifiedCart(req.session.member.member_id);
+
+    res.status(200).json(modifiedCart);
   } catch (error) {
     res.status(500).send(error);
   }
 };
 
+// Q. incrementCart로 수정할까?
+// Q. decrementCart와의 공통 로직을 별도의 함수로 빼낸다면 어떤 이름이 좋을까?
 const addCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인하고,
@@ -94,31 +119,8 @@ const addCart = async (req, res, next) => {
       });      
     }
 
-    // 응답으로 장바구니 목록(+상품 정보 & 상품 이미지 정보) 반환
-    // - 직접 JSON 포매팅
-    const cart = await Cart.findAll({
-      where: {
-        member_id: req.session.member.member_id,
-      },
-      include: [{
-        model: Product,
-        attributes: ['product_name', 'description', 'price'],
-        include: [{
-          model: ProductImage,
-          attributes: ['product_image_id', 'src', 'product_id'],
-        }],
-      }],
-      // raw: true,
-    });
-
-    const modifiedCart = cart.map(eachCart => {
-      let eachCartJson = eachCart.toJSON();
-      eachCartJson.Product.ProductImages = eachCartJson.Product.ProductImages.map(img => ({
-        ...img,
-        src: `${BASE_URL}${img.src}`
-      }));
-      return eachCartJson;
-    });
+    // 응답으로 장바구니 목록 반환
+    const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
     res.status(200).json(modifiedCart);
   } catch (error) {
@@ -126,103 +128,102 @@ const addCart = async (req, res, next) => {
   }
 };
 
-// 클라이언트로부터 상품 ID 배열을 받을 경우의 처리
-// - 예: [1, 1, 1, 2, 2, 3, 3, 3, 3]
-/* const addCart = async (req, res, next) => {
+const decrementCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인하고,
     if (!req.session.member.member_id) {
       return res.status(401).send("로그인이 필요합니다.");
     }
 
-    // 클라이언트로부터 받은 상품 ID 배열로,
-    // const productIds = req.body.productIds;
+    // 클라이언트로부터 상품 ID와 수량 받음
+    const idAndCount = req.body;
+    const productId = Number(idAndCount.productId);
+    const productQuantity = Number(idAndCount.quantity);
 
-    // 상품 테이블을 조회하여, 판매 중인 상품 ID만 모음
-    const existingProductIds = await Product.findAll({
+    // 상품 테이블을 조회하여, 판매 중인지 체크
+    const existingProduct = await Product.findOne({
       where: {
-        product_id: { [Op.in]: productIds },
+        product_id: productId,
         status: 1
       },
       attributes: ['product_id'],
-      raw: true
+      raw: true,
     });
 
-    // 판매 중인 상품 ID 모음에서, 상품 아이디 값만 추출하기
-    const idValues = existingProductIds.map(product => product.product_id);
+    // 판매 중이 아니면 처리 중단 
+    if (!existingProduct) {
+      res.status(401).send('구매할 수 없는 상품입니다.');
+    }
 
-    // 클라이언트로부터 받은 상품 ID 배열에서, 유효한 값만 골라내기
-    const validProductIds = productIds.filter(id => idValues.includes(id));
-    
-    // 상품별 수량 조사하여,
-    const idsAndCounts = validProductIds.reduce((acc, cur) => {
-      const currentCount = acc.get(cur) || 0;
-      acc.set(cur, currentCount + 1);
-      return acc;
-    }, new Map());
-    
-    // 장바구니 테이블에 저장하고,
-    // - 이미 담긴 상품이면 수량 갱신
-    // - 없으면 새 레코드 추가
-    for ( const [ product_id, quantity ] of idsAndCounts ) {
-      const existingCart = await Cart.findOne({
-        where: {
-          member_id: req.session.member.member_id,
-          product_id: product_id,
-        }
-      });
+    // 이미 담긴 상품인가 검증
+    const existingCart = await Cart.findOne({
+      where: {
+        member_id: req.session.member.member_id,
+        product_id: existingProduct.product_id,
+      },
+      raw: true,
+    });
 
-      if (existingCart) {
+    // 수량이 0 이하이면 장바구니에서 상품을 삭제하고, 아니라면 상품 수량 감소 처리만 하기
+    if (existingCart) {
+      const newQuantity = existingCart.quantity - productQuantity;
+
+      if (newQuantity <= 0) {
+        await Cart.destroy({
+          where: {
+            member_id: req.session.member.member_id,
+            product_id: existingProduct.product_id,            
+          }
+        });
+      } else {
         await Cart.update(
-          { quantity: existingCart.quantity + quantity },
+          {
+            quantity: newQuantity,
+          },
           {
             where: {
               member_id: req.session.member.member_id,
-              product_id: product_id,
+              product_id: existingProduct.product_id,
             }
           }
         );
-      } else {
-        await Cart.create({
-          member_id: req.session.member.member_id,
-          product_id: product_id,
-          quantity: quantity,
-          public_cart_id: null,
-        });
       }
     }
-    
-    // 응답으로 장바구니 목록(+상품 정보 & 상품 이미지 정보) 반환
-    // - Cart + Product, ProductImage
-    // - 직접 JSON 포매팅
-    const cart = await Cart.findAll({
-      where: {
-        member_id: req.session.member.member_id,
-      },
-      include: [{
-        model: Product,
-        attributes: ['product_name', 'description', 'price'],
-        include: [{
-          model: ProductImage,
-          attributes: ['product_image_id', 'src', 'product_id'],
-        }],
-      }],
-      // raw: true,
-    });
 
-    const modifiedCart = cart.map(eachCart => {
-      let eachCartJson = eachCart.toJSON();
-      eachCartJson.Product.ProductImages = eachCartJson.Product.ProductImages.map(img => ({
-        ...img,
-        src: `${BASE_URL}${img.src}`
-      }));
-      return eachCartJson;
-    });
+    // 응답으로 장바구니 목록 반환
+    const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
     res.status(200).json(modifiedCart);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json(error);
   }
-}; */
+};
 
-module.exports = { getCart, addCart };
+const deleteCart = async (req, res, next) => {
+  try {
+    // 로그인한 회원인지 확인하고,
+    if (!req.session.member.member_id) {
+      return res.status(401).send("로그인이 필요합니다.");
+    }
+
+    // 클라이언트로부터 상품 ID 확보
+    const productId = Number(req.body.productId);
+
+    // 장바구니에서 상품 삭제   
+    await Cart.destroy({
+      where: {
+        member_id: req.session.member.member_id,
+        product_id: productId,
+      }
+    });
+
+    // 응답으로 장바구니 목록 반환
+    const modifiedCart = await getModifiedCart(req.session.member.member_id);
+
+    res.status(200).json(modifiedCart);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+module.exports = { getCart, addCart, decrementCart, deleteCart };

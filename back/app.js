@@ -12,7 +12,7 @@ const port = process.env.PORT;
 const { 
   memberRouter,
   cartRouter,
-  orderRouter,
+  checkoutRouter,
   productRouter,
   publicCartRouter,
 } = require('./routes');
@@ -73,7 +73,7 @@ app.get('/', (req, res) => {
 
 app.use('/member', memberRouter);
 app.use('/cart', cartRouter);
-app.use('/order', orderRouter);
+app.use('/checkout', checkoutRouter);
 app.use('/product', productRouter);
 app.use('/public-cart', publicCartRouter);
 // app.use('/promotion', promotionRouter);

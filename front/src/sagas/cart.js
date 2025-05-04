@@ -2,12 +2,18 @@ import axios from 'axios';
 import { delay, call, put, takeEvery, all, fork } from 'redux-saga/effects';
 
 import {
+  loadCartItemsRequest,
+  loadCartItemsSuccess,
+  loadCartItemsFailure,
   addToCartRequest,
   addToCartSuccess,
   addToCartFailure,
-  loadCartItemsRequest,
-  loadCartItemsSuccess,
-  loadCartItemsFailure,  
+  decrementCartRequest,
+  decrementCartSuccess,
+  decrementCartFailure,
+  deleteCartRequest,
+  deleteCartSuccess,
+  deleteCartFailure,  
   // resetState,
 } from '@/reducers/cart';
 
@@ -53,9 +59,49 @@ function* addToCart(action) {
     // yield put(resetState());
     yield put(addToCartSuccess(cartItems.data));
 
-    // throw new Error("장바구니 가져오기에 실패하였습니다. 다시 시도해 주세요.");
+    // throw new Error("장바구니 추가하기에 실패하였습니다. 다시 시도해 주세요.");
   } catch (error) {
     yield put(addToCartFailure(error.response?.data?.message || error.message));
+  }
+}
+
+function decrementCartAPI(data) {
+  const cartItems = axios.patch(`${backURL}/cart/decrement`, data, { withCredentials: true });
+  return cartItems;
+}
+
+function* decrementCart(action) {
+  try {
+    yield delay(2000);
+
+    const cartItems = yield call(decrementCartAPI, action.data);
+
+    // yield put(resetState());
+    yield put(decrementCartSuccess(cartItems.data));
+
+    // throw new Error("장바구니에서 제외시키기에 실패하였습니다. 다시 시도해 주세요.");
+  } catch (error) {
+    yield put(decrementCartFailure(error.response?.data?.message || error.message));
+  }
+}
+
+function deleteCartAPI(data) {
+  const cartItems = axios.delete(`${backURL}/cart/delete`, { data: data, withCredentials: true });
+  return cartItems;
+}
+
+function* deleteCart(action) {
+  try {
+    yield delay(2000);
+
+    const cartItems = yield call(deleteCartAPI, action.data);
+
+    // yield put(resetState());
+    yield put(deleteCartSuccess(cartItems.data));
+
+    // throw new Error("장바구니 상품 삭제를 실패하였습니다. 다시 시도해 주세요.");
+  } catch (error) {
+    yield put(deleteCartFailure(error.response?.data?.message || error.message));
   }
 }
 
@@ -67,9 +113,19 @@ function* watchAddToCart() {
   yield takeEvery(addToCartRequest.type, addToCart);
 }
 
-export default function* productSaga() {
+function* watchDecrementCart() {
+  yield takeEvery(decrementCartRequest.type, decrementCart);
+}
+
+function* watchDeleteCart() {
+  yield takeEvery(deleteCartRequest.type, deleteCart);
+}
+
+export default function* cartSaga() {
   yield all([
     fork(watchLoadCartItems),
     fork(watchAddToCart),
+    fork(watchDecrementCart),
+    fork(watchDeleteCart),
   ]);
 }
