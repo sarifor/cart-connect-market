@@ -6,24 +6,19 @@ import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginRequest } from '../../reducers/member';
 
-// Q. useEffect에서, deps 배열에 [loginDone]을 넣어서 loginDone이 false에서 true로 변할 때 메인 페이지로 리다이렉트되는 걸 의도했는데, 왜 로그인 화면 들어오자마자 다시 메인 페이지로 리다이렉트되는 거지?
-// A. useEffect가 처음 마운트될 때도 실행되므로, loginDone이 false일 때 실행될 수도 있어. loginDone이 false일 땐 아무 일도 하지 않고, true로 변할 때만 실행되도록 수정하자 (ChatGPT)
-// Q. '아직 회원이 아니신가요? 회원 가입' 부분이 로그인 버튼 아래에 오게 하려면?
-// A. 로그인 버튼과 해당 텍스트를 같은 컨테이너 안에 넣으면 해결됩니다 (ChatGPT)
 const Login = () => {
   const [ email, setEmail ] = useState(null);
   const [ password, setPassword ] = useState(null);
-  const { loginLoading, loginDone, loginError } = useSelector(state => state.member);
+  const { me, loginLoading, loginError } = useSelector(state => state.member);
 
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // Q. CommonLayout.js에서 메뉴 구성이 바뀌는 기준을 me로 변경했으니, login.js도 그러는 게 좋지 않을까?
   useEffect(() => {
-    if (loginDone) {
+    if (me) {
       router.push("/");
     }
-  }, [loginDone]);
+  }, [me]);
 
   const onSubmitForm = () => {
     dispatch({

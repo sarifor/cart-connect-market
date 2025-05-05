@@ -9,7 +9,6 @@ const Footer = Layout.Footer;
 // const { Header, Footer } = Layout;
 
 // Q. localhost:3000에 접속하면 가끔 const CommonLayout = ({ title, children }) => { 이 부분에서 에러가 났다는 메시지가 뜬다. 원인? 해결법?
-// Q. 장바구니 접속 주소를 그냥 /cart로 바꿀까? 아니면 '/cart/회원 아이디' 그대로 공개 장바구니로 활용할 여지를 남겨 둘까?
 const CommonLayout = ({ title, children }) => {
   const [ open, setOpen ] = useState(false);
   let { logoutLoading, logoutError, me } = useSelector((state) => state.member);
@@ -64,7 +63,7 @@ const CommonLayout = ({ title, children }) => {
             {me ? (
               <div>
                 <p><Link href={`/member/${memberId}`}>마이페이지</Link></p>
-                <p><Link href={`/cart/${memberId}`}>장바구니</Link></p>
+                <p><Link href={`/cart`}>장바구니</Link></p>
                 <p><Link href="">검색</Link></p>
                 <p><Link href="/product/category">카테고리</Link></p>
                 <div>

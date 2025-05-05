@@ -8,7 +8,6 @@ const Summary = ({ itemQuantityTotal, itemPriceTotal, shippingFee, tax, finalTot
     router.push('/checkout');
   };
 
-  // Q. '합계'나 '세금' 값이 소수가 될 때 반올림 값으로 바꾸려면?
   return (
     <div style={{ display: "flex", flexDirection: "column", padding: "20px", rowGap: "5px" }}>
       <div style ={{ fontWeight: "bold", borderBottom: "1px solid black" }}>

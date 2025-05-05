@@ -28,8 +28,6 @@ const EmailSignup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // Q. router.replace vs push ?
-  // A. Router.push()는 페이지 이동을 히스토리에 남기고, replace()는 현재 기록을 덮어씁니다. 로그인/회원가입 리디렉션처럼 뒤로가기가 필요 없는 경우엔 replace()가 더 적절합니다 (ChatGPT)
   useEffect(() => {
     if (me) {
       router.replace("/");

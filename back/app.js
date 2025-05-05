@@ -95,13 +95,15 @@ const connectDB = async() => {
   }
 };
 
-// Q. sync()의 역할?
-// A. This creates the table if it doesn't exist (and does nothing if it already exists)
 const syncDB = async () => {
   try {
-    await mysql.sync();
+    if (process.env.NODE_ENV === 'production') {
+      await mysql.sync();
+    } else {
+      await mysql.sync({ alter: true });
+    }
+
     console.log('All models are synced');
-    console.log('Models: ', mysql.models);
   } catch (error) {
     console.log('Model sync failed: ', error)
   }

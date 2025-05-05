@@ -4,7 +4,6 @@ require('dotenv').config();
 // Q. Sequelize 설정의 host란?
 // A. 데이터베이스 서버의 주소를 의미합니다. MySQL이 Node.js 서버와 같은 EC2 인스턴스에 설치되어 있다면, 배포 환경에서도 host: 'localhost' 그대로 사용해도 되고, 별도의 도메인이나 퍼블릭 IP로 변경할 필요는 없습니다 (ChatGPT)
 // Q. 각 모델의 필드마다 필요한 경우 comment로 보충 설명 달아놓을까? (예: Order 모델 status)
-// Q. Order, OrderDetail 외엔 아직 created_at과 updated_at에 현재 시간 기본값 설정이 제대로 안 되어 있다. Sequelize.literal을 사용해서 언제쯤 수정할까?
 const mysql = new Sequelize({
   database: 'testdb',
   username: 'root',
@@ -46,20 +45,12 @@ const Member = mysql.define(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,      
-    },
   },
   {
     tableName: 'member_tbl',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   },
 );
 
@@ -89,20 +80,12 @@ const ShippingAddress = mysql.define(
       type: DataTypes.STRING(10),
       allowNull: false,
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
   },
   {
     tableName: 'shipping_address_tbl',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   }
 );
 
@@ -130,20 +113,12 @@ const Category = mysql.define(
       allowNull: true,
       defaultValue: null,
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
   },
   {
     tableName: 'category_tbl',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   }
 );
 
@@ -184,20 +159,12 @@ const Product = mysql.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
   },
   {
     tableName: 'product_tbl',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   }
 );
 
@@ -220,20 +187,12 @@ const ProductImage = mysql.define(
       allowNull: true,
       defaultValue: null,
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
   },
   {
     tableName: 'product_image_tbl',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',    
   }
 );
 
@@ -264,20 +223,12 @@ const Cart = mysql.define(
       allowNull: true,
       defaultValue: null,
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
   }, 
   {
     tableName: "cart_tbl",
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',    
   });
 
 const Order = mysql.define(
@@ -324,20 +275,12 @@ const Order = mysql.define(
       allowNull: false,
       comment: '0: 주문 취소, 1: 결제 완료, 2: 배송 중, 3: 배송 완료',
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: mysql.literal('CURRENT_TIMESTAMP'),
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: mysql.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-    },
   }, 
   {
     tableName: 'order_tbl',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',    
   });
 
   const OrderDetail = mysql.define(
@@ -371,20 +314,12 @@ const Order = mysql.define(
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: mysql.literal('CURRENT_TIMESTAMP'),
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: mysql.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-      },
     },
     {
       tableName: 'order_detail_tbl',
-      timestamps: false,
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',      
     }
   );
 

@@ -42,9 +42,8 @@ function* loadCategories() {
   }
 }
 
-// Q. 'Get 공개 정보'니까, withCredentials 옵션 지우기?
 function loadProductsAPI(data) {
-  const products = axios.get(`${backURL}/product/category/${data.categoryId}`, {}, { withCredentials: true });
+  const products = axios.get(`${backURL}/product/category/${data.categoryId}`);
   return products;
 }
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import CommonLayout from '../../../components/CommonLayout.js';
-import ItemList from '../../../components/cart/ItemList.js';
-import Summary from '../../../components/cart/Summary.js';
+import CommonLayout from '../../components/CommonLayout.js';
+import ItemList from '../../components/cart/ItemList.js';
+import Summary from '../../components/cart/Summary.js';
 import { Col } from 'antd';
-import { loadCartItemsRequest } from '../../../reducers/cart.js';
+import { loadCartItemsRequest } from '../../reducers/cart.js';
 import { useSelector, useDispatch } from 'react-redux';
 
 const Cart = () => {
@@ -32,7 +32,7 @@ const Cart = () => {
   const itemPriceTotal = cartItems.reduce((acc, cur) => acc + (cur.Product.price * cur.quantity), 0);
   const itemQuantityTotal = cartItems.reduce((acc, cur) => acc + (cur.quantity), 0); 
   const shippingFee = itemPriceTotal > 2000 ? 0 : 200;
-  const tax = itemPriceTotal * 0.1;
+  const tax = Math.round(itemPriceTotal * 0.1);
   const finalTotal = itemPriceTotal + shippingFee + tax;
 
   const dispatch = useDispatch();

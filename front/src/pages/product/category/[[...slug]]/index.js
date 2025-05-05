@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Col, Select } from 'antd';
 import { loadCategoriesRequest, loadProductsRequest } from '../../../../reducers/product';
 import CommonLayout from '../../../../components/CommonLayout';
-import ProductList from '../../../../components/ProductList';
+import ProductList from '../../../../components/product/ProductList';
 
 // Q. 주소 직접 입력으로도 원하는 카테고리 선택하고 상품 필터링 하려면?
 // A. slug 사용 (ChatGPT) -> 보류

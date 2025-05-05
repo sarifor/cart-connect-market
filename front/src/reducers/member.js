@@ -13,8 +13,6 @@ const initialState = {
   me: null,
 };
 
-// Q. 화면이나 saga에서 쓸 type은 어디서 얻을 수 있지?
-// A. 예: loginRequest.type
 export const memberSlice = createSlice({
   name: 'member',
   initialState,

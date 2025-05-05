@@ -11,8 +11,6 @@ if (process.env.NODE_ENV === 'production') {
   backURL = 'http://localhost:4000';
 }
 
-// Q. /member/me의 Request Headers에 Cookie: connect.sid=... 항목이 없어
-// A. axios.post('/member/me', {}, { withCredentials: true })처럼 config 객체에 따로 설정해야 쿠키가 포함돼! (ChatGPT)
 const SessionChecker = () => {
   const dispatch = useDispatch();
 
