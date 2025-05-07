@@ -41,7 +41,11 @@ function* loadCartItems() {
 
     // throw new Error("장바구니 가져오기에 실패하였습니다. 다시 시도해 주세요.");
   } catch (error) {
-    yield put(loadCartItemsFailure(error.response?.data || error.message));
+    yield put(loadCartItemsFailure(
+      (error.response?.data && Object.keys(error.response.data).length > 0)
+      ? error.response.data
+      : error.message      
+    ));
   }
 }
 

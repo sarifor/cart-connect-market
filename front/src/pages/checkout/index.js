@@ -68,6 +68,10 @@ const CheckoutMain = () => {
   };
 
   const handleReviewClick = () => {
+    if (!selectedDeliveryDate || !selectedDeliveryTime || !selectedPayment) {
+      alert("배송일, 배송 시간대, 결제 방법을 모두 선택해 주세요.");
+      return;
+    }
     router.push('/checkout/review');
   };
 
