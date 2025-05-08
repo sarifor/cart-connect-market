@@ -8,7 +8,7 @@ const publicCartRouter = express.Router();
 
 const { login, me, logout, signup } = require('../controllers/member');
 const { getCart, addCart, decrementCart, deleteCart } = require('../controllers/cart');
-const { getShippingAddress, getServerTime } = require('../controllers/checkout');
+const { createOrder, getShippingAddress, getServerTime } = require('../controllers/checkout');
 const { productTest, getProduct, getCategories, getProductsByCategory } = require('../controllers/product');
 const { publicCartTest } = require('../controllers/public-cart');
 
@@ -27,6 +27,7 @@ cartRouter.patch('/decrement', decrementCart);
 cartRouter.delete('/delete', deleteCart);
 
 // /checkout
+checkoutRouter.post('/', createOrder);
 checkoutRouter.get('/shipping-address', getShippingAddress);
 checkoutRouter.get('/server-time', getServerTime);
 

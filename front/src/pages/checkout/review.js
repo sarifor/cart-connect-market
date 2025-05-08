@@ -77,12 +77,7 @@ const CheckoutReview = () => {
     }
 
     // 위의 경우들이 아니면
-    console.log(`
-      배송 주소: ${JSON.stringify(shippingAddresses?.[0], null, 2)}, 
-      배송 날짜: ${selectedDeliveryDate}, 
-      배송 시간대: ${selectedDeliveryTime}, 
-      결제 방법: ${selectedPayment}
-    `);
+    router.push('/checkout/processing');
   };
 
   return (

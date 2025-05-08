@@ -4,6 +4,9 @@ const initialState = {
   loadShippingAddressesLoading: false,
   loadShippingAddressesDone: false,
   loadShippingAddressesError: null,
+  checkoutLoading: false,
+  checkoutDone: false,
+  checkoutError: null,
   shippingAddresses: [],
   selectedDeliveryDate: null,
   selectedDeliveryTime: null,
@@ -30,6 +33,21 @@ export const checkoutSlice = createSlice({
       state.loadShippingAddressesDone = true;
       state.loadShippingAddressesError = action.payload;
     },
+    checkoutRequest: (state) => {
+      state.checkoutLoading = true;
+      state.checkoutDone = false;
+      state.checkoutError = null;
+    },
+    checkoutSuccess: (state) => {
+      state.checkoutLoading = false;
+      state.checkoutDone = true;
+      state.checkoutError = null;
+    },
+    checkoutFailure: (state, action) => {
+      state.checkoutLoading = false;
+      state.checkoutDone = false;
+      state.checkoutError = action.payload;
+    },
     setSelectedDeliveryDate: (state, action) => {
       state.selectedDeliveryDate = action.payload;
     },
@@ -49,6 +67,9 @@ export const {
   loadShippingAddressesRequest,
   loadShippingAddressesSuccess,
   loadShippingAddressesFailure,
+  checkoutRequest,
+  checkoutSuccess,
+  checkoutFailure,
   setSelectedDeliveryDate,
   setSelectedDeliveryTime,
   setSelectedPayment,

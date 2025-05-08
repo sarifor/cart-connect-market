@@ -5,6 +5,9 @@ import {
   loadShippingAddressesRequest,
   loadShippingAddressesSuccess,
   loadShippingAddressesFailure,
+  checkoutRequest,
+  checkoutSuccess,
+  checkoutFailure,
   // resetState,
 } from '@/reducers/checkout';
 
@@ -43,12 +46,43 @@ function* loadShippingAddresses() {
   }
 }
 
+function checkoutAPI(data) {
+  const response = axios.post(`${backURL}/checkout`, data, { withCredentials: true });
+
+  return response;
+}
+
+function* checkout(action) {
+  try {
+    yield delay(1000);
+
+    const response = yield call(checkoutAPI, action.data);
+
+    if (response.status === 201) {
+      yield put(checkoutSuccess());
+    }
+
+    // throw new Error("주문 생성에 실패하였습니다. 다시 시도해 주세요.");
+  } catch (error) {
+    yield put(checkoutFailure(
+      (error.response?.data && Object.keys(error.response.data).length > 0)
+      ? error.response.data
+      : error.message      
+    ));
+  }
+}
+
 function* watchLoadShippingAddresses() {
   yield takeEvery(loadShippingAddressesRequest.type, loadShippingAddresses);
+}
+
+function* watchCheckout() {
+  yield takeEvery(checkoutRequest.type, checkout);
 }
 
 export default function* checkoutSaga() {
   yield all([
     fork(watchLoadShippingAddresses),
+    fork(watchCheckout),
   ]);
 }
