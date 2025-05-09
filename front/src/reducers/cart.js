@@ -135,7 +135,7 @@ export const cartSlice = createSlice({
       state.deleteCartDone = false;
       state.deleteCartError = action.payload;
     },
-    resetState: () => {
+    cartResetState: () => {
       return initialState;
     }
   },
@@ -154,7 +154,7 @@ export const {
   deleteCartRequest,
   deleteCartSuccess,
   deleteCartFailure,  
-  resetState,
+  cartResetState,
 } = cartSlice.actions;
 
 const cartReducer = cartSlice.reducer;
