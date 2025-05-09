@@ -8,7 +8,6 @@ import {
   checkoutRequest,
   checkoutSuccess,
   checkoutFailure,
-  // resetState,
 } from '@/reducers/checkout';
 
 let backURL;
@@ -32,7 +31,6 @@ function* loadShippingAddresses() {
     const shippingAddresses = yield call(loadShippingAddressesAPI);
 
     if (shippingAddresses.data.length === 0 || shippingAddresses.data.length > 0 ) {
-      // yield put(resetState());
       yield put(loadShippingAddressesSuccess(shippingAddresses.data));
     }
 

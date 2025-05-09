@@ -14,7 +14,6 @@ import {
   deleteCartRequest,
   deleteCartSuccess,
   deleteCartFailure,  
-  // resetState,
 } from '@/reducers/cart';
 
 let backURL;
@@ -36,7 +35,6 @@ function* loadCartItems() {
 
     const cartItems = yield call(loadCartItemsAPI);
 
-    // yield put(resetState());
     yield put(loadCartItemsSuccess(cartItems.data));
 
     // throw new Error("장바구니 가져오기에 실패하였습니다. 다시 시도해 주세요.");
@@ -60,7 +58,6 @@ function* addToCart(action) {
 
     const cartItems = yield call(addToCartAPI, action.data);
 
-    // yield put(resetState());
     yield put(addToCartSuccess(cartItems.data));
 
     // throw new Error("장바구니 추가하기에 실패하였습니다. 다시 시도해 주세요.");
@@ -80,7 +77,6 @@ function* decrementCart(action) {
 
     const cartItems = yield call(decrementCartAPI, action.data);
 
-    // yield put(resetState());
     yield put(decrementCartSuccess(cartItems.data));
 
     // throw new Error("장바구니에서 제외시키기에 실패하였습니다. 다시 시도해 주세요.");
@@ -100,7 +96,6 @@ function* deleteCart(action) {
 
     const cartItems = yield call(deleteCartAPI, action.data);
 
-    // yield put(resetState());
     yield put(deleteCartSuccess(cartItems.data));
 
     // throw new Error("장바구니 상품 삭제를 실패하였습니다. 다시 시도해 주세요.");

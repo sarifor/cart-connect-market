@@ -11,7 +11,6 @@ import {
   loadProductDetailRequest,
   loadProductDetailSuccess,
   loadProductDetailFailure,  
-  resetState,
 } from '@/reducers/product';
 
 let backURL;
@@ -33,7 +32,6 @@ function* loadCategories() {
 
     const categories = yield call(loadCategoriesAPI);
 
-    // yield put(resetState());
     yield put(loadCategoriesSuccess(categories.data));
 
     // throw new Error("카테고리 가져오기에 실패하였습니다. 다시 시도해 주세요.");
@@ -54,7 +52,6 @@ function* loadProducts(action) {
     const products = yield call(loadProductsAPI, action.data);
 
     if (products.data.length === 0 || products.data.length > 0) {
-      // yield put(resetState());
       yield put(loadProductsSuccess(products.data));
     }
 
@@ -76,7 +73,6 @@ function* loadProductDetail(action) {
     const productDetail = yield call(loadProductDetailAPI, action.data);
     
     if (productDetail === null) {
-      // yield put(resetState());
       yield put(loadProductDetailSuccess(null));
     } else {
       yield put(loadProductDetailSuccess(productDetail.data));

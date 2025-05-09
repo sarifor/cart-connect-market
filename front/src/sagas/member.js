@@ -5,7 +5,7 @@ import {
   loginRequest, loginSuccess, logoutSuccess,
   logoutRequest, loginFailure, logoutFailure,
   signupRequest, signupSuccess, signupFailure,
-  resetState,
+  resetMemberState,
 } from '@/reducers/member';
 
 let backURL;
@@ -23,7 +23,7 @@ function loginAPI(data) {
   return member;
 }
 
-// Q. resetState()를 delay(3000) 직전이 아닌 loginSuccess 직전으로 옮긴 이유?
+// Q. resetMemberState()를 delay(3000) 직전이 아닌 loginSuccess 직전으로 옮긴 이유?
 // A. delay(3000) 직전에 실행하면 loginLoading이 false로 바뀐 상태가 3초 동안 유지되어 UX가 어색해지기 때문 (ChatGPT)
 function* login(action) {
   try {
@@ -31,7 +31,7 @@ function* login(action) {
 
     const member = yield call(loginAPI, action.data);
 
-    yield put(resetState());
+    yield put(resetMemberState());
     yield put(loginSuccess(member.data));
 
     // throw new Error("로그인에 실패하였습니다. 다시 시도해 주세요.");
@@ -55,7 +55,7 @@ function* logout() {
     
     if (res.status === 200) {
       yield put(logoutSuccess());
-      yield put(resetState());
+      yield put(resetMemberState());
     }
 
     // throw new Error("로그아웃에 실패하였습니다. 다시 시도해 주세요.");
@@ -79,7 +79,7 @@ function* signup(action) {
     const member = yield call(signupAPI, action.data);
 
     if (member.status = 201) {
-      yield put(resetState());
+      yield put(resetMemberState());
       yield put(signupSuccess(member.data));
     }
 

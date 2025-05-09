@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import CommonLayout from '../../components/CommonLayout';
-import { cartResetState } from '../../reducers/cart.js';
-import { checkoutResetState } from '../../reducers/checkout.js';
+import { resetCartState } from '../../reducers/cart.js';
+import { resetCheckoutState } from '../../reducers/checkout.js';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -30,8 +30,8 @@ const CheckoutComplete = () => {
   }, [checkoutDone]);
 
   const handleResetClick = () => {
-    dispatch(cartResetState());
-    dispatch(checkoutResetState());
+    dispatch(resetCartState());
+    dispatch(resetCheckoutState());
   };
 
   return (

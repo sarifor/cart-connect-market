@@ -57,7 +57,7 @@ export const checkoutSlice = createSlice({
     setSelectedPayment: (state, action) => {
       state.selectedPayment = action.payload;
     },
-    checkoutResetState: () => {
+    resetCheckoutState: () => {
       return initialState;
     }
   },
@@ -73,7 +73,7 @@ export const {
   setSelectedDeliveryDate,
   setSelectedDeliveryTime,
   setSelectedPayment,
-  checkoutResetState,
+  resetCheckoutState,
 } = checkoutSlice.actions;
 
 const checkoutReducer = checkoutSlice.reducer;

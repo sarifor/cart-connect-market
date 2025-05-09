@@ -68,7 +68,7 @@ export const memberSlice = createSlice({
       state.signupLoading = false;
       state.signupError = action.payload;
     },
-    resetState: () => {
+    resetMemberState: () => {
       return initialState;
     }
   },
@@ -84,7 +84,7 @@ export const {
   signupRequest,
   signupSuccess,
   signupFailure,
-  resetState,
+  resetMemberState,
 } = memberSlice.actions;
 
 const memberReducer = memberSlice.reducer;

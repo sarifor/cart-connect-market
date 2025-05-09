@@ -55,7 +55,7 @@ export const productSlice = createSlice({
       state.loadProductDetailLoading = false;
       state.loadProductDetailError = action.payload;      
     },
-    resetState: () => {
+    resetProductState: () => {
       return initialState;
     }
   },
@@ -71,7 +71,7 @@ export const {
   loadProductDetailRequest,
   loadProductDetailSuccess,
   loadProductDetailFailure,  
-  resetState,
+  resetProductState,
 } = productSlice.actions;
 
 const productReducer = productSlice.reducer;
