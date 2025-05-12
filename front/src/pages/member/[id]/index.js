@@ -22,9 +22,16 @@ const MyPage = () => {
 
   return (
     <CommonLayout title="마이 페이지">
-      <div>
-        <Link href={`/member/${memberId}/profile`}>회원 정보</Link><br />
-        주문 이력
+      <div 
+        style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          padding: "20px",
+          rowGap: "10px"
+        }}
+      >
+        <Link href={`/member/${memberId}/profile`}>회원 정보</Link>
+        <Link href={"/order/history"}>주문 이력</Link>
       </div>
     </CommonLayout>
   );

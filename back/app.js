@@ -13,6 +13,7 @@ const {
   memberRouter,
   cartRouter,
   checkoutRouter,
+  orderRouter,
   productRouter,
   publicCartRouter,
 } = require('./routes');
@@ -74,6 +75,7 @@ app.get('/', (req, res) => {
 app.use('/member', memberRouter);
 app.use('/cart', cartRouter);
 app.use('/checkout', checkoutRouter);
+app.use('/order', orderRouter);
 app.use('/product', productRouter);
 app.use('/public-cart', publicCartRouter);
 // app.use('/promotion', promotionRouter);
