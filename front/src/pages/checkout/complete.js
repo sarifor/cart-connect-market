@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import CommonLayout from '../../components/CommonLayout';
+import { Button } from 'antd';
 import { resetCartState } from '../../reducers/cart.js';
 import { resetCheckoutState } from '../../reducers/checkout.js';
-import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 
@@ -29,9 +29,18 @@ const CheckoutComplete = () => {
     }
   }, [checkoutDone]);
 
-  const handleResetClick = () => {
-    dispatch(resetCartState());
-    dispatch(resetCheckoutState());
+  const handleOrderHistoryClick = () => {
+    router.push("/order/history").then(() => {
+      dispatch(resetCartState());
+      dispatch(resetCheckoutState());
+    })
+  };
+
+  const handleHomeClick = () => {
+    router.push("/").then(() => {
+      dispatch(resetCartState());
+      dispatch(resetCheckoutState());
+    })
   };
 
   return (
@@ -54,8 +63,8 @@ const CheckoutComplete = () => {
               <div style={{ display: "flex", flexDirection: "column", rowGap: "10px" }}>
                 <div>주문이 확정되었습니다. 감사합니다.</div>
                 <div style={{ display: "flex", flexDirection: "column", rowGap: "10px", marginTop: "16px" }}>
-                  <Link href={"/member/orderhistory"} onClick={handleResetClick}>최근 주문 확인하기</Link>
-                  <Link href={"/"} onClick={handleResetClick}>홈 화면으로 돌아가기</Link>
+                  <Button onClick={handleOrderHistoryClick}>최근 주문 확인하기</Button>
+                  <Button onClick={handleHomeClick}>홈 화면으로 돌아가기</Button>
                 </div>
               </div>
             ) : (
