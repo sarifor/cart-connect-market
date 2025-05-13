@@ -72,7 +72,7 @@ const Profile = () => {
     }
   }, [me]);
   
-  const onHandleGoBack = () => {
+  const handleGoBackClick = () => {
     router.back();
   };
 
@@ -90,7 +90,7 @@ const Profile = () => {
         <Descriptions title="기본 정보" items={basicInfo} column={1} /><br/>
         <Descriptions title="배송 주소" items={shippingAddressInfo} column={1} /><br/>
         <Button type="primary" style={{ width: '100px' }} disabled block>수정하기</Button><br/>
-        <Button type="primary" style={{ width: '100px' }} onClick={onHandleGoBack} >돌아가기</Button>        
+        <Button type="primary" style={{ width: '100px' }} onClick={handleGoBackClick} >돌아가기</Button>        
       </div>
     </CommonLayout>
   );
