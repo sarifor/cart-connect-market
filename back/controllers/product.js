@@ -110,15 +110,16 @@ const getProductsByCategory = async (req, res, next) => {
     });
 
     // 실행 환경에 따라 상품 이미지 src 변경
-    // Q. 클라이언트 쪽에서 Error: Objects are not valid as a React child (found: object with keys {}). If you meant to render a collection of children, use an array instead.
-    // A. product.toJSON()으로 순수 객체로 바꾸기 (ChatGPT)
     const modifiedProducts = products.map(product => ({
       ...product.toJSON(),
-      ProductImages: product.ProductImages.map(img => ({
-        ...img,
-        src: `${BASE_URL}${img.src}`,
-      }))
-    }))
+      ProductImages: product.ProductImages.map(img => {
+        const plainImage = img.toJSON();
+        return {
+          ...plainImage,
+          src: `${BASE_URL}${img.src}`,
+        };
+      }),
+    }));
 
     res.status(200).json(modifiedProducts);
   } catch (error) {
