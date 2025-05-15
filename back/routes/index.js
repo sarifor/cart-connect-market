@@ -10,7 +10,7 @@ const publicCartRouter = express.Router();
 const { login, me, logout, signup } = require('../controllers/member');
 const { getCart, addCart, decrementCart, deleteCart } = require('../controllers/cart');
 const { createOrder, getShippingAddress, getServerTime } = require('../controllers/checkout');
-const { getOrders } = require('../controllers/order');
+const { getOrders, getOrderDetail } = require('../controllers/order');
 const { productTest, getProduct, getCategories, getProductsByCategory } = require('../controllers/product');
 const { publicCartTest } = require('../controllers/public-cart');
 
@@ -35,9 +35,10 @@ checkoutRouter.get('/server-time', getServerTime);
 
 // /order
 orderRouter.get('/', getOrders);
-// orderRouter.get('/:orderId', getOrder);
+orderRouter.get('/:orderId', getOrderDetail);
 
 // /product
+// Q. getProduct를 getProductDetail로 바꿀까?
 productRouter.get('/', productTest);
 productRouter.get('/category', getCategories);
 productRouter.get('/:productId', getProduct);
