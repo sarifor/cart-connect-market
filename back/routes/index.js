@@ -12,7 +12,7 @@ const { getCart, addCart, decrementCart, deleteCart } = require('../controllers/
 const { createOrder, getShippingAddress, getServerTime } = require('../controllers/checkout');
 const { getOrders, getOrderDetail } = require('../controllers/order');
 const { productTest, getProduct, getCategories, getProductsByCategory } = require('../controllers/product');
-const { publicCartTest } = require('../controllers/public-cart');
+const { getPublicCarts, getPublicCartsNetworkByLikes } = require('../controllers/public-cart');
 
 
 // /member
@@ -45,7 +45,8 @@ productRouter.get('/:productId', getProduct);
 productRouter.get('/category/:categoryId', getProductsByCategory);
 
 // public-cart
-publicCartRouter.get('/', publicCartTest);
+publicCartRouter.get('/', getPublicCarts);
+publicCartRouter.get('/network', getPublicCartsNetworkByLikes);
 
 const routers = {
   memberRouter,

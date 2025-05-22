@@ -5,6 +5,7 @@ import productSaga from './product';
 import cartSaga from './cart';
 import checkoutSaga from './checkout';
 import orderSaga from './order';
+import publicCartSaga from './publicCart';
 
 export default function* rootSaga() {
   yield all([
@@ -13,5 +14,6 @@ export default function* rootSaga() {
     fork(cartSaga),
     fork(checkoutSaga),
     fork(orderSaga),
+    fork(publicCartSaga),
   ]);
 }
