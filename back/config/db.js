@@ -49,8 +49,10 @@ const Member = mysql.define(
   {
     tableName: 'member_tbl',
     timestamps: true,
+    paranoid: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
+    deletedAt: 'deleted_at',
   },
 );
 
@@ -229,7 +231,8 @@ const Cart = mysql.define(
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',    
-  });
+  }
+);
 
 const Order = mysql.define(
   "Order", 
@@ -281,47 +284,130 @@ const Order = mysql.define(
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',    
-  });
+  }
+);
 
-  const OrderDetail = mysql.define(
-    "OrderDetail",
-    {
-      order_detail_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true,
-        unique: true,
-      },
-      order_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      product_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      public_cart_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        defaultValue: null,
-      },
-      quantity: {
-        type: DataTypes.TINYINT,
-        allowNull: false,
-      },
-      purchase_price: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
+const OrderDetail = mysql.define(
+  "OrderDetail",
+  {
+    order_detail_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+      unique: true,
     },
-    {
-      tableName: 'order_detail_tbl',
-      timestamps: true,
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',      
-    }
-  );
+    order_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    product_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    public_cart_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+    },
+    quantity: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+    },
+    purchase_price: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+  },
+  {
+    tableName: 'order_detail_tbl',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',      
+  }
+);
+
+const PublicCart = mysql.define(
+  'PublicCart', 
+  {
+    public_cart_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+      unique: true,
+    },
+    member_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    order_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true,
+    },
+    title: {
+      type: DataTypes.STRING(200),
+      allowNull: false,
+    },
+    content: {
+      type: DataTypes.STRING(1000),
+      allowNull: false,
+    },
+    img_src: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: null,      
+    },
+  }, 
+  {
+    tableName: 'public_cart_tbl',
+    timestamps: true,
+    paranoid: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    deletedAt: 'deleted_at',
+  }
+);
+
+const Like = mysql.define(
+  'Like', 
+  {
+    like_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+      unique: true,
+    },
+    member_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    public_cart_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 1,
+      comment: '1：いいね、0：キャンセル',
+    },
+  }, 
+  {
+    tableName: 'like_tbl',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    indexes: [
+      {
+        unique: true,
+        fields: ['member_id', 'public_cart_id'],
+      },
+    ],
+  }
+);
 
 /*
   Q. 모델 간 관계 정의는, 모든 모델이 로드된 뒤 한 번만 실행되면 되니까 정적 메서드 안에 정의하는 게 좋을까?
@@ -370,4 +456,24 @@ OrderDetail.belongsTo(Order, { foreignKey: 'order_id', onDelete: 'NO ACTION', on
 Product.hasMany(OrderDetail, { foreignKey: 'product_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
 OrderDetail.belongsTo(Product, { foreignKey: 'product_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
 
-module.exports = { mysql, Member, ShippingAddress, Product, ProductImage, Category, Cart, Order, OrderDetail };
+// 주문-공개장바구니 관계(1:1)
+// - 주문이 soft delete 될 때 공개 장바구니는 soft delete 됨
+// - 공개 장바구니가 soft delete 될 때 주문은 아무 영향 없음
+Order.hasOne(PublicCart, { foreignKey: 'order_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+PublicCart.belongsTo(Order, { foreignKey: 'order_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+
+// 회원(작성자)-공개장바구니 관계(1:N)
+// - 회원 탈퇴 시 공개 장바구니는 soft delete 됨
+// - 공개 장바구니가 soft delete 될 때 회원은 아무 영향 없음
+Member.hasMany(PublicCart, { foreignKey: 'member_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+PublicCart.belongsTo(Member, { foreignKey: 'member_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+
+// 회원(열람자)-공개장바구니 관계(N:M)
+// - 회원(열람자) soft delete 시 공개 장바구니는 영향 없으며, 좋아요는 controller에서 직접 삭제(hard delete)
+// - 공개 장바구니 soft delete 시 회원(열람자)는 영향 없으며, 좋아요는 controller에서 직접 삭제(hard delete)
+Member.hasMany(Like, { foreignKey: 'member_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+Like.belongsTo(Member, { foreignKey: 'member_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+PublicCart.hasMany(Like, { foreignKey: 'public_cart_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+Like.belongsTo(PublicCart, { foreignKey: 'public_cart_id', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+
+module.exports = { mysql, Member, ShippingAddress, Product, ProductImage, Category, Cart, Order, OrderDetail, PublicCart, Like };
