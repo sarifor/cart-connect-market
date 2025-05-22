@@ -10,7 +10,7 @@ const OrderList = ({ order }) => {
       <div style={{ width: "120px", marginRight: "20px" }}>
         <Link href={`/order/${order.order_id}`}>
           <img 
-            src={ order?.OrderDetails?.[0]?.Product?.ProductImages?.[0]?.src || "/order/default.jpg" }
+            src={ order.OrderDetails?.[0]?.Product?.ProductImages?.[0]?.src || "/order/default.jpg" }
             onError={(e) => {
               e.currentTarget.onerror = null;
               e.currentTarget.src = "/order/default.jpg";
@@ -28,7 +28,7 @@ const OrderList = ({ order }) => {
             day: 'numeric',
           })}
         </div>
-        <div>내용: {order.OrderDetails[0].Product.product_name} {order.OrderDetails.length > 1 && ("외")}</div>
+        <div>내용: {order.OrderDetails?.[0]?.Product?.product_name} {order.OrderDetails?.length > 1 && ("외")}</div>
         <div>총액: {order.total}엔</div>
         
         <div>
