@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import { Menu, Row, Button, Drawer, Layout } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { logoutRequest } from '../reducers/member';
 
@@ -20,6 +22,7 @@ const CommonLayout = ({ title, children }) => {
   }
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const showDrawer = () => {
     setOpen(true);
@@ -35,58 +38,72 @@ const CommonLayout = ({ title, children }) => {
     });
   };
 
+  const handleHomeClick = () => {
+    router.push("/");
+  };
+
   return (
     <div>
-      <Menu 
-        mode="horizontal" 
-        style={{ 
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
           top: 0,
           left: 0,
-          position: "fixed",
-          width: "100%"
+          right: 0,
+          position: "fixed",          
+          width: "100%",
+          zIndex: 1000,
+          backgroundColor: "#3CB371"
         }}
       >
-        <Menu.Item>
-          사이트 아이콘
-        </Menu.Item>
 
-        <Menu.Item>
-          Cart Connect Market
-        </Menu.Item>
+        <div style={{ flex: 1, padding: "15px" }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", cursor: "pointer" }} onClick={handleHomeClick}>
+            <img src="/logo.png" style={{ width: "10%", height: "auto" }} />
+            <div style={{ paddingLeft: "10px" }}>Cart Connect Market</div>
+          </div>
+        </div>
 
-        <Menu.Item onClick={showDrawer}>
-          삼선 버튼
-        </Menu.Item>
+        <div style={{ flex: 1, textAlign: "center", padding: "15px" }}>
+          <Link href="/public-cart" style={{ textDecorationLine: "none", color: "black" }}>みんな何食べてるんだろう？</Link>
+        </div>
 
-        <Menu.Item>
-          <Drawer onClose={onClose} open={open}>
-            {me ? (
-              <div>
-                <p><Link href={`/member/${memberId}`}>마이페이지</Link></p>
-                <p><Link href={`/cart`}>장바구니</Link></p>
-                <p><Link href="">검색</Link></p>
-                <p><Link href="/product/category">카테고리</Link></p>
-                <div>
-                  <p onClick={onLogout}>로그아웃</p>
-                  {logoutLoading && (<p>Loading...</p>)}
-                  {logoutError && (<p>로그아웃 실패: {logoutError}</p>)} 
-                </div>                
-              </div>
-            ) : (
-              <div>
-                <p><Link href="/auth/login">로그인</Link> / <Link href="/auth/signup">회원가입</Link></p>
-                <p><Link href="">검색</Link></p>
-                <p><Link href="/product/category">카테고리</Link></p>
-              </div>
-            )}
-          </Drawer>
-        </Menu.Item>
-      </Menu>
+        <div style={{ flex: 1, textAlign: "right", padding: "15px" }}>
+          <MenuOutlined onClick={showDrawer} />
+        </div>
 
-      <Row style={{ paddingTop: '60px', backgroundColor: 'skyblue' }}>
-        <Header style={{ backgroundColor: 'white' }}>
+      </div>
+
+      <Drawer onClose={onClose} open={open}>
+        {me ? (
+          <div style={{ display: "flex", flexDirection: "column", padding: "0px", rowGap: "15px" }}>
+            <div><Link href={`/member/${memberId}`}>마이페이지</Link></div>
+            <div><Link href={`/cart`}>장바구니</Link></div>
+            <div><Link href="/product/category">카테고리</Link></div>
+            <div><Link href="/public-cart">공개 장바구니</Link></div>
+            <div onClick={onLogout}>로그아웃 {logoutLoading && ("(Loading...)")} {logoutError && ("(실패)")}</div> 
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", padding: "0px", rowGap: "15px" }}>
+            <div><Link href="/auth/login">로그인</Link> / <Link href="/auth/signup">회원가입</Link></div>
+            <div><Link href="/product/category">카테고리</Link></div>
+            <div><Link href="/public-cart">공개 장바구니</Link></div>
+          </div>
+        )}
+      </Drawer>
+
+      <Row style={{ paddingTop: '60px' }}>
+        <header
+          style={{ 
+            // backgroundColor: 'yellow',
+            padding: "15px",
+            width: "100%",
+          }}
+        >
           {title}
-        </Header>
+        </header>
       </Row>
 
       <Row>
