@@ -152,6 +152,11 @@ const Product = mysql.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    emoji: {
+      type: DataTypes.STRING(4),
+      allowNull: true,
+      defaultValue: null,
+    },
     status: {
       type: DataTypes.TINYINT,
       allowNull: false,
@@ -353,11 +358,6 @@ const PublicCart = mysql.define(
     content: {
       type: DataTypes.STRING(1000),
       allowNull: false,
-    },
-    img_src: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      defaultValue: null,      
     },
   }, 
   {

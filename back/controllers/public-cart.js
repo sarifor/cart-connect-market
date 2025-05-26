@@ -1,4 +1,4 @@
-const { PublicCart, Like, } = require('../config/db');
+const { PublicCart, Like, Order, OrderDetail, Product, } = require('../config/db');
 require('dotenv').config();
 
 let BASE_URL;
@@ -20,21 +20,36 @@ const getPublicCarts = async (req, res, next) => {
           where: { status: 1 },
           required: false,
           attributes: ['member_id'],
+        },
+        {
+          model: Order,
+          include: [{
+            model: OrderDetail,
+            include: [{
+              model: Product,
+            }]
+          }]
         }
       ]
     });
 
-    // '좋아요 수'와 '좋아요 한 회원 목록' 속성 및 값 추가, 이미지 경로 수정
+    // 상품 이모지 배열, '좋아요 수'와 '좋아요 한 회원 목록' 속성 및 값 추가
+    // - 상품 이모지 배열을 만들 때 undefined, null, '', 0, false 같은 falsy 값 제거
     const modifiedPublicCarts = publicCarts.map(publicCart => {
       const raw = publicCart.toJSON();
-      const { Likes, ...rest } = raw;
+      const { Likes, Order, ...rest } = raw;
       const likedBy = Likes?.map(like => like.member_id) || [];
+
+      const emojis = Order.OrderDetails
+        ?.map(detail => detail.Product?.emoji)
+        .filter(v => v)
+        || [];
 
       return {
         ...rest,
-        img_src: raw.img_src ? `${BASE_URL}${raw.img_src}` : null,
+        emojis: emojis,
         likeCount: likedBy.length,
-        likedBy: likedBy,        
+        likedBy: likedBy,
       }
     });
 
