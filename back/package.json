@@ -7,7 +7,7 @@
     "npm": "10.8.2"
   },
   "scripts": {
-    "dev": "cross-env PORT=4000 nodemon app",
+    "dev": "cross-env ENABLE_SQL=true PORT=4000 nodemon app",
     "start": "cross-env NODE_ENV=production PORT=80 npx pm2 start app.js"
   },
   "dependencies": {

@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const session = require('express-session');
 const path = require('path');
 const { mysql } = require('./config/db');
+const { executeSQL } = require('./scripts/sql-runner');
 require('dotenv').config();
 
 const app = express();
@@ -101,11 +102,16 @@ const syncDB = async () => {
   try {
     if (process.env.NODE_ENV === 'production') {
       await mysql.sync();
+      console.log('All models are synced');
     } else {
       await mysql.sync({ force: true });
-    }
+      console.log('All models are synced');
 
-    console.log('All models are synced');
+      if (process.env.ENABLE_SQL === 'true') {
+        await executeSQL(mysql);
+        console.log('All dummy data are inserted');
+      }
+    }
   } catch (error) {
     console.log('Model sync failed: ', error)
   }
