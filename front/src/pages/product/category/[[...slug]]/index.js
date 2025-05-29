@@ -8,6 +8,7 @@ import ProductList from '../../../../components/product/ProductList';
 
 // Q. 주소 직접 입력으로도 원하는 카테고리 선택하고 상품 필터링 하려면?
 // A. slug 사용 (ChatGPT) -> 보류
+// Q. 상품 상세 페이지에서 뒤로가기 눌러 카테고리 메인으로 돌아가도, 선택한 카테고리 값이 유지되게 하려면?
 const CategoryProductList = () => {
   // const router = useRouter();
   // const slug = router.query.slug || [];

@@ -3,6 +3,10 @@ import { Col, Row, Card } from 'antd';
 import { HeartOutlined } from '@ant-design/icons';
 const { Meta } = Card;
 
+// Q. '최신 순'인지 아닌지 명확하게 알기 위해, 작성 일시 표시?
+// Q. 원 윗부분에 여유 공간을 넣으려면 padding을 쓰면 되나?
+// Q. 모든 이미지를 같은 폭으로 보이게 하고, 나아가서 서버 쪽에서 처음부터 압축 전송시키려면?
+// Q. 공개 장바구니 제목과 내용 미리보기의 글자 수를 한정시키려면?
 const PublicCartList = ({ sortedPublicCarts }) => {
   const getRandomPastelColor = () => {
     const pastelColors = [
