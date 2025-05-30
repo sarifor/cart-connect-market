@@ -11,7 +11,6 @@
 - [스크린샷](#스크린샷)
 - [기술 스택](#기술-스택)
   - [개발 환경](#개발-환경)
-  - [언어](#언어)
   - [프론트엔드](#프론트엔드)
   - [백엔드](#백엔드)
 - [실행 방법](#실행-방법)
@@ -48,10 +47,8 @@
 - Windows 11
 - Ubuntu: 24.04.1 LTS (Noble Numbat)
 
-### 언어
-- JavaScript, HTML, CSS
-
 ### 프론트엔드
+- JavaScript, HTML, CSS
 - Next.js, React
 - Redux + Redux-Saga
 - Ant Design 등
