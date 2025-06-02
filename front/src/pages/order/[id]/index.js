@@ -75,7 +75,9 @@ const OrderDetail = () => {
 
             // 회원이고, 데이터는 로딩 중이고, 아직 도착하지 않았다면,
             ) : loadOrderDetailLoading && !loadOrderDetailDone ? (
-              <div>주문 상세 정보 로딩 중...</div>
+              <div style={{ padding: "10px" }}>
+                주문 상세 정보 로딩 중...
+              </div>
 
             // 회원이고, 데이터는 아직 도착하지 않았고, 에러가 났다면,
             ) : !loadOrderDetailDone && loadOrderDetailError ? (

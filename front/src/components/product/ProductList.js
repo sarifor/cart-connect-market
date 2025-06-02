@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Col, Row, Card } from 'antd';
-import { HeartOutlined } from '@ant-design/icons';
 const { Meta } = Card;
 
 // Q. return 컴포넌트 내 조건문을 case 문과 같이 바꾸려면? 예를 들어 '카테고리를 선택하세요' 메시지와 '해당하는 상품이 없습니다' 메시지가 둘 다 보이는 경우가 생기는 경우를 막고 싶음.

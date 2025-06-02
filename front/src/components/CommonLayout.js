@@ -111,7 +111,7 @@ const CommonLayout = ({ title, children }) => {
       </Row>
 
       <Footer style={{ textAlign: 'center' }}>
-        ©2025 Sarifor. All rights reserved. [GitHub 링크] [Qiita 링크]
+        ©2025 Sarifor. All rights reserved. [GitHub 링크] [Qiita 링크] [구글 폼 설문조사]
       </Footer>
     </div>
   )

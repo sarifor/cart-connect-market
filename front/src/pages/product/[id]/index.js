@@ -95,7 +95,7 @@ const ProductDetail = () => {
     } else if (loadCartItemsDone && cartItems && cartItems.some(item => Number(item.product_id) === Number(productId))) {
       cartStatusMessage = "장바구니에 이미 담긴 상품입니다.";
     } else if (loadCartItemsError) {
-      cartStatusMessage = `장바구니에 담겼는지 확인하는 과정에서 에러가 발생하였습니다: ${loadCartItemsError}`;
+      cartStatusMessage = "장바구니에 담겼는지 확인하는 과정에서 에러가 발생하였습니다.";
     }
   }
 
