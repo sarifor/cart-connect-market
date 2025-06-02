@@ -7,8 +7,12 @@ const initialState = {
   loadPublicCartsNetworkLoading: false,
   loadPublicCartsNetworkDone: false,
   loadPublicCartsNetworkError: null,
+  loadPublicCartDetailLoading: false,
+  loadPublicCartDetailDone: false,
+  loadPublicCartDetailError: null,
   publicCarts: [],
   publicCartsNetwork: [],
+  publicCartDetail: [],
 };
 
 export const publicCartSlice = createSlice({
@@ -50,6 +54,24 @@ export const publicCartSlice = createSlice({
       state.loadPublicCartsNetworkDone = false;
       state.loadPublicCartsNetworkError = action.payload;
       state.publicCartsNetwork = [];
+    },
+    loadPublicCartDetailRequest: (state) => {
+      state.loadPublicCartDetailLoading = true;
+      state.loadPublicCartDetailDone = false;
+      state.loadPublicCartDetailError = null;
+      state.publicCartDetail = [];
+    },
+    loadPublicCartDetailSuccess: (state, action) => {
+      state.loadPublicCartDetailLoading = false;
+      state.loadPublicCartDetailDone = true;
+      state.loadPublicCartDetailError = null;
+      state.publicCartDetail = action.payload;
+    },
+    loadPublicCartDetailFailure: (state, action) => {
+      state.loadPublicCartDetailLoading = false;
+      state.loadPublicCartDetailDone = false;
+      state.loadPublicCartDetailError = action.payload;
+      state.publicCartDetail = [];
     },    
     resetPublicCartState: () => {
       return initialState;
@@ -64,6 +86,9 @@ export const {
   loadPublicCartsNetworkRequest,
   loadPublicCartsNetworkSuccess,
   loadPublicCartsNetworkFailure,  
+  loadPublicCartDetailRequest,
+  loadPublicCartDetailSuccess,
+  loadPublicCartDetailFailure,
   resetPublicCartState,
 } = publicCartSlice.actions;
 

@@ -8,6 +8,9 @@ import {
   loadPublicCartsNetworkRequest,
   loadPublicCartsNetworkSuccess,
   loadPublicCartsNetworkFailure,
+  loadPublicCartDetailRequest,
+  loadPublicCartDetailSuccess,
+  loadPublicCartDetailFailure,
 } from '@/reducers/publicCart';
 
 let backURL;
@@ -72,6 +75,35 @@ function* loadPublicCartsNetwork() {
   }
 }
 
+function loadPublicCartDetailAPI(data) {
+  const publicCartDetail = axios.get(`${backURL}/public-cart/${data.publicCartId}`);
+
+  return publicCartDetail;
+}
+
+function* loadPublicCartDetail(action) {
+  try {
+    yield delay(1000);
+
+    const publicCartDetail = yield call(loadPublicCartDetailAPI, action.data);
+    
+    if (publicCartDetail.data.Order.OrderDetails.length === 0 || publicCartDetail.data.Order.OrderDetails.length > 0 ) {
+      yield put(loadPublicCartDetailSuccess(publicCartDetail.data));
+
+      return;
+    } else {
+      throw new Error("OrderDetails is not an array");
+    }
+
+  } catch (error) {
+    yield put(loadPublicCartDetailFailure(
+      (error.response?.data && Object.keys(error.response.data).length > 0)
+      ? error.response.data
+      : error.message      
+    ));
+  }
+}
+
 function* watchLoadPublicCarts() {
   yield takeEvery(loadPublicCartsRequest.type, loadPublicCarts);
 }
@@ -80,9 +112,14 @@ function* watchLoadPublicCartsNetwork() {
   yield takeEvery(loadPublicCartsNetworkRequest.type, loadPublicCartsNetwork);
 }
 
+function* watchLoadPublicCartDetail() {
+  yield takeEvery(loadPublicCartDetailRequest.type, loadPublicCartDetail);
+}
+
 export default function* publicCartSaga() {
   yield all([
     fork(watchLoadPublicCarts),
     fork(watchLoadPublicCartsNetwork),
+    fork(watchLoadPublicCartDetail),
   ]);
 }

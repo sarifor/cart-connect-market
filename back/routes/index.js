@@ -12,7 +12,7 @@ const { getCart, addCart, decrementCart, deleteCart } = require('../controllers/
 const { createOrder, getShippingAddress, getServerTime } = require('../controllers/checkout');
 const { getOrders, getOrderDetail } = require('../controllers/order');
 const { productTest, getProduct, getCategories, getProductsByCategory } = require('../controllers/product');
-const { getPublicCarts, getPublicCartsNetworkByLikes } = require('../controllers/public-cart');
+const { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail } = require('../controllers/public-cart');
 
 
 // /member
@@ -41,12 +41,13 @@ orderRouter.get('/:orderId', getOrderDetail);
 // Q. getProduct를 getProductDetail로 바꿀까?
 productRouter.get('/', productTest);
 productRouter.get('/category', getCategories);
-productRouter.get('/:productId', getProduct);
 productRouter.get('/category/:categoryId', getProductsByCategory);
+productRouter.get('/:productId', getProduct);
 
 // public-cart
 publicCartRouter.get('/', getPublicCarts);
 publicCartRouter.get('/network', getPublicCartsNetworkByLikes);
+publicCartRouter.get('/:publicCartId', getPublicCartDetail);
 
 const routers = {
   memberRouter,
@@ -55,6 +56,6 @@ const routers = {
   orderRouter,
   productRouter,
   publicCartRouter,
-}
+};
 
 module.exports = routers;
