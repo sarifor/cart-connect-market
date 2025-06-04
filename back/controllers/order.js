@@ -52,7 +52,7 @@ const getOrders = async (req, res, next) => {
     // 클라이언트에게 주문 목록 데이터 응답
     return res.status(200).json(modifiedOrders);
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
@@ -112,7 +112,7 @@ const getOrderDetail = async (req, res, next) => {
 
     // 상품 총 개수, 상품 총 가격, 세금 계산
     const itemQuantityTotal = orderDetailJson.OrderDetails.reduce((acc, cur) => acc + cur.quantity, 0);
-    const itemPriceTotal = orderDetailJson.OrderDetails.reduce((acc, cur) => acc + (cur.Product.price * cur.quantity), 0);
+    const itemPriceTotal = orderDetailJson.OrderDetails.reduce((acc, cur) => acc + (cur.purchase_price * cur.quantity), 0);
     const tax = Math.round(itemPriceTotal * 0.1);
 
     // 필드 추가
@@ -121,9 +121,9 @@ const getOrderDetail = async (req, res, next) => {
     orderDetailJson.tax = tax;
     
     // 클라이언트에게 주문 데이터 응답
-    res.status(200).json(orderDetailJson);
+    return res.status(200).json(orderDetailJson);
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 

@@ -12,8 +12,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const productTest = (req, res, next) => {
   try {
-    res.status(200).json([{"value": "ok"}]);
-    console.log("ok")
+    return res.status(200).json([{"value": "ok"}]);
   } catch (error) {
     console.log(error);
   }
@@ -44,18 +43,18 @@ const getProduct = async (req, res, next) => {
       }),
     };
 
-    res.status(200).json(modifiedProductDetail);
+    return res.status(200).json(modifiedProductDetail);
   } catch (error) {
-    res.status(500).json(error);    
+    return res.status(500).json(error);    
   }
 };
 
 const getCategories = async (req, res, next) => {
   try {
     const categories = await Category.findAll({ raw: true });
-    res.status(200).json(categories);
+    return res.status(200).json(categories);
   } catch (error) {
-    res.status(500).json(error);
+    return res.status(500).json(error);
   }
 };
 
@@ -121,9 +120,9 @@ const getProductsByCategory = async (req, res, next) => {
       }),
     }));
 
-    res.status(200).json(modifiedProducts);
+    return res.status(200).json(modifiedProducts);
   } catch (error) {
-    res.status(500).json(error);
+    return res.status(500).json(error);
   }
 };
 

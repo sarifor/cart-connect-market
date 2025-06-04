@@ -55,10 +55,10 @@ const getPublicCarts = async (req, res, next) => {
     });
 
     // 공개 장바구니 목록 데이터 응답
-    res.status(200).json(modifiedPublicCarts);
+    return res.status(200).json(modifiedPublicCarts);
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
@@ -139,10 +139,10 @@ const getPublicCartsNetworkByLikes = async (req, res, next) => {
     }
 
     // 공개 장바구니 연결 관계 네트워크 데이터 응답
-    res.status(200).json({ nodes, edges, latestLikedPublicCartId });
+    return res.status(200).json({ nodes, edges, latestLikedPublicCartId });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
@@ -167,7 +167,7 @@ const getPublicCartDetail = async (req, res, next) => {
             attributes: ['product_id', 'quantity', 'purchase_price'],
             include: [{
               model: Product,
-              attributes: ['product_name', 'description', 'price'],
+              attributes: ['product_name', 'description'],
               include: [{
                 model: ProductImage,
                 attributes: ['src'],
@@ -202,7 +202,7 @@ const getPublicCartDetail = async (req, res, next) => {
 
     // 상품 총 개수, 상품 총 가격 계산
     const itemQuantityTotal = publicCartDetailJson.Order.OrderDetails.reduce((acc, cur) => acc + cur.quantity, 0);
-    const itemPriceTotal = publicCartDetailJson.Order.OrderDetails.reduce((acc, cur) => acc + (cur.Product.price * cur.quantity), 0);
+    const itemPriceTotal = publicCartDetailJson.Order.OrderDetails.reduce((acc, cur) => acc + (cur.purchase_price * cur.quantity), 0);
 
     // 좋아요 개수 계산
     const likeCount = await Like.count({
@@ -218,10 +218,10 @@ const getPublicCartDetail = async (req, res, next) => {
     publicCartDetailJson.likeCount = likeCount;
     
     // 클라이언트에게 주문 데이터 응답
-    res.status(200).json(publicCartDetailJson);
+    return res.status(200).json(publicCartDetailJson);
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 

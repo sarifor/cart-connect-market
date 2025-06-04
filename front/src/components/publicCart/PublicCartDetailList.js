@@ -23,7 +23,7 @@ const PublicCartDetailList = ({ detail }) => {
 
       <div style={{ display: 'flex', flexDirection: 'column', rowGap: '5px' }}>
         <div>{detail.Product.product_name}</div>
-        <div>{detail.Product.price}엔</div>
+        <div>{detail.purchase_price}엔</div>
         <div>{detail.quantity}개</div>
       </div>
 

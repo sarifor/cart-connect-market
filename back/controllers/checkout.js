@@ -98,7 +98,7 @@ const createOrder = async (req, res, next) => {
       await transaction.commit();
 
       // 응답
-      res.status(201).send("주문이 생성되었습니다");      
+      return res.status(201).send("주문이 생성되었습니다");      
     } else {
       await transaction.rollback();
       console.error("주문 생성에 필요한 조건이 갖춰지지 않았습니다.", {
@@ -108,12 +108,12 @@ const createOrder = async (req, res, next) => {
         selectedDeliveryTime,
         selectedPaymentNumber,
       });
-      res.status(400).send("주문 생성에 필요한 조건이 갖춰지지 않았습니다. 처음부터 다시 시도해 주세요.");
+      return res.status(400).send("주문 생성에 필요한 조건이 갖춰지지 않았습니다. 처음부터 다시 시도해 주세요.");
     }
   } catch (error) {
     await transaction.rollback();
     console.error("createOrder 에러: ", error);
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
@@ -131,9 +131,9 @@ const getShippingAddress = async (req, res, next) => {
       },
     });
 
-    res.status(200).json(shippingAddresses);
+    return res.status(200).json(shippingAddresses);
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
@@ -147,9 +147,9 @@ const getServerTime = async (req, res, next) => {
     // const currentServerTime = dayjs.tz().format("YYYY-MM-DD HH:mm:ss");
     const currentServerTime = dayjs.tz().format();
 
-    res.status(200).json(currentServerTime);
+    return res.status(200).json(currentServerTime);
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 

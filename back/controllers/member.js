@@ -49,7 +49,7 @@ const login = async (req, res, next) => {
 
     const savedMember = await saveMemberInSession(memberId, req, res, next);
 
-    res.status(200).json(savedMember);
+    return res.status(200).json(savedMember);
   } catch (error) {
     console.log(error);
   }
@@ -159,7 +159,7 @@ const signup = async (req, res, next) => {
 
     const savedMember = await saveMemberInSession(memberId, req, res, next);
     
-    res.status(201).json(savedMember);
+    return res.status(201).json(savedMember);
   } catch (error) {
     return res.status(500).json(`회원 가입에 실패하였습니다: ${error}`);
   }
