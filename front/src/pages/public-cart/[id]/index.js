@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import CommonLayout from '@/components/CommonLayout';
 import PublicCartDetailList from '@/components/publicCart/PublicCartDetailList';
 import PublicCartDetailSummary from '@/components/publicCart/PublicCartDetailSummary';
 import { Col, Button } from 'antd';
 import Link from 'next/link';
 import { loadPublicCartDetailRequest, resetPublicCartState } from '@/reducers/publicCart.js';
+import { copyCartRequest, resetCartState } from '@/reducers/cart';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 
@@ -16,7 +17,15 @@ const PublicCartDetail = () => {
     publicCartDetail,
   } = useSelector(state => state.publicCart);
 
+  const {
+    copyCartLoading,
+    copyCartDone,
+    copyCartError,
+  } = useSelector(state => state.cart);
+
   const { me } = useSelector(state => state.member);
+
+  const [ isModalOpen, setIsModalOpen ] = useState(false);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -38,18 +47,39 @@ const PublicCartDetail = () => {
   useEffect(() => {
     return () => {
       dispatch(resetPublicCartState());
+      dispatch(resetCartState());
     }
   }, []);
+
+  const handleShowModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOkClick = () => {
+    setIsModalOpen(false);
+    router.push("/cart");
+  };
+
+  const handleCancelClick = () => {
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (copyCartDone) {
+      handleShowModal();
+    }
+  }, [copyCartDone]);
 
   const handlePublicCartListClick = () => {
     router.push(`/public-cart`).then(() => {
       dispatch(resetPublicCartState());
+      dispatch(resetCartState());
     })
   };
 
   const handleLikeClick = () => {
     if (!me) {
-      alert("로그인을 해 주세요.");
+      alert("'좋아요'를 누르려면 로그인을 해 주세요.");
     } else if (me && me.member_id === publicCartDetail.member_id) {
       alert("본인 게시물에는 '좋아요'를 누를 수 없습니다.");
     } else {
@@ -59,11 +89,14 @@ const PublicCartDetail = () => {
 
   const handleCopyClick = () => {
     if (!me) {
-      alert("로그인을 해 주세요.");
+      alert("복사 기능을 이용하려면 로그인을 해 주세요.");
     } else if (me && me.member_id === publicCartDetail.member_id) {
-      alert("본인 게시물은 복사할 수 없습니다.");
+      alert("본인 게시물의 상품은 복사할 수 없습니다.");
     } else {
-      alert("'복사' 기능 구현 예정");
+      dispatch({
+        type: copyCartRequest.type,
+        data: { publicCartId },
+      });
     }
   };
 
@@ -158,9 +191,15 @@ const PublicCartDetail = () => {
               itemQuantityTotal={publicCartDetail.itemQuantityTotal}
               itemPriceTotal={publicCartDetail.itemPriceTotal}
               likeCount={publicCartDetail.likeCount}
+              copyCartLoading={copyCartLoading}
+              copyCartDone={copyCartDone}
+              copyCartError={copyCartError}
+              isModalOpen={isModalOpen}
               handlePublicCartListClick={handlePublicCartListClick}
               handleLikeClick={handleLikeClick}
               handleCopyClick={handleCopyClick}
+              handleOkClick={handleOkClick}
+              handleCancelClick={handleCancelClick}
             />
           </Col>
         ): null}

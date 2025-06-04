@@ -8,7 +8,7 @@ const productRouter = express.Router();
 const publicCartRouter = express.Router();
 
 const { login, me, logout, signup } = require('../controllers/member');
-const { getCart, addCart, decrementCart, deleteCart } = require('../controllers/cart');
+const { getCart, addCart, decrementCart, deleteCart, copyCart } = require('../controllers/cart');
 const { createOrder, getShippingAddress, getServerTime } = require('../controllers/checkout');
 const { getOrders, getOrderDetail } = require('../controllers/order');
 const { productTest, getProduct, getCategories, getProductsByCategory } = require('../controllers/product');
@@ -27,6 +27,7 @@ cartRouter.get('/', getCart);
 cartRouter.post('/add', addCart);
 cartRouter.patch('/decrement', decrementCart);
 cartRouter.delete('/delete', deleteCart);
+cartRouter.post('/copy', copyCart);
 
 // /checkout
 checkoutRouter.post('/', createOrder);

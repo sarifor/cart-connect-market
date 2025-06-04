@@ -1,4 +1,4 @@
-const { Product, ProductImage, Cart } = require('../config/db');
+const { mysql, Product, ProductImage, Cart, PublicCart, Order, OrderDetail } = require('../config/db');
 const { Op } = require('sequelize');
 require('dotenv').config();
 
@@ -52,14 +52,15 @@ const getCart = async (req, res, next) => {
     // 응답으로 장바구니 목록 반환
     const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
-    res.status(200).json(modifiedCart);
+    return res.status(200).json(modifiedCart);
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
 // Q. incrementCart로 수정할까?
 // Q. decrementCart와의 공통 로직을 별도의 함수로 빼낸다면 어떤 이름이 좋을까?
+// Q. existingCart -> alreadyInCart로 고칠까?
 const addCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인하고,
@@ -84,7 +85,7 @@ const addCart = async (req, res, next) => {
 
     // 판매 중이 아니면 처리 중단하고, 
     if (!existingProduct) {
-      res.status(401).send('구매할 수 없는 상품입니다.');
+      return res.status(401).send('구매할 수 없는 상품입니다.');
     }
 
     // 판매 중이라면 장바구니 테이블에 저장
@@ -122,12 +123,13 @@ const addCart = async (req, res, next) => {
     // 응답으로 장바구니 목록 반환
     const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
-    res.status(200).json(modifiedCart);
+    return res.status(200).json(modifiedCart);
   } catch (error) {
-    res.status(500).json(error);    
+    return res.status(500).json(error);    
   }
 };
 
+// Q. existingCart -> alreadyInCart로 고칠까?
 const decrementCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인하고,
@@ -152,7 +154,7 @@ const decrementCart = async (req, res, next) => {
 
     // 판매 중이 아니면 처리 중단 
     if (!existingProduct) {
-      res.status(401).send('구매할 수 없는 상품입니다.');
+      return res.status(401).send('구매할 수 없는 상품입니다.');
     }
 
     // 이미 담긴 상품인가 검증
@@ -193,9 +195,9 @@ const decrementCart = async (req, res, next) => {
     // 응답으로 장바구니 목록 반환
     const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
-    res.status(200).json(modifiedCart);
+    return res.status(200).json(modifiedCart);
   } catch (error) {
-    res.status(500).json(error);
+    return res.status(500).json(error);
   }
 };
 
@@ -220,10 +222,135 @@ const deleteCart = async (req, res, next) => {
     // 응답으로 장바구니 목록 반환
     const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
-    res.status(200).json(modifiedCart);
+    return res.status(200).json(modifiedCart);
   } catch (error) {
-    res.status(500).json(error);
+    return res.status(500).json(error);
   }
 };
 
-module.exports = { getCart, addCart, decrementCart, deleteCart };
+// Q. 재고 유무도 조건 포함?
+const copyCart = async (req, res, next) => {
+  // 트랜지션 수동 시작
+  const transaction = await mysql.transaction();
+
+  try {
+    // 로그인한 회원인지 확인 
+    if (!req.session.member.member_id) {
+      await transaction.rollback();
+      return res.status(401).send("로그인이 필요합니다.");
+    }
+
+    // 클라이언트로부터 공개 장바구니 ID 확보
+    const { publicCartId } = req.body;
+    
+    // 공개 장바구니 -> 주문 -> 주문 상세 -> 상품 테이블을 조회하여, 판매 중인 상품 구매 이력만 필터링
+    const existingProducts = await PublicCart.findOne({
+      where: {
+        public_cart_id: publicCartId,
+        deleted_at: null,
+      },
+      attributes: ['public_cart_id'],
+      include: [
+        {
+          model: Order,
+          attributes: ['order_id'],
+          include: [{
+            model: OrderDetail,
+            attributes: ['product_id', 'quantity', 'purchase_price'],
+            include: [{
+              model: Product,
+              attributes: ['product_name', 'description', 'price'],
+              where: { status: 1 },
+            }]
+          }]
+        },
+      ]
+    }, { transaction: transaction });
+
+    // 판매 중인 상품이 없으면 처리 중단
+    if (!existingProducts) {
+      await transaction.rollback();
+      return res.status(400).send('구매할 수 있는 상품이 없습니다.');
+    }
+
+    // 상품 ID, 수량 세트 배열 생성
+    const productIdAndQuantity = existingProducts.Order.OrderDetails.map((item) => {
+      return {
+        product_id: item.product_id, 
+        quantity: item.quantity 
+      };
+    });
+
+    // 로그인 회원의 장바구니에 이미 있는 상품, 없는 상품 나누기
+    const alreadyInCart = [];
+    const notInCart = [];
+
+    for (const item of productIdAndQuantity) {
+      const searchResult = await Cart.findOne({
+        where: {
+          member_id: req.session.member.member_id,
+          product_id: item.product_id,
+        }
+      }, { transaction: transaction });
+
+      if (searchResult) {
+        alreadyInCart.push(item);
+      } else {
+        notInCart.push(item);
+      }
+    }
+
+    // 장바구니에 이미 담긴 상품 -> 수량 갱신, 공개 장바구니 ID 기록
+    if (alreadyInCart.length > 0) {
+      for (const item of alreadyInCart) {
+
+        const currentRecord = await Cart.findOne({
+          where: {
+            member_id: req.session.member.member_id,
+            product_id: item.product_id,
+          }
+        }, { transaction: transaction });
+
+        const newQuantity = currentRecord.quantity + item.quantity;
+
+        await Cart.update(
+          {
+            quantity: newQuantity,
+            public_cart_id: publicCartId,
+          },
+          {
+            where: {
+              member_id: req.session.member.member_id,
+              product_id: item.product_id,
+            }
+          },
+          { transaction: transaction }
+        );
+      }
+    } 
+    
+    // 장바구니에 없는 상품 -> 새 레코드 추가, 공개 장바구니 ID 기록
+    if (notInCart.length > 0) {
+      for (const item of notInCart) {     
+        await Cart.create({
+          member_id: req.session.member.member_id,
+          product_id: item.product_id,
+          quantity: item.quantity,
+          public_cart_id: publicCartId,
+        }, 
+        { transaction: transaction });
+      }
+    }
+
+    await transaction.commit();
+
+    // 200 상태만 응답
+    return res.sendStatus(200);
+  } catch (error) {
+    await transaction.rollback();
+    console.log(error);
+    return res.status(500).send(error);
+  }
+};
+
+module.exports = { getCart, addCart, decrementCart, deleteCart, copyCart };

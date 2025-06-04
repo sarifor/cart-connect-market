@@ -14,6 +14,9 @@ import {
   deleteCartRequest,
   deleteCartSuccess,
   deleteCartFailure,  
+  copyCartRequest,
+  copyCartSuccess,
+  copyCartFailure,
 } from '@/reducers/cart';
 
 let backURL;
@@ -104,6 +107,34 @@ function* deleteCart(action) {
   }
 }
 
+function copyCartAPI(data) {
+  const response = axios.post(`${backURL}/cart/copy`, data, { withCredentials: true });
+  return response;
+}
+
+function* copyCart(action) {
+  try {
+    yield delay(1000);
+
+    const response = yield call(copyCartAPI, action.data);
+    
+    if (response.status === 200) {
+      yield put(copyCartSuccess(response.data));
+
+      return;
+    } else {
+      throw new Error("Copy failed");
+    }
+
+  } catch (error) {
+    yield put(copyCartFailure(
+      (error.response?.data && Object.keys(error.response.data).length > 0)
+      ? error.response.data
+      : error.message
+    ));
+  }
+}
+
 function* watchLoadCartItems() {
   yield takeEvery(loadCartItemsRequest.type, loadCartItems);
 }
@@ -120,11 +151,16 @@ function* watchDeleteCart() {
   yield takeEvery(deleteCartRequest.type, deleteCart);
 }
 
+function* watchCopyCart() {
+  yield takeEvery(copyCartRequest.type, copyCart);
+}
+
 export default function* cartSaga() {
   yield all([
     fork(watchLoadCartItems),
     fork(watchAddToCart),
     fork(watchDecrementCart),
     fork(watchDeleteCart),
+    fork(watchCopyCart),
   ]);
 }

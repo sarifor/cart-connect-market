@@ -14,6 +14,9 @@ const initialState = {
   deleteCartLoading: false,
   deleteCartDone: false,
   deleteCartError: null,
+  copyCartLoading: false,
+  copyCartDone: false,
+  copyCartError: null,
   cartItems: [],
 };
 
@@ -135,6 +138,21 @@ export const cartSlice = createSlice({
       state.deleteCartDone = false;
       state.deleteCartError = action.payload;
     },
+    copyCartRequest: (state) => {
+      state.copyCartLoading = true;
+      state.copyCartDone = false;
+      state.copyCartError = null;
+    },
+    copyCartSuccess: (state) => {
+      state.copyCartLoading = false;
+      state.copyCartDone = true;
+      state.copyCartError = null;
+    },
+    copyCartFailure: (state, action) => {
+      state.copyCartLoading = false;
+      state.copyCartDone = false;
+      state.copyCartError = action.payload;   
+    },
     resetCartState: () => {
       return initialState;
     }
@@ -153,7 +171,10 @@ export const {
   decrementCartFailure,
   deleteCartRequest,
   deleteCartSuccess,
-  deleteCartFailure,  
+  deleteCartFailure,
+  copyCartRequest,
+  copyCartSuccess,
+  copyCartFailure,    
   resetCartState,
 } = cartSlice.actions;
 
