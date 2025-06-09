@@ -20,6 +20,7 @@ const getOrders = async (req, res, next) => {
     const orders = await Order.findAll({
       where: {
         member_id: req.session.member.member_id,
+        deleted_at: null,
       },
       // order: [
       //  ['created_at', 'DESC']
@@ -71,6 +72,7 @@ const getOrderDetail = async (req, res, next) => {
       where: {
         member_id: req.session.member.member_id,
         order_id: orderId,
+        deleted_at: null,
       },
       attributes: ['shipping_fee', 'payment', 'total'],
       include: [{
@@ -139,6 +141,7 @@ const getOrderSummary = async (req, res, next) => {
     const orders = await Order.findAll({
       where: {
         member_id: req.session.member.member_id,
+        deleted_at: null,
       },
       attributes: ['order_id', 'created_at'],
       order: [

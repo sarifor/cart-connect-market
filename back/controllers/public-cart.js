@@ -243,7 +243,7 @@ const postPublicCart = async (req, res, next) => {
       where: {
         order_id: selectedOrderId,
         member_id: req.session.member.member_id,
-        // deleted_at: null,
+        deleted_at: null,
       },
       attributes: ['order_id'],
       include: [{
