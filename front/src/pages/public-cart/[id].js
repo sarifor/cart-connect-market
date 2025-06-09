@@ -71,7 +71,7 @@ const PublicCartDetail = () => {
   }, [copyCartDone]);
 
   const handlePublicCartListClick = () => {
-    router.push(`/public-cart`).then(() => {
+    router.push('/public-cart').then(() => {
       dispatch(resetPublicCartState());
       dispatch(resetCartState());
     })
