@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Col, Row } from 'antd';
-import { loadPublicCartsRequest } from '@/reducers/publicCart';
+import { loadPublicCartsRequest, resetPublicCartState } from '@/reducers/publicCart';
 import CommonLayout from '@/components/CommonLayout';
 import NetworkView from '@/components/publicCart/NetworkView';
 import PublicCartList from '@/components/publicCart/PublicCartList';
+import { useRouter } from 'next/router';
 
 const PublicCart = () => {
   const {
@@ -18,6 +19,7 @@ const PublicCart = () => {
 
   const [ sortType, setSortType ] = useState('latest');
 
+  const router = useRouter();
   const dispatch = useDispatch();
   const dispatched = useRef(false);
 
@@ -50,6 +52,20 @@ const PublicCart = () => {
     }    
   }, [sortType, publicCarts, me]);
 
+  const handlePostClick = () => {
+    if (!me) {
+      alert('공개 장바구니를 작성하려면 로그인을 해 주세요.');
+
+      router.push('/auth/login').then(() => {
+        dispatch(resetPublicCartState());
+      });
+    } else {
+      router.push('/public-cart/post').then(() => {
+        dispatch(resetPublicCartState());
+      });
+    }
+  };
+
   let content;
 
   if (sortType === 'network') {
@@ -72,8 +88,29 @@ const PublicCart = () => {
         <div style={{ display: "flex", flexDirection: "column", rowGap: "10px" }}>
           <div style={{ cursor: "pointer"}} onClick={ () => handleSortClick('latest') }>최신 순</div>
           <div style={{ cursor: "pointer"}} onClick={ () => handleSortClick('likes') }>좋아요 순</div>
-          { me?.member_id && <div style={{ cursor: "pointer"}} onClick={ () => handleSortClick('mine') }>내가 공개한 장바구니</div>}
           <div style={{ cursor: "pointer"}} onClick={ () => handleSortClick('network') }>관계 네트워크</div>
+          <hr style={{ 
+            border: "1px dotted #e0e0e0", 
+            width: "120px", 
+            marginTop: "5px",
+            marginRight: "0px",
+            marginBottom: "5px",
+            marginLeft: "0px",
+          }} />          
+          { me?.member_id &&
+            <>
+              <div style={{ cursor: "pointer"}} onClick={ () => handleSortClick('mine') }>내 공개 장바구니</div>
+              <hr style={{ 
+                border: "1px dotted #e0e0e0", 
+                width: "120px", 
+                marginTop: "5px",
+                marginRight: "0px",
+                marginBottom: "5px",
+                marginLeft: "0px",
+              }} />
+            </>
+          }
+          <div style={{ cursor: "pointer"}} onClick={handlePostClick}>작성하기</div>
         </div>
       </Col>
 

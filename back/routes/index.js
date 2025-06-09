@@ -10,9 +10,9 @@ const publicCartRouter = express.Router();
 const { login, me, logout, signup } = require('../controllers/member');
 const { getCart, addCart, decrementCart, deleteCart, copyCart } = require('../controllers/cart');
 const { createOrder, getShippingAddress, getServerTime } = require('../controllers/checkout');
-const { getOrders, getOrderDetail } = require('../controllers/order');
+const { getOrders, getOrderDetail, getOrderSummary } = require('../controllers/order');
 const { productTest, getProduct, getCategories, getProductsByCategory } = require('../controllers/product');
-const { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail } = require('../controllers/public-cart');
+const { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail, postPublicCart } = require('../controllers/public-cart');
 
 
 // /member
@@ -36,6 +36,7 @@ checkoutRouter.get('/server-time', getServerTime);
 
 // /order
 orderRouter.get('/', getOrders);
+orderRouter.get('/summary', getOrderSummary);
 orderRouter.get('/:orderId', getOrderDetail);
 
 // /product
@@ -47,6 +48,7 @@ productRouter.get('/:productId', getProduct);
 
 // public-cart
 publicCartRouter.get('/', getPublicCarts);
+publicCartRouter.post('/', postPublicCart);
 publicCartRouter.get('/network', getPublicCartsNetworkByLikes);
 publicCartRouter.get('/:publicCartId', getPublicCartDetail);
 

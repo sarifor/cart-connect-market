@@ -1,4 +1,4 @@
-const { PublicCart, Like, Order, OrderDetail, Product, ProductImage, Member } = require('../config/db');
+const { mysql, PublicCart, Like, Order, OrderDetail, Product, ProductImage, Member } = require('../config/db');
 require('dotenv').config();
 
 let BASE_URL;
@@ -225,4 +225,63 @@ const getPublicCartDetail = async (req, res, next) => {
   }
 };
 
-module.exports = { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail };
+const postPublicCart = async (req, res, next) => {
+  // 트랜잭션 수동 시작
+  const transaction = await mysql.transaction();
+
+  try {
+    // 로그인한 회원인지 확인
+    if (!req.session.member) {
+      return res.status(401).send("로그인이 필요합니다.");
+    }
+
+    // 클라이언트가 보낸 데이터 확인
+    const { title, content, selectedOrderId, } = req.body;
+
+    // 주문 조회
+    const result = await Order.findOne({
+      where: {
+        order_id: selectedOrderId,
+        member_id: req.session.member.member_id,
+        // deleted_at: null,
+      },
+      attributes: ['order_id'],
+      include: [{
+        model: OrderDetail,
+        attributes: ['order_detail_id'],
+      }],
+      transaction: transaction,
+    })
+
+    // 사용할 수 있는 주문인가 검토
+    if (!result || !result.OrderDetails || result.OrderDetails.length === 0) {
+      await transaction.rollback();
+
+      return res.status(400).send("주문 생성에 필요한 조건이 갖춰지지 않았습니다. 처음부터 다시 시도해 주세요.");
+    } else {
+      // 공개 장바구니 생성
+      await PublicCart.create({
+        member_id: req.session.member.member_id,
+        order_id: selectedOrderId,
+        title: title,
+        content: content,
+      }, 
+      { 
+        transaction: transaction
+      });
+
+      // 트랜잭션 커밋
+      await transaction.commit();
+      
+      // 응답
+      return res.status(201).send("공개 장바구니가 생성되었습니다.");
+
+    }
+  } catch (error) {
+    await transaction.rollback();
+    console.error("postPublicCart 에러: ", error);
+    return res.status(500).send(error);
+  }
+};
+
+module.exports = { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail, postPublicCart };

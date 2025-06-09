@@ -7,8 +7,12 @@ const initialState = {
   loadOrderDetailLoading: false, 
   loadOrderDetailDone: false, 
   loadOrderDetailError: null,  
+  loadOrdersForPublicCartLoading: false,
+  loadOrdersForPublicCartDone: false,
+  loadOrdersForPublicCartError: null,
   orders: [],
   orderDetail: [],
+  ordersForPublicCart: [],
 };
 
 export const orderSlice = createSlice({
@@ -51,6 +55,24 @@ export const orderSlice = createSlice({
       state.loadOrderDetailError = action.payload;
       state.orderDetail = [];
     },
+    loadOrdersForPublicCartRequest: (state) => {
+      state.loadOrdersForPublicCartLoading = true;
+      state.loadOrdersForPublicCartDone = false;
+      state.loadOrdersForPublicCartError = null;
+      state.ordersForPublicCart = [];
+    },
+    loadOrdersForPublicCartSuccess: (state, action) => {
+      state.loadOrdersForPublicCartLoading = false;
+      state.loadOrdersForPublicCartDone = true;
+      state.loadOrdersForPublicCartError = null;
+      state.ordersForPublicCart = action.payload;
+    },
+    loadOrdersForPublicCartFailure: (state, action) => {
+      state.loadOrdersForPublicCartLoading = false;
+      state.loadOrdersForPublicCartDone = false;
+      state.loadOrdersForPublicCartError = action.payload;
+      state.ordersForPublicCart = [];
+    },
     resetOrderState: () => {
       return initialState;
     }
@@ -64,6 +86,9 @@ export const {
   loadOrderDetailRequest,
   loadOrderDetailSuccess,
   loadOrderDetailFailure,  
+  loadOrdersForPublicCartRequest,
+  loadOrdersForPublicCartSuccess,
+  loadOrdersForPublicCartFailure,
   resetOrderState,
 } = orderSlice.actions;
 

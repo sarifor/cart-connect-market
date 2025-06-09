@@ -1,4 +1,4 @@
-const { Order, OrderDetail, Product, ProductImage } = require('../config/db');
+const { Order, OrderDetail, Product, ProductImage, PublicCart } = require('../config/db');
 require('dotenv').config();
 
 let BASE_URL;
@@ -127,7 +127,107 @@ const getOrderDetail = async (req, res, next) => {
   }
 };
 
+const getOrderSummary = async (req, res, next) => {
+  try {
+    // 로그인한 회원인지 확인
+    if (!req.session.member) {
+      return res.status(401).send("로그인이 필요합니다.");
+    }
+
+    // 로그인한 회원의 모든 주문 조회 (+ 주문 상세, 상품 정보, 공개 장바구니 정보)
+    // - 내림차순 정렬
+    const orders = await Order.findAll({
+      where: {
+        member_id: req.session.member.member_id,
+      },
+      attributes: ['order_id', 'created_at'],
+      order: [
+       ['created_at', 'DESC']
+      ],
+      include: [
+        {
+          model: OrderDetail,
+          attributes: ['order_detail_id', 'quantity'],
+          include: [{
+            model: Product,
+            attributes: ['product_name', 'emoji'],
+          }],
+        },
+        {
+          model: PublicCart,
+          attributes: ['public_cart_id'],
+          where: { deleted_at: null },
+          required: false,
+        },
+      ]
+    });
+
+    const modifiedOrders = orders.map((order) => {
+      const raw = order.toJSON();
+      const { OrderDetails, PublicCart, ...rest } = raw;
+
+      let quantitySum = 0;
+      let emojiArray = [];
+      
+      // 상품 총 개수, 이모지 배열 계산
+      OrderDetails.forEach((detail) => {
+        quantitySum += detail.quantity;
+        emojiArray.push(detail.Product.emoji);
+      });
+
+      // 대표 상품명 취득
+      const firstProductName = OrderDetails[0].Product.product_name;
+
+      // 상품 종류 개수 취득
+      const orderLength = OrderDetails.length;
+
+      // 이미지 배열을 한 문자열로 가공
+      const mergedEmojiArray = Array.from(emojiArray.join('') || '').slice(0, 8).join('');
+
+      return {
+        ...rest,
+        quantitySum,
+        productEmojis: mergedEmojiArray,
+        firstProductName,
+        public_cart_id: PublicCart?.public_cart_id || null,
+        orderLength: orderLength,
+      }
+    });
+
+    // Select options 객체 형태로 만들기
+    const ordersInOptionFormat = modifiedOrders.map((order) => {
+      const orderDate = new Date(order.created_at).toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      
+      const etc = order.orderLength > 1 ? ' 他' : '';
+
+      if (order.public_cart_id) {
+        return {
+          value: `published-${order.order_id}`,
+          label: `[${orderDate}] ${order.firstProductName}${etc}（計${order.quantitySum}点）${order.productEmojis} →公開済み`,
+          disabled: true,
+        }
+      } else {
+        return {
+          value: order.order_id,
+          label: `[${orderDate}] ${order.firstProductName}${etc}（計${order.quantitySum}点）${order.productEmojis}`,
+        }
+      }
+    });
+
+    // 클라이언트에게 데이터 응답
+    return res.status(200).json(ordersInOptionFormat);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error);
+  }
+};
+
 module.exports = { 
   getOrders,
   getOrderDetail,
+  getOrderSummary,
 };

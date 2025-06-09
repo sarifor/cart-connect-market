@@ -11,6 +11,9 @@ import {
   loadPublicCartDetailRequest,
   loadPublicCartDetailSuccess,
   loadPublicCartDetailFailure,
+  postPublicCartRequest,
+  postPublicCartSuccess,
+  postPublicCartFailure,
 } from '@/reducers/publicCart';
 
 let backURL;
@@ -104,6 +107,31 @@ function* loadPublicCartDetail(action) {
   }
 }
 
+function postPublicCartAPI(data) {
+  const response = axios.post(`${backURL}/public-cart`, data, { withCredentials: true });
+
+  return response;
+}
+
+function* postPublicCart(action) {
+  try {
+    yield delay(1000);
+
+    const response = yield call(postPublicCartAPI, action.data);
+
+    if (response.status === 201) {
+      yield put(postPublicCartSuccess());
+      return;
+    }
+  } catch (error) {
+    yield put(postPublicCartFailure(
+      (error.response?.data && Object.keys(error.response.data).length > 0)
+      ? error.response.data
+      : error.message      
+    ));
+  }
+}
+
 function* watchLoadPublicCarts() {
   yield takeEvery(loadPublicCartsRequest.type, loadPublicCarts);
 }
@@ -116,10 +144,15 @@ function* watchLoadPublicCartDetail() {
   yield takeEvery(loadPublicCartDetailRequest.type, loadPublicCartDetail);
 }
 
+function* watchPostPublicCart() {
+  yield takeEvery(postPublicCartRequest.type, postPublicCart);
+}
+
 export default function* publicCartSaga() {
   yield all([
     fork(watchLoadPublicCarts),
     fork(watchLoadPublicCartsNetwork),
     fork(watchLoadPublicCartDetail),
+    fork(watchPostPublicCart),
   ]);
 }
