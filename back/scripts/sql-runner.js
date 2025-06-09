@@ -17,7 +17,7 @@ const executeSQL = async(mysql) => {
   ];
 
   try {  
-    // 트랜지션 수동 시작
+    // 트랜잭션 수동 시작
     const transaction = await mysql.transaction();
 
     // SQL을 차례로 실행하기

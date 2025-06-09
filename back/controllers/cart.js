@@ -230,7 +230,7 @@ const deleteCart = async (req, res, next) => {
 
 // Q. 재고 유무도 조건 포함?
 const copyCart = async (req, res, next) => {
-  // 트랜지션 수동 시작
+  // 트랜잭션 수동 시작
   const transaction = await mysql.transaction();
 
   try {
