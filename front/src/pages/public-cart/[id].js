@@ -37,6 +37,8 @@ const PublicCartDetail = () => {
     if (!dispatched.current && publicCartId) {
       dispatched.current = true;
 
+      dispatch(resetPublicCartState());
+      
       dispatch({
         type: loadPublicCartDetailRequest.type,
         data: { publicCartId: publicCartId },
@@ -46,7 +48,7 @@ const PublicCartDetail = () => {
 
   useEffect(() => {
     return () => {
-      dispatch(resetPublicCartState());
+      // dispatch(resetPublicCartState());
       dispatch(resetCartState());
     }
   }, []);
@@ -96,6 +98,23 @@ const PublicCartDetail = () => {
       dispatch({
         type: copyCartRequest.type,
         data: { publicCartId },
+      });
+    }
+  };
+
+  const handleUpdateClick = () => {
+    if (!me) {
+      alert('공개 장바구니를 수정하려면 로그인을 해 주세요.');
+
+      router.push('/auth/login').then(() => {
+        dispatch(resetPublicCartState());
+      });
+    } else if (me && me.member_id !== publicCartDetail.member_id) {
+      alert('작성자 본인이 아니면 수정할 수 없습니다.');
+      return;
+    } else if (me && me.member_id === publicCartDetail.member_id) {
+      router.push(`/public-cart/edit?id=${publicCartId}`).then(() => {
+        // dispatch(resetPublicCartState());
       });
     }
   };
@@ -158,7 +177,7 @@ const PublicCartDetail = () => {
                     {/* 작성자 회원에게만 '수정' '삭제' 버튼 보임 */}
                     { me && me.member_id === publicCartDetail.member_id ? (
                       <div style={{ padding: "10px", display: 'flex', gap: '15px' }}>
-                        <Link href="" title="기능 준비 중">수정</Link> <Link href="" title="기능 준비 중">삭제</Link>
+                        <div style={{ cursor: "pointer"}} onClick={handleUpdateClick}>수정</div> <Link href="" title="기능 준비 중">삭제</Link>
                       </div>
                     ): null}
                   </div>

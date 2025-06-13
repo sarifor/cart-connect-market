@@ -12,7 +12,7 @@ const { getCart, addCart, decrementCart, deleteCart, copyCart } = require('../co
 const { createOrder, getShippingAddress, getServerTime } = require('../controllers/checkout');
 const { getOrders, getOrderDetail, getOrderSummary } = require('../controllers/order');
 const { productTest, getProduct, getCategories, getProductsByCategory } = require('../controllers/product');
-const { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail, postPublicCart } = require('../controllers/public-cart');
+const { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail, postPublicCart, updatePublicCart } = require('../controllers/public-cart');
 
 
 // /member
@@ -47,10 +47,12 @@ productRouter.get('/category/:categoryId', getProductsByCategory);
 productRouter.get('/:productId', getProduct);
 
 // public-cart
+// Q. RESTful 준수 위해 /network를 /로 통합?
 publicCartRouter.get('/', getPublicCarts);
 publicCartRouter.post('/', postPublicCart);
 publicCartRouter.get('/network', getPublicCartsNetworkByLikes);
 publicCartRouter.get('/:publicCartId', getPublicCartDetail);
+publicCartRouter.patch('/:publicCartId', updatePublicCart);
 
 const routers = {
   memberRouter,

@@ -14,6 +14,9 @@ import {
   postPublicCartRequest,
   postPublicCartSuccess,
   postPublicCartFailure,
+  updatePublicCartRequest,
+  updatePublicCartSuccess,
+  updatePublicCartFailure,  
 } from '@/reducers/publicCart';
 
 let backURL;
@@ -132,6 +135,33 @@ function* postPublicCart(action) {
   }
 }
 
+async function updatePublicCartAPI(data) {
+  const response = await axios.patch(`${backURL}/public-cart/${data.publicCartId}`, data, { withCredentials: true });
+
+  return response;
+}
+
+function* updatePublicCart(action) {
+  try {
+    yield delay(1000);
+
+    const response = yield call(updatePublicCartAPI, action.data);
+
+    if (response.status === 200) {
+      yield put(updatePublicCartSuccess());
+      return;
+    } else {
+      throw new Error("공개 장바구니 수정에 실패하였습니다.");
+    }
+  } catch (error) {
+    yield put(updatePublicCartFailure(
+      (error.response?.data && Object.keys(error.response.data).length > 0)
+      ? error.response.data
+      : error.message      
+    ));
+  }
+}
+
 function* watchLoadPublicCarts() {
   yield takeEvery(loadPublicCartsRequest.type, loadPublicCarts);
 }
@@ -148,11 +178,16 @@ function* watchPostPublicCart() {
   yield takeEvery(postPublicCartRequest.type, postPublicCart);
 }
 
+function* watchUpdatePublicCart() {
+  yield takeEvery(updatePublicCartRequest.type, updatePublicCart);
+}
+
 export default function* publicCartSaga() {
   yield all([
     fork(watchLoadPublicCarts),
     fork(watchLoadPublicCartsNetwork),
     fork(watchLoadPublicCartDetail),
     fork(watchPostPublicCart),
+    fork(watchUpdatePublicCart),    
   ]);
 }

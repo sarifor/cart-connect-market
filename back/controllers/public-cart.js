@@ -284,4 +284,73 @@ const postPublicCart = async (req, res, next) => {
   }
 };
 
-module.exports = { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail, postPublicCart };
+const updatePublicCart = async (req, res, next) => {
+  // 트랜잭션 수동 시작
+  const transaction = await mysql.transaction();
+
+  try {
+    // 로그인한 회원인지 확인
+    if (!req.session.member) {
+      return res.status(401).send("로그인이 필요합니다.");
+    }
+
+    // 클라이언트가 보낸 데이터 확인
+    const { title, content, publicCartId, } = req.body;
+
+    // 유효성 검사
+    if (!title || !content) {
+      return res.status(400).send("제목과 본문을 모두 입력해 주세요.");
+    }
+
+    if ([...title].length > 20 || [...content].length > 50) {
+      return res.status(400).send("제목은 20자 이내로, 본문은 50자 이내로 써 주세요.");
+    }
+
+    // 공개 장바구니 조회
+    const result = await PublicCart.findOne({
+      where: {
+        public_cart_id: publicCartId,
+        member_id: req.session.member.member_id,
+        deleted_at: null,
+      },
+      attributes: ['public_cart_id'],
+      transaction: transaction,
+      raw: true,
+    });
+
+    if (!result || !result.public_cart_id) {
+      await transaction.rollback();
+
+      return res.status(400).send("공개장바구니 데이터가 존재하지 않습니다.")
+    } else {
+      // 공개 장바구니 업데이트      
+      await PublicCart.update(
+        {
+          title: title,
+          content: content,        
+        },        
+        {
+          where: {
+            member_id: req.session.member.member_id,
+            public_cart_id: publicCartId,          
+          },
+          transaction: transaction,
+        }
+      );
+
+      // 트랜잭션 커밋
+      await transaction.commit();
+      
+      // 응답
+      return res.status(200).send("공개 장바구니가 수정되었습니다.");
+    }
+  } catch (error) {
+    await transaction.rollback();
+
+    console.error("updatePublicCart 에러: ", error);
+    
+    return res.status(500).send("서버 오류가 발생하였습니다.");
+  }
+};
+
+module.exports = { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail, postPublicCart, updatePublicCart };

@@ -209,13 +209,13 @@ const getOrderSummary = async (req, res, next) => {
 
       if (order.public_cart_id) {
         return {
-          value: `published-${order.order_id}`,
+          value: `${order.order_id}-${order.public_cart_id}`,
           label: `[${orderDate}] ${order.firstProductName}${etc}（計${order.quantitySum}点）${order.productEmojis} →公開済み`,
           disabled: true,
         }
       } else {
         return {
-          value: order.order_id,
+          value: String(order.order_id),
           label: `[${orderDate}] ${order.firstProductName}${etc}（計${order.quantitySum}点）${order.productEmojis}`,
         }
       }
