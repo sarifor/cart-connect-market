@@ -10,7 +10,8 @@ const PublicCartPostForm = ({
   handleOrderIdChange,
   handleGoBackClick,
   handlePostClick,
-  isModalOpen,
+  handleSuccessOkClick,
+  isSuccessModalOpen,
 }) => {
 
   return (
@@ -60,7 +61,12 @@ const PublicCartPostForm = ({
         <Button style={{ width: '100px' }} onClick={handleGoBackClick}>돌아가기</Button>
         <Button style={{ width: '100px' }} onClick={handlePostClick}>등록</Button>
         <Modal
-          open={isModalOpen}
+          open={isSuccessModalOpen}
+          footer={[
+            <Button key="ok" type="primary" onClick={handleSuccessOkClick}>
+              확인
+            </Button>
+          ]}
           getContainer={false}
         >
           공개 장바구니 등록이 완료되었습니다.

@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import PublicCartPostForm from '@/components/publicCart/PublicCartPostForm';
 
+// Q. 제목, 내용 길이 제한시키기?
 const PublicCartPost = () => {
   const {
     loadOrdersForPublicCartLoading,
@@ -27,7 +28,7 @@ const PublicCartPost = () => {
   const [ content, setContent ] = useState('');
   const [ selectedOrderId, setSelectedOrderId ] = useState(undefined);
 
-  const [ isModalOpen, setIsModalOpen ] = useState(false);
+  const [ isSuccessModalOpen, setIsSuccessModalOpen ] = useState(false);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -51,19 +52,20 @@ const PublicCartPost = () => {
     }
   }, [me]);
 
-  const handleShowModal = () => {
-    setIsModalOpen(true);
+  const handleSuccessOkClick = () => {
+    router.push('/public-cart').then(() => {
+      dispatch(resetPublicCartState());
+      dispatch(resetOrderState());
+    });
+  };
+
+  const handleShowSuccessModal = () => {
+    setIsSuccessModalOpen(true);
   };  
 
   useEffect(() => {
     if (postPublicCartDone) {
-      handleShowModal();
-      setIsModalOpen(false);
-
-      router.push("/public-cart").then(() => {
-        dispatch(resetPublicCartState());
-        dispatch(resetOrderState())
-      })
+      handleShowSuccessModal();
     }
   }, [postPublicCartDone]);
 
@@ -134,7 +136,8 @@ const PublicCartPost = () => {
         handleOrderIdChange={handleOrderIdChange}
         handleGoBackClick={handleGoBackClick}
         handlePostClick={handlePostClick}
-        isModalOpen={isModalOpen}
+        handleSuccessOkClick={handleSuccessOkClick}
+        isSuccessModalOpen={isSuccessModalOpen}
       />
     }
   }
