@@ -11,25 +11,34 @@ const ProductList = (props) => {
   return (
     <Col md={18}>
       {!levelSelected && (
-        <Row>
+        <Row style={{ padding: '5px' }}>
           カテゴリーを選択してください。
         </Row>
       )}
       {loadProductsLoading && (
-        <Row>
+        <Row style={{ padding: '5px' }}>
           商品を読み込み中...
         </Row>
       )}
       {loadProductsDone && (
         <Row>
           {products.map((product) => (
-            <Col md={6} style={{backgroundColor: 'yellowgreen'}}>
+            <Col md={6}>
               <Card
-                style={{ width: 240 }}
+                style={{ width: 240, height: 350 }}
                 cover={
-                  <div style={{ position: 'relative' }}> 
+                  <div style={{ 
+                    // position: 'relative',
+                    width: '100%', 
+                    height: '240px', 
+                    // overflow: 'hidden' 
+                  }}>
                     <Link href={`/product/${product.product_id}`}>
-                      <img alt="example" src={product.ProductImages[0].src} style={{ width: '100%' }} />
+                      <img 
+                        alt="example" 
+                        src={product.ProductImages[0].src} 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
                     </Link>
                   </div>
                 }
@@ -41,12 +50,12 @@ const ProductList = (props) => {
         </Row>          
       )}
       {(products && products.length === 0) && (
-        <Row>
+        <Row style={{ padding: '5px' }}>
           該当する商品がありません。
         </Row>
       )}
       {loadProductsError && (
-        <Row>
+        <Row style={{ padding: '5px' }}>
           商品を読み込めませんでした。
         </Row>
       )}      

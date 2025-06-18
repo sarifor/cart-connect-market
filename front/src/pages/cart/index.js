@@ -90,33 +90,33 @@ const Cart = () => {
   // Q. 레이아웃 설정은 개별 컴포넌트에서 관리? (Col md={16}, div style={{ display: flex ... 등)
   if (!me) {
     return <CommonLayout title="カート">
-      <div style={{ width: "100%", backgroundColor: "pink" }}>
+      <div style={{ width: "100%", padding: "30px" }}>
         カートを確認するにはログインが必要です。
       </div>
     </CommonLayout>
   } else if (loadCartItemsLoading) {
     return <CommonLayout title="カート">
-      <div style={{ width: "100%", backgroundColor: "pink" }}>
+      <div style={{ width: "100%", padding: "30px" }}>
         カートの情報を読み込み中...
       </div>
     </CommonLayout>
   } else if (loadCartItemsDone && (cartItems.length === 0)) {
     return <CommonLayout title="カート">
-      <div style={{ width: "100%", backgroundColor: "pink" }}>
+      <div style={{ width: "100%", padding: "30px" }}>
         カートは空です。
       </div>
     </CommonLayout>  
   } else if (loadCartItemsDone && cartItems) {
     return <CommonLayout title="カート">
       <>
-        <Col md={16} style={{ backgroundColor: "orange" }}>
+        <Col md={16}>
           <div style={{ display: "flex", flexDirection: "column" }}>
             {cartItems.map(item => (
               <ItemList item={item} />
             ))}
           </div>
         </Col>
-        <Col md={8} style={{ backgroundColor: "green" }}>
+        <Col md={8}>
           <Summary 
             itemPriceTotal={itemPriceTotal}
             itemQuantityTotal={itemQuantityTotal}
@@ -130,7 +130,7 @@ const Cart = () => {
     </CommonLayout>    
   } else if (!loadCartItemsDone && loadCartItemsError) {
     return <CommonLayout title="カート">
-      <div style={{ width: "100%", backgroundColor: "pink" }}>
+      <div style={{ width: "100%", padding: "30px" }}>
         カートの読み込み中にエラーが発生しました。
       </div>
     </CommonLayout>    

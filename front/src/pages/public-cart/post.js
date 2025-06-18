@@ -154,7 +154,7 @@ const PublicCartPost = () => {
 
   return (
     <CommonLayout title='公開カート投稿'>
-      <Col xs={24} sm={24} md={24} lg={24} style={{ backgroundColor: 'orange', maxWidth: 600 }}>
+      <Col xs={24} sm={24} md={24} lg={24} style={{ maxWidth: 600 }}>
         {mainContent}
         <div 
           style={{ 

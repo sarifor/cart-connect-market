@@ -59,7 +59,7 @@ const OrderHistory = () => {
   
   return (
     <CommonLayout title="注文履歴">
-      <Col md={16} style={{ backgroundColor: "orange" }}>
+      <Col md={16}>
         <div 
           style={{ 
             display: "flex", 

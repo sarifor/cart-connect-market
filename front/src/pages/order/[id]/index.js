@@ -48,7 +48,7 @@ const OrderDetail = () => {
   return (
     <CommonLayout title="注文情報">
       <>
-        <Col md={16} style={{ backgroundColor: "orange" }}>
+        <Col md={16}>
           <div 
             style={{ 
               display: "flex", 
@@ -117,7 +117,7 @@ const OrderDetail = () => {
 
         {/* 회원이고, 데이터는 도착했고, 주문 상세 정보가 있으면(1개 이상), */}
         { loadOrderDetailDone && orderDetail.OrderDetails && orderDetail.OrderDetails.length > 0 ? (
-          <Col md={8} style={{ backgroundColor: "green" }}>
+          <Col md={8}>
             <OrderDetailSummary
               itemQuantityTotal={orderDetail.itemQuantityTotal}
               itemPriceTotal={orderDetail.itemPriceTotal}

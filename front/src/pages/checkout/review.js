@@ -83,7 +83,7 @@ const CheckoutReview = () => {
   return (
     <CommonLayout title="注文確認">
       <>
-        <Col md={16} style={{ backgroundColor: "orange" }}>
+        <Col md={16}>
           <div 
             style={{ 
               display: "flex", 
@@ -215,7 +215,7 @@ const CheckoutReview = () => {
           </div>
         </Col>
 
-        <Col md={8} style={{ backgroundColor: "green" }}>
+        <Col md={8}>
           <ReviewSummary
             itemPriceTotal={itemPriceTotal}
             itemQuantityTotal={itemQuantityTotal}

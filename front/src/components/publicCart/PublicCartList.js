@@ -31,9 +31,14 @@ const PublicCartList = ({ sortedPublicCarts }) => {
             lg={6}
           >
             <Card
-              style={{ width: 240 }}
+              style={{ width: 240, height: 350 }}
               cover={
-                <div style={{ position: 'relative' }}>
+                <div style={{ 
+                  position: 'relative',
+                  width: '100%', 
+                  // height: '240px', 
+                  // overflow: 'hidden' 
+                }}>
                   <Link href={`/public-cart/${sortedPublicCart.public_cart_id}`}>
                     {!sortedPublicCart?.emojis || sortedPublicCart?.emojis.length === 0 ? (
                       <img 

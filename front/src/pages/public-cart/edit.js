@@ -211,7 +211,7 @@ const PublicCartEdit = () => {
 
   return (
     <CommonLayout title='公開カートの編集'>
-      <Col xs={24} sm={24} md={24} lg={24} style={{ backgroundColor: 'orange', maxWidth: 600 }}>
+      <Col xs={24} sm={24} md={24} lg={24} style={{ maxWidth: 600 }}>
         {mainContent}
         <div 
           style={{ 

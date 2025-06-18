@@ -122,7 +122,7 @@ const PublicCartDetail = () => {
   return (
     <CommonLayout title='公開カート情報'>
       <>
-        <Col md={16} style={{ backgroundColor: 'orange' }}>
+        <Col md={16}>
           <div 
             style={{ 
               display: 'flex', 
@@ -202,7 +202,7 @@ const PublicCartDetail = () => {
 
         {/* 비로그인 사용자/열람자 회원/작성자 회원이고, loadPublicCartDetailDone true이고, 상세 정보가 있으면(1개 이상) */}
         { loadPublicCartDetailDone && publicCartDetail.Order.OrderDetails && publicCartDetail.Order.OrderDetails.length > 0 ? (
-          <Col md={8} style={{ backgroundColor: 'green' }}>
+          <Col md={8}>
             <PublicCartDetailSummary
               nickname={publicCartDetail.Member.nickname}
               orderCreatedAt={publicCartDetail.Order.created_at}
