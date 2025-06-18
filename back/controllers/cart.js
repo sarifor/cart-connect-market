@@ -37,7 +37,7 @@ const getModifiedCart = async (memberId) => {
 
     return modifiedCart;
   } catch (error) {
-    throw new Error(`장바구니 조회 실패: ${error}`);
+    throw new Error(`カート照会失敗: ${error}`);
   }
 };
 
@@ -46,7 +46,7 @@ const getCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인하고,
     if (!req.session.member) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 응답으로 장바구니 목록 반환
@@ -65,7 +65,7 @@ const addCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인하고,
     if (!req.session.member.member_id) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 클라이언트로부터 상품 ID와 수량 확보
@@ -85,7 +85,7 @@ const addCart = async (req, res, next) => {
 
     // 판매 중이 아니면 처리 중단하고, 
     if (!existingProduct) {
-      return res.status(401).send('구매할 수 없는 상품입니다.');
+      return res.status(401).send('購入できない商品です。');
     }
 
     // 판매 중이라면 장바구니 테이블에 저장
@@ -134,7 +134,7 @@ const decrementCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인하고,
     if (!req.session.member.member_id) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 클라이언트로부터 상품 ID와 수량 받음
@@ -154,7 +154,7 @@ const decrementCart = async (req, res, next) => {
 
     // 판매 중이 아니면 처리 중단 
     if (!existingProduct) {
-      return res.status(401).send('구매할 수 없는 상품입니다.');
+      return res.status(401).send('購入できない商品です。');
     }
 
     // 이미 담긴 상품인가 검증
@@ -205,7 +205,7 @@ const deleteCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인하고,
     if (!req.session.member.member_id) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 클라이언트로부터 상품 ID 확보
@@ -237,7 +237,7 @@ const copyCart = async (req, res, next) => {
     // 로그인한 회원인지 확인 
     if (!req.session.member.member_id) {
       await transaction.rollback();
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 클라이언트로부터 공개 장바구니 ID 확보
@@ -270,7 +270,7 @@ const copyCart = async (req, res, next) => {
     // 판매 중인 상품이 없으면 처리 중단
     if (!existingProducts) {
       await transaction.rollback();
-      return res.status(400).send('구매할 수 있는 상품이 없습니다.');
+      return res.status(400).send('購入可能な商品がありません。');
     }
 
     // 상품 ID, 수량 세트 배열 생성

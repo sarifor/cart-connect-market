@@ -45,69 +45,69 @@ const Cart = () => {
 
   useEffect(() => {
     if (cartItems) {
-      console.log("장바구니 최신 상태: ", cartItems);
+      console.log("カートの最新状態：", cartItems);
     }
   }, [cartItems]);
 
   useEffect(() => {
     if (addToCartLoading) {
-      setCartActionMessage(`1개 더 추가 중...`);
+      setCartActionMessage('1個追加中...');
     } 
     
     if (addToCartDone) {
-      setCartActionMessage("1개 더 추가 완료");
+      setCartActionMessage("1個追加しました。");
     } 
     
     if (addToCartError) {
-      setCartActionMessage(`1개 더 추가하기에 실패하였습니다: ${addToCartError}`);
+      setCartActionMessage('1個追加に失敗しました。');
     } 
     
     if (decrementCartLoading) {
-      setCartActionMessage("1개 제외 중...");
+      setCartActionMessage("1個削除中...");
     } 
     
     if (decrementCartDone) {
-      setCartActionMessage("1개 제외 완료");
+      setCartActionMessage("1個削除しました。");
     } 
     
     if (decrementCartError) {
-      setCartActionMessage(`1개 제외시키기에 실패하였습니다: ${decrementCartError}`)
+      setCartActionMessage('1個削除に失敗しました。')
     }
 
     if (deleteCartLoading) {
-      setCartActionMessage("상품 삭제 중...");
+      setCartActionMessage("商品を削除中...");
     } 
     
     if (deleteCartDone) {
-      setCartActionMessage("상품 삭제 완료");
+      setCartActionMessage("商品を削除しました。");
     } 
     
     if (deleteCartError) {
-      setCartActionMessage(`상품 삭제에 실패하였습니다: ${deleteCartError}`)
+      setCartActionMessage('商品の削除に失敗しました。')
     }    
   }, [addToCartLoading, addToCartDone, addToCartError, decrementCartLoading, decrementCartDone, decrementCartError, deleteCartLoading, deleteCartDone, deleteCartError]);
 
   // Q. 레이아웃 설정은 개별 컴포넌트에서 관리? (Col md={16}, div style={{ display: flex ... 등)
   if (!me) {
-    return <CommonLayout title="장바구니">
+    return <CommonLayout title="カート">
       <div style={{ width: "100%", backgroundColor: "pink" }}>
-        장바구니를 확인하려면 로그인을 해 주세요.
+        カートを確認するにはログインが必要です。
       </div>
     </CommonLayout>
   } else if (loadCartItemsLoading) {
-    return <CommonLayout title="장바구니">
+    return <CommonLayout title="カート">
       <div style={{ width: "100%", backgroundColor: "pink" }}>
-      장바구니 상세 정보 로딩 중...
+        カートの情報を読み込み中...
       </div>
     </CommonLayout>
   } else if (loadCartItemsDone && (cartItems.length === 0)) {
-    return <CommonLayout title="장바구니">
+    return <CommonLayout title="カート">
       <div style={{ width: "100%", backgroundColor: "pink" }}>
-      장바구니가 비어 있습니다.
+        カートは空です。
       </div>
     </CommonLayout>  
   } else if (loadCartItemsDone && cartItems) {
-    return <CommonLayout title="장바구니">
+    return <CommonLayout title="カート">
       <>
         <Col md={16} style={{ backgroundColor: "orange" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -129,9 +129,9 @@ const Cart = () => {
       </>
     </CommonLayout>    
   } else if (!loadCartItemsDone && loadCartItemsError) {
-    return <CommonLayout title="장바구니">
+    return <CommonLayout title="カート">
       <div style={{ width: "100%", backgroundColor: "pink" }}>
-        장바구니를 불러 오는 과정에서 에러가 발생하였습니다: {loadCartItemsError}
+        カートの読み込み中にエラーが発生しました。
       </div>
     </CommonLayout>    
   }

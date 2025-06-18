@@ -69,12 +69,12 @@ const NetworkView = () => {
           .map(node => ({
             ...node,            
             shape: node.id === `public-cart-${latestLikedNodeId}` ? 'star' : 'dot',
-            label: node.id === `public-cart-${latestLikedNodeId}` ? `${node.label}\n(あなたの最新「いいね」)` : node.label,
+            label: node.id === `public-cart-${latestLikedNodeId}` ? `${node.label}\n（直近の「いいね！」）` : node.label,
           }));
 
         // 노드가 없으면 초기화하지 않음
         if (validNodes.length === 0) {
-          console.log("유효한 노드가 없습니다");
+          console.log("有効なノードがありません。");
           return;
         } else {
           // 노드 ID 목록 생성
@@ -134,7 +134,7 @@ const NetworkView = () => {
           // 네트워크 인스턴스 생성
           const data = { nodes: validNodes, edges: validEdges };
           networkInstance.current = new Network(container.current, data, options);
-          console.log("networkInstance 생성됨");
+          console.log("networkInstanceが生成されました。");
 
           // 클릭 이벤트 추가
           networkInstance.current.on("click", (param) => {
@@ -150,7 +150,7 @@ const NetworkView = () => {
 
         }
       } catch (error) {
-        console.error("네트워크 생성 오류:", error);
+        console.error("ネットワークグラフ生成エラー：", error);
       }
     }
   }, [loadPublicCartsNetworkLoading, loadPublicCartsNetworkDone, publicCartsNetwork]);
@@ -158,11 +158,11 @@ const NetworkView = () => {
   return (
     <>
       {loadPublicCartsNetworkLoading && !loadPublicCartsNetworkDone ? (
-        <div>네트워크 그래프 로딩 중...</div>
+        <div>ネットワークグラフを読み込み中...</div>
       ) : !loadPublicCartsNetworkDone && loadPublicCartsNetworkError ? (
-        <div>네트워크 그래프를 불러올 수 없습니다.</div>
+        <div>ネットワークグラフを読み込めませんでした。</div>
       ) : loadPublicCartsNetworkDone && publicCartsNetwork && publicCartsNetwork.nodes.length === 0 ? (
-        <div>작성된 공개 장바구니가 없습니다.</div>
+        <div>投稿された公開カートはまだありません。</div>
       ) : loadPublicCartsNetworkDone && publicCartsNetwork && publicCartsNetwork.nodes.length > 0 ? (
         <div 
           ref={container} 

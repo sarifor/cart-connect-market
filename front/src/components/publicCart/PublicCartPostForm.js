@@ -29,7 +29,7 @@ const PublicCartPostForm = ({
         {/* 제목 작성란 */}
         <div style={{ display: 'flex', flexDirection: 'column', rowGap: '5px' }}>
           <div>
-            제목을 입력해 주세요.
+            タイトルを入力してください。
           </div>
           <Input style={{ width: '100%' }} type="text" value={title} onChange={handleTitleChange} />
         </div>
@@ -37,7 +37,7 @@ const PublicCartPostForm = ({
         {/* 내용 작성란 */}
         <div style={{ display: 'flex', flexDirection: 'column', rowGap: '5px' }}>
           <div>
-            내용을 입력해 주세요.
+            内容を入力してください。
           </div>
           <Input style={{ width: '100%' }} type="text" value={content} onChange={handleContentChange} />
         </div>
@@ -45,7 +45,7 @@ const PublicCartPostForm = ({
         {/* 주문 선택란 */}
         <div style={{ display: 'flex', flexDirection: 'column', rowGap: '5px' }}>
           <div>
-            공개하고 싶은 주문을 선택해 주세요. (이미 공개한 주문은 사용할 수 없습니다)
+            公開したい注文を選択してください。（すでに公開済みの注文は選択できません）
           </div>
           <Select
             value={selectedOrderId || undefined}
@@ -58,18 +58,18 @@ const PublicCartPostForm = ({
       </div>
 
       <div style={{ display: "flex", flexDirection: "row", padding: '10px', columnGap: "10px", marginTop: "16px" }}>
-        <Button style={{ width: '100px' }} onClick={handleGoBackClick}>돌아가기</Button>
-        <Button style={{ width: '100px' }} onClick={handlePostClick}>등록</Button>
+        <Button style={{ width: '100px' }} onClick={handleGoBackClick}>戻る</Button>
+        <Button style={{ width: '100px' }} onClick={handlePostClick}>投稿する</Button>
         <Modal
           open={isSuccessModalOpen}
           footer={[
             <Button key="ok" type="primary" onClick={handleSuccessOkClick}>
-              확인
+              確認
             </Button>
           ]}
           getContainer={false}
         >
-          공개 장바구니 등록이 완료되었습니다.
+          公開カートの投稿が完了しました。
         </Modal>        
       </div>
 

@@ -79,17 +79,17 @@ const CommonLayout = ({ title, children }) => {
       <Drawer onClose={onClose} open={open}>
         {me ? (
           <div style={{ display: "flex", flexDirection: "column", padding: "0px", rowGap: "15px" }}>
-            <div><Link href={`/member/${memberId}`}>마이페이지</Link></div>
-            <div><Link href={`/cart`}>장바구니</Link></div>
-            <div><Link href="/product/category">카테고리</Link></div>
-            <div><Link href="/public-cart">공개 장바구니</Link></div>
-            <div onClick={onLogout}>로그아웃 {logoutLoading && ("(Loading...)")} {logoutError && ("(실패)")}</div> 
+            <div><Link href={`/member/${memberId}`}>マイページ</Link></div>
+            <div><Link href={`/cart`}>カート</Link></div>
+            <div><Link href="/product/category">カテゴリー</Link></div>
+            <div><Link href="/public-cart">公開カート</Link></div>
+            <div onClick={onLogout}>ログアウト{logoutLoading && ("（ログアウト中...）")}{logoutError && ("（失敗）")}</div> 
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", padding: "0px", rowGap: "15px" }}>
-            <div><Link href="/auth/login">로그인</Link> / <Link href="/auth/signup">회원가입</Link></div>
-            <div><Link href="/product/category">카테고리</Link></div>
-            <div><Link href="/public-cart">공개 장바구니</Link></div>
+            <div><Link href="/auth/login">ログイン</Link> ／ <Link href="/auth/signup">会員登録</Link></div>
+            <div><Link href="/product/category">カテゴリー</Link></div>
+            <div><Link href="/public-cart">公開カート</Link></div>
           </div>
         )}
       </Drawer>
@@ -111,7 +111,7 @@ const CommonLayout = ({ title, children }) => {
       </Row>
 
       <Footer style={{ textAlign: 'center' }}>
-        ©2025 Sarifor. All rights reserved. [GitHub 링크] [Qiita 링크] [구글 폼 설문조사]
+        ©2025 Sarifor. All rights reserved. [GitHub] [Qiita] [ご意見をどうぞ！]
       </Footer>
     </div>
   )

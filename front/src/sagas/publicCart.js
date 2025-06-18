@@ -151,7 +151,7 @@ function* updatePublicCart(action) {
       yield put(updatePublicCartSuccess());
       return;
     } else {
-      throw new Error("공개 장바구니 수정에 실패하였습니다.");
+      throw new Error("公開カートの更新に失敗しました。");
     }
   } catch (error) {
     yield put(updatePublicCartFailure(

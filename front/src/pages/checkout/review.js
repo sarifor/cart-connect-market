@@ -48,31 +48,31 @@ const CheckoutReview = () => {
   const handleOrderClick = () => {
     // 배송 주소가 없다면
     if (!shippingAddresses[0]) {
-      alert("배송 주소가 없으므로 주문을 진행할 수 없습니다.");
+      alert("配送先住所が登録されていないため、注文を進めることができません。");
       return;
     }
 
     // 배송 날짜 선택이 없다면
     if (!selectedDeliveryDate) {
-      alert("배송 날짜 선택 값이 없으므로 주문을 진행할 수 없습니다.");
+      alert("配送希望日が選択されていないため、注文を進めることができません。");
       return;
     }
 
     // 배송 시간대 선택이 없다면
     if (!selectedDeliveryTime) {
-      alert("배송 시간대 선택 값이 없으므로 주문을 진행할 수 없습니다.");
+      alert("配送希望時間帯が選択されていないため、注文を進めることができません。");
       return;
     }
 
     // 결제 방법 선택이 없다면
     if (!selectedPayment) {
-      alert("결제 방법 선택값이 없으므로 주문을 진행할 수 없습니다.");
+      alert("お支払い方法が選択されていないため、注文を進めることができません。");
       return;
     }
 
     // 장바구니에 상품이 0개라면
     if (cartItems && cartItems.length === 0) {
-      alert("장바구니에 상품이 없으므로 주문을 진행할 수 없습니다.");
+      alert("カートに商品が入っていないため、注文を進めることができません。");
       return;
     }
 
@@ -81,7 +81,7 @@ const CheckoutReview = () => {
   };
 
   return (
-    <CommonLayout title="주문 확인">
+    <CommonLayout title="注文確認">
       <>
         <Col md={16} style={{ backgroundColor: "orange" }}>
           <div 
@@ -98,7 +98,7 @@ const CheckoutReview = () => {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ borderBottom: "1px solid black" }}>
                 <div style={{ fontWeight: "bold", padding: "10px" }}>
-                  배송 주소
+                  配送先住所
                 </div>
               </div>
 
@@ -120,7 +120,7 @@ const CheckoutReview = () => {
                     </>
                   ):(
                     <div>
-                      주소가 존재하지 않습니다.
+                      配送先住所が登録されていません。
                     </div>
                   )}
                 </div>
@@ -131,7 +131,7 @@ const CheckoutReview = () => {
             <div style={{ display: "flex", flexDirection: "column", marginTop: "16px" }}>
               <div style={{ borderBottom: "1px solid black" }}>
                 <div style={{ fontWeight: "bold", padding: "10px" }}>
-                  배송 일시
+                  配送日時
                 </div>
               </div>
 
@@ -142,7 +142,7 @@ const CheckoutReview = () => {
                   </div>
                 ) : (
                   <div>
-                    배송 날짜 선택 값이 존재하지 않습니다.
+                    配送希望日が選択されていません。
                   </div>
                 )}
 
@@ -152,7 +152,7 @@ const CheckoutReview = () => {
                   </div>
                 ) : (
                   <div>
-                    배송 시간대 선택 값이 존재하지 않습니다.
+                    配送希望時間帯が選択されていません。
                   </div>
                 )}
               </div>
@@ -162,19 +162,19 @@ const CheckoutReview = () => {
             <div style={{ display: "flex", flexDirection: "column", marginTop: "16px" }}>
               <div style={{ borderBottom: "1px solid black" }}>
                 <div style={{ fontWeight: "bold", padding: "10px" }}>
-                  주문 상품
+                  注文商品
                 </div>
               </div>
 
               {(loadCartItemsLoading && !loadCartItemsDone) && (
                 <div style={{ padding: "10px" }}>
-                  장바구니 상세 정보 로딩 중...
+                  カートの情報を読み込み中...
                 </div>                
               )}
 
               {(loadCartItemsDone && (cartItems.length === 0)) && (
                 <div style={{ padding: "10px" }}>
-                  장바구니가 비어 있습니다.
+                  カートが空です。
                 </div>                
               )}
 
@@ -186,7 +186,7 @@ const CheckoutReview = () => {
 
               {(!loadCartItemsDone && loadCartItemsError) && (
                 <div style={{ padding: "10px" }}>
-                  장바구니를 불러 오는 과정에서 에러가 발생하였습니다: {loadCartItemsError}
+                  カート情報の取得中にエラーが発生しました。
                 </div>
               )}
             </div>
@@ -195,7 +195,7 @@ const CheckoutReview = () => {
             <div style={{ display: "flex", flexDirection: "column", marginTop: "16px" }}>
               <div style={{ borderBottom: "1px solid black" }}>
                 <div style={{ fontWeight: "bold", padding: "10px" }}>
-                  결제 방법
+                  お支払い方法
                 </div>
               </div>
 
@@ -206,7 +206,7 @@ const CheckoutReview = () => {
                   </div>
                 ) : (
                   <div>
-                    결제 방법 선택값이 존재하지 않습니다.
+                    お支払い方法が選択されていません。
                   </div>
                 )}
               </div>

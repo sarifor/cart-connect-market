@@ -118,11 +118,11 @@ const CategoryProductList = () => {
   };
 
   return (
-    <CommonLayout title="카테고리">
+    <CommonLayout title="カテゴリー">
       <Col md={6}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           {loadCategoriesLoading && (
-            <div>Categories Loading...</div>
+            <div>カテゴリーを読み込み中...</div>
           )}
           {loadCategoriesDone && (
             <div style={{ display: "flex", flexDirection: "column" }}>
@@ -171,7 +171,7 @@ const CategoryProductList = () => {
             </div>
           )}
           {loadCategoriesError && (
-            <div>카테고리 데이터를 불러올 수 없습니다: {loadCategoriesError}</div>
+            <div>カテゴリーデータを読み込めませんでした。</div>
           )}
         </div>      
       </Col>      

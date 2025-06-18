@@ -57,7 +57,7 @@ const EmailSignup = () => {
   };
 
   return (
-    <CommonLayout title="이메일로 회원 가입">
+    <CommonLayout title="メールアドレスで会員登録">
       <div style={{ display: "flex", flexDirection: "column" }}>
         <Form
           // {...formItemLayout} 
@@ -75,11 +75,11 @@ const EmailSignup = () => {
             rules={[
               {
                 type: 'email',
-                message: '유효한 이메일 형식이 아닙니다. 다시 입력해 주세요.'
+                message: '有効なメールアドレスの形式ではありません。もう一度入力してください。'
               },
               {
                 required: true,
-                message: '이메일을 입력해 주세요.'
+                message: 'メールアドレスを入力してください。'
               },
             ]}>
             <Input onChange={ (event) => setEmail(event.target.value) } />
@@ -91,7 +91,7 @@ const EmailSignup = () => {
             rules={[
               {
                 required: true,
-                message: '입력 필수입니다.'
+                message: '必須項目です。'
               },
             ]}          
           >
@@ -104,7 +104,7 @@ const EmailSignup = () => {
             rules={[
               {
                 required: true,
-                message: '입력 필수입니다.'
+                message: '必須項目です。'
               },
             ]}
           >
@@ -117,7 +117,7 @@ const EmailSignup = () => {
             rules={[
               {
                 required: true,
-                message: '입력 필수입니다.'
+                message: '必須項目です。'
               },
             ]}
           >
@@ -130,7 +130,7 @@ const EmailSignup = () => {
             rules={[
               {
                 required: true,
-                message: '비밀번호를 입력해 주세요.'
+                message: 'パスワードを入力してください。'
               },
             ]}
           >
@@ -143,14 +143,14 @@ const EmailSignup = () => {
             rules={[
               {
                 required: true,
-                message: '입력 필수입니다.'
+                message: '必須項目です。'
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'));
+                  return Promise.reject(new Error('パスワードが一致しません。もう一度入力してください。'));
                 },
               }),
             ]}
@@ -158,15 +158,15 @@ const EmailSignup = () => {
             <Input.Password />
           </Form.Item>
 
-          <div>---- 배송지 정보 ----</div>
+          <div>---- 配送先情報 ----</div>
   
           <Form.Item 
             name="receiver" 
-            label="받는 사람"
+            label="受取人"
             rules={[
               {
                 required: true,
-                message: '입력 필수입니다.'
+                message: '必須項目です。'
               },
             ]}
           >
@@ -175,11 +175,11 @@ const EmailSignup = () => {
 
           <Form.Item 
             name="postalnumber" 
-            label="우편번호"
+            label="郵便番号"
             rules={[
               {
                 required: true,
-                message: '입력 필수입니다.'
+                message: '必須項目です。'
               },
             ]}
           >
@@ -188,11 +188,11 @@ const EmailSignup = () => {
 
           <Form.Item 
             name="address" 
-            label="주소"
+            label="住所"
             rules={[
               {
                 required: true,
-                message: '입력 필수입니다.'
+                message: '必須項目です。'
               },
             ]}
           >
@@ -208,27 +208,27 @@ const EmailSignup = () => {
                   if (value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('회원 가입 하시려면 동의는 필수입니다.'));
+                  return Promise.reject(new Error('会員登録には同意が必要です。'));
                 },
               },
             ]} 
           >
             <Checkbox>
-              상품 구매 및 배송을 위한 필수 정보 제공에 동의합니다.
+              商品購入および配送に必要な情報の提供に同意します。
             </Checkbox>
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Sign up
+              会員登録する
             </Button>
           </Form.Item>
         </Form>
         { signupLoading && (
-          <div>회원 가입 중...</div>
+          <div>処理中...</div>
         )}
         { signupError && (
-          <div>회원 가입에 실패하였습니다: {signupError}</div>
+          <div>会員登録に失敗しました。</div>
         )}        
       </div>
     </CommonLayout>

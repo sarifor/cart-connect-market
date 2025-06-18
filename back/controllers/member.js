@@ -38,11 +38,11 @@ const login = async (req, res, next) => {
     });
 
     if (!member) {
-      return res.status(401).json("회원이 존재하지 않습니다.");
+      return res.status(401).json("会員が存在しません。");
     }
 
     if (reqPassword !== member.password) {
-      return res.status(401).json("비밀번호가 일치하지 않습니다.");
+      return res.status(401).json("パスワードが一致しません。");
     }
 
     const memberId = member.member_id;
@@ -70,8 +70,8 @@ const me = async (req, res, next) => {
 const logout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {
-      console.error("세션 삭제 실패: ", err);
-      return res.status(500).json({ message: "Failed to destroy session" });
+      console.error("セッション削除失敗：", err);
+      return res.status(500).json({ message: "セッション削除に失敗しました。" });
     }
 
     if (process.env.NODE_ENV === 'production') {
@@ -117,7 +117,7 @@ const signup = async (req, res, next) => {
     });
 
     if (existingEmail) {
-      return res.status(409).json("이미 가입한 회원입니다.");
+      return res.status(409).json("すでに会員登録済みです。");
     }
 
     const existingNickname = await Member.findOne({
@@ -127,7 +127,7 @@ const signup = async (req, res, next) => {
     });
 
     if (existingNickname) {
-      return res.status(409).json("이미 있는 닉네임입니다. 다른 닉네임을 써 주세요.");
+      return res.status(409).json("このニックネームは既に使用されています。別のニックネームを試してください。");
     }
 
     // 비밀번호 해싱
@@ -161,7 +161,7 @@ const signup = async (req, res, next) => {
     
     return res.status(201).json(savedMember);
   } catch (error) {
-    return res.status(500).json(`회원 가입에 실패하였습니다: ${error}`);
+    return res.status(500).json('会員登録に失敗しました。');
   }
 };
 

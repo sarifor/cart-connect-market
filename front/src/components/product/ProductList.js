@@ -12,12 +12,12 @@ const ProductList = (props) => {
     <Col md={18}>
       {!levelSelected && (
         <Row>
-          카테고리를 선택하세요.
+          カテゴリーを選択してください。
         </Row>
       )}
       {loadProductsLoading && (
         <Row>
-          Products Loading...
+          商品を読み込み中...
         </Row>
       )}
       {loadProductsDone && (
@@ -42,12 +42,12 @@ const ProductList = (props) => {
       )}
       {(products && products.length === 0) && (
         <Row>
-          해당하는 상품이 없습니다.
+          該当する商品がありません。
         </Row>
       )}
       {loadProductsError && (
         <Row>
-          상품을 불러올 수 없습니다: {loadProductsError}
+          商品を読み込めませんでした。
         </Row>
       )}      
     </Col>

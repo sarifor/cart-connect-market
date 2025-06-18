@@ -46,7 +46,7 @@ const OrderDetail = () => {
   };
 
   return (
-    <CommonLayout title="주문 상세 정보">
+    <CommonLayout title="注文情報">
       <>
         <Col md={16} style={{ backgroundColor: "orange" }}>
           <div 
@@ -64,11 +64,11 @@ const OrderDetail = () => {
             { !me ? (
               <>
                 <div style={{ padding: "10px" }}>
-                  로그인을 해 주세요.
+                  ログインしてください。
                 </div>
                 <div style={{ padding: "10px" }}>
                   <Button type="primary" style={{ width: '100px' }} onClick={handleHomeClick} >
-                    홈 화면으로 돌아가기
+                    ホーム画面に戻る
                   </Button>
                 </div>
               </>
@@ -76,18 +76,18 @@ const OrderDetail = () => {
             // 회원이고, 데이터는 로딩 중이고, 아직 도착하지 않았다면,
             ) : loadOrderDetailLoading && !loadOrderDetailDone ? (
               <div style={{ padding: "10px" }}>
-                주문 상세 정보 로딩 중...
+                注文情報を読み込み中...
               </div>
 
             // 회원이고, 데이터는 아직 도착하지 않았고, 에러가 났다면,
             ) : !loadOrderDetailDone && loadOrderDetailError ? (
               <>
                 <div style={{ padding: "10px" }}>
-                  주문 상세 정보가 존재하지 않거나 불러올 수 없습니다.
+                  注文情報が存在しないか、読み込めませんでした。
                 </div>
                 <div style={{ padding: "10px" }}>
                   <Button type="primary" style={{ width: '100px' }} onClick={handleOrderHistoryClick} >
-                    목록으로
+                    一覧へ戻る
                   </Button>
                 </div>
               </>
@@ -96,11 +96,11 @@ const OrderDetail = () => {
             ) : loadOrderDetailDone && orderDetail.OrderDetails && orderDetail.OrderDetails.length === 0 ? (
               <>
                 <div style={{ padding: "10px" }}>
-                  주문 상세 정보가 존재하지 않습니다.
+                  注文情報が存在しません。
                 </div>
                 <div style={{ padding: "10px" }}>
                   <Button type="primary" style={{ width: '100px' }} onClick={handleOrderHistoryClick} >
-                    목록으로
+                    一覧へ戻る
                   </Button>
                 </div>
               </>

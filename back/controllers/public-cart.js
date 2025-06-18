@@ -185,7 +185,7 @@ const getPublicCartDetail = async (req, res, next) => {
     });
 
     if (!publicCartDetail) {
-      return res.status(404).send('공개 장바구니 정보를 찾을 수 없습니다.');
+      return res.status(404).send('公開カート情報が見つかりません。');
     }
 
     // JSON 가공
@@ -232,7 +232,7 @@ const postPublicCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인
     if (!req.session.member) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 클라이언트가 보낸 데이터 확인
@@ -257,7 +257,7 @@ const postPublicCart = async (req, res, next) => {
     if (!result || !result.OrderDetails || result.OrderDetails.length === 0) {
       await transaction.rollback();
 
-      return res.status(400).send("주문 생성에 필요한 조건이 갖춰지지 않았습니다. 처음부터 다시 시도해 주세요.");
+      return res.status(400).send("公開カートの投稿に必要な条件が揃っていません。最初からやり直してください。");
     } else {
       // 공개 장바구니 생성
       await PublicCart.create({
@@ -274,12 +274,12 @@ const postPublicCart = async (req, res, next) => {
       await transaction.commit();
       
       // 응답
-      return res.status(201).send("공개 장바구니가 생성되었습니다.");
+      return res.status(201).send("公開カートが投稿されました。");
 
     }
   } catch (error) {
     await transaction.rollback();
-    console.error("postPublicCart 에러: ", error);
+    console.error("postPublicCartエラー：", error);
     return res.status(500).send(error);
   }
 };
@@ -291,7 +291,7 @@ const updatePublicCart = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인
     if (!req.session.member) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 클라이언트가 보낸 데이터 확인
@@ -299,11 +299,11 @@ const updatePublicCart = async (req, res, next) => {
 
     // 유효성 검사
     if (!title || !content) {
-      return res.status(400).send("제목과 본문을 모두 입력해 주세요.");
+      return res.status(400).send("タイトルと本文の両方を入力してください。");
     }
 
     if ([...title].length > 20 || [...content].length > 50) {
-      return res.status(400).send("제목은 20자 이내로, 본문은 50자 이내로 써 주세요.");
+      return res.status(400).send("タイトルは20文字以内、本文は50文字以内で入力してください。");
     }
 
     // 공개 장바구니 조회
@@ -321,7 +321,7 @@ const updatePublicCart = async (req, res, next) => {
     if (!result || !result.public_cart_id) {
       await transaction.rollback();
 
-      return res.status(400).send("공개장바구니 데이터가 존재하지 않습니다.")
+      return res.status(400).send("公開カートのデータが存在しません。")
     } else {
       // 공개 장바구니 업데이트      
       await PublicCart.update(
@@ -342,14 +342,14 @@ const updatePublicCart = async (req, res, next) => {
       await transaction.commit();
       
       // 응답
-      return res.status(200).send("공개 장바구니가 수정되었습니다.");
+      return res.status(200).send("公開カートが更新されました。");
     }
   } catch (error) {
     await transaction.rollback();
 
-    console.error("updatePublicCart 에러: ", error);
+    console.error("updatePublicCartエラー：", error);
     
-    return res.status(500).send("서버 오류가 발생하였습니다.");
+    return res.status(500).send("サーバエラーが発生しました。");
   }
 };
 

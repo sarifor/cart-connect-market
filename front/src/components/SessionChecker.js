@@ -21,7 +21,7 @@ const SessionChecker = () => {
       if (res.status === 200 && res.data) {
         const sessionObj = {
           ...res.data,
-          justCheck: "서버에서 가져온 세션 객체!"
+          justCheck: "サーバからのセッションオブジェクト！"
         };
 
         dispatch(loginSuccess(sessionObj));

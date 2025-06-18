@@ -4,19 +4,19 @@ const OrderDetailSummary = ({ itemQuantityTotal, itemPriceTotal, tax, shippingFe
   return (
     <div style={{ display: "flex", flexDirection: "column", padding: "20px", rowGap: "5px" }}>
       <div style ={{ fontWeight: "bold", borderBottom: "1px solid black" }}>
-        주문 내용: {itemQuantityTotal}개
+        注文内容：{itemQuantityTotal}個
       </div>
-      <div>상품 합계: {itemPriceTotal}엔</div>
-      <div>송료: {shippingFee}엔</div>
+      <div>商品合計：{itemPriceTotal}円</div>
+      <div>送料：{shippingFee}円</div>
 
       <div style ={{ fontWeight: "bold", borderBottom: "1px solid black", marginTop: "16px" }}>
-        합계: {finalTotal}엔
+        合計：{finalTotal}円
       </div>
-      <div>그 중 세금: {tax}엔</div>
-      <div>지불 방법: {payment}</div>
+      <div>うち消費税：{tax}円</div>
+      <div>お支払い方法：{payment}</div>
 
       <div style ={{ marginTop: "16px" }}>
-        <Button type="primary" onClick={handleOrderHistoryClick}>목록으로</Button>
+        <Button type="primary" onClick={handleOrderHistoryClick}>一覧に戻る</Button>
       </div>
     </div>
   )

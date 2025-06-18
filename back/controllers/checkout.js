@@ -9,7 +9,7 @@ const createOrder = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인
     if (!req.session.member) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 클라이언트가 보낸 데이터 확인
@@ -22,13 +22,13 @@ const createOrder = async (req, res, next) => {
 
     let selectedPaymentNumber;
 
-    if (selectedPayment === '신용카드') {
+    if (selectedPayment === 'クレジットカード') {
       selectedPaymentNumber = 1;
     } else if (selectedPayment === '代引き') {
       selectedPaymentNumber = 2;
-    } else if (selectedPayment === '프로모션 코드') {
+    } else if (selectedPayment === 'プロモーションコード') {
       selectedPaymentNumber = 3;
-    } else if (selectedPayment === '쿠폰') {
+    } else if (selectedPayment === 'クーポン') {
       selectedPaymentNumber = 4;
     }
 
@@ -98,21 +98,21 @@ const createOrder = async (req, res, next) => {
       await transaction.commit();
 
       // 응답
-      return res.status(201).send("주문이 생성되었습니다");      
+      return res.status(201).send("注文が作成されました。");      
     } else {
       await transaction.rollback();
-      console.error("주문 생성에 필요한 조건이 갖춰지지 않았습니다.", {
+      console.error("注文作成に必要な条件が満たされていません。", {
         cartLength: cartItems?.length,
         shippingAddress,
         selectedDeliveryDate,
         selectedDeliveryTime,
         selectedPaymentNumber,
       });
-      return res.status(400).send("주문 생성에 필요한 조건이 갖춰지지 않았습니다. 처음부터 다시 시도해 주세요.");
+      return res.status(400).send("注文作成に必要な条件が満たされていません。最初からやり直してください。");
     }
   } catch (error) {
     await transaction.rollback();
-    console.error("createOrder 에러: ", error);
+    console.error("createOrderエラー: ", error);
     return res.status(500).send(error);
   }
 };
@@ -121,7 +121,7 @@ const getShippingAddress = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인하고,
     if (!req.session.member) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 응답으로 배송처 목록 반환

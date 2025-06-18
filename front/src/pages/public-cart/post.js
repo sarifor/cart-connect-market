@@ -86,7 +86,7 @@ const PublicCartPost = () => {
 
   const handlePostClick = () => {
     if (!title || !content || !selectedOrderId) {
-      alert("공개하려는 주문을 선택하고, 제목과 내용을 입력해 주세요.\n아직 주문 내역이 없다면 먼저 주문을 진행해 주세요.");
+      alert("公開したい注文を選択し、タイトルと内容を入力してください。\nまだ注文履歴がない場合は、先に注文を行ってください。");
 
       return;
     } else {
@@ -107,23 +107,23 @@ const PublicCartPost = () => {
 
   if (!me) {
     mainContent = <div style={{ padding: "30px" }}>
-      <div>로그인을 해 주세요.</div>
-      <div style={{ marginTop: '10px' }}>2초 뒤 로그인 화면으로 이동합니다.</div>
+      <div>ログインしてください。</div>
+      <div style={{ marginTop: '10px' }}>2秒後にログイン画面へ移動します。</div>
     </div> 
   } else {
     if (loadOrdersForPublicCartLoading && !loadOrdersForPublicCartDone) {
       mainContent = <div style={{ padding: "30px" }}>
-        주문 이력 로딩 중...
+        注文履歴を読み込み中...
       </div>
     } else if (!loadOrdersForPublicCartDone && loadOrdersForPublicCartError) {
       mainContent = <div style={{ padding: "30px" }}>
-        <div>주문 이력을 불러올 수 없습니다.</div>
-        <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>돌아가기</Button></div>
+        <div>注文履歴を取得できませんでした。</div>
+        <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>戻る</Button></div>
       </div>
     } else if (loadOrdersForPublicCartDone && ordersForPublicCart.length === 0) {
       mainContent = <div style={{ padding: "30px" }}>
-        <div>주문 이력이 존재하지 않습니다.</div>
-        <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>돌아가기</Button></div>
+        <div>注文履歴が存在しません。</div>
+        <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>戻る</Button></div>
       </div>
     } else if (loadOrdersForPublicCartDone && ordersForPublicCart.length > 0) {
       mainContent = <PublicCartPostForm 
@@ -145,15 +145,15 @@ const PublicCartPost = () => {
   let postStatusMessage;
 
   if (postPublicCartLoading && !postPublicCartDone) {
-    postStatusMessage = '전송 중...';
+    postStatusMessage = '投稿中...';
   } else if (!postPublicCartDone && postPublicCartError) {
-    postStatusMessage = '전송 중 오류가 발생하였습니다.';
+    postStatusMessage = '投稿中にエラーが発生しました。';
   } else if (postPublicCartDone) {
     postStatusMessage = '';
   }
 
   return (
-    <CommonLayout title='공개 장바구니 작성'>
+    <CommonLayout title='公開カート投稿'>
       <Col xs={24} sm={24} md={24} lg={24} style={{ backgroundColor: 'orange', maxWidth: 600 }}>
         {mainContent}
         <div 

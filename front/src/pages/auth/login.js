@@ -28,7 +28,7 @@ const Login = () => {
   };
 
   return (
-    <CommonLayout title="로그인">
+    <CommonLayout title="ログイン">
       <div style={{ display: "flex", flexDirection: "column" }}>
         <Form name="loginform" onFinish={onSubmitForm}>
           <Form.Item 
@@ -36,10 +36,10 @@ const Login = () => {
             name="email" 
             rules={[{
               required: true,
-              message: 'Please input your email!',
+              message: 'メールアドレスを入力してください。',
             }]}
           >
-            <Input placeholder="이메일" onChange={ (event) => setEmail(event.target.value) } />
+            <Input placeholder="メールアドレス" onChange={ (event) => setEmail(event.target.value) } />
           </Form.Item>
 
           <Form.Item
@@ -47,26 +47,26 @@ const Login = () => {
             name="password"
             rules={[{
               required: true,
-              message: 'Please input your password!',
+              message: 'パスワードを入力してください。',
             }]}
           >
-            <Input.Password placeholder="패스워드" onChange={ (event) => setPassword(event.target.value) } />
+            <Input.Password placeholder="パスワード" onChange={ (event) => setPassword(event.target.value) } />
           </Form.Item>
           
           <Form.Item label={null}>
             <Button type="primary" htmlType="submit">
-              로그인
+              ログイン
             </Button>
           </Form.Item>
         </Form>
         <div style={{ marginTop: "30px" }}>
-          아직 회원이 아니신가요? <Link href="/auth/signup" style={{ color: "skyblue" }}>회원 가입</Link>
+          まだ会員登録がお済みでない方は、<Link href="/auth/signup" style={{ color: "skyblue" }}>こちらから登録してください。</Link>
         </div>
         { loginLoading && (
-          <div>로그인 중...</div>
+          <div>ログイン処理中...</div>
         )}
         { loginError && (
-          <div>로그인에 실패하였습니다: {loginError}</div>
+          <div>ログインに失敗しました。</div>
         )}
       </div>
     </CommonLayout>

@@ -55,13 +55,13 @@ const ProductDetail = () => {
 
   useEffect(() => {
     if (cartItems) {
-      console.log("장바구니 최신 상태: ", cartItems);
+      console.log("カートの最新状態：", cartItems);
     }
   }, [cartItems]);
 
   const handleAddClick = () => {
     if (!me) {
-      setCartActionMessage("로그인이 필요합니다. 로그인 후 이용해 주세요.");
+      setCartActionMessage("ログインが必要です。ログインしてからご利用ください。");
     } else {
       dispatch({
         type: addToCartRequest.type,
@@ -75,44 +75,44 @@ const ProductDetail = () => {
 
   useEffect(() => {
     if (addToCartLoading) {
-      setCartActionMessage("장바구니에 담는 중...");
+      setCartActionMessage("カートに追加中...");
     } else if (addToCartDone) {
-      setCartActionMessage("장바구니에 담겼습니다.");
+      setCartActionMessage("カートに追加しました。");
     } else if (addToCartError) {
-      setCartActionMessage(`장바구니 담기에 실패하였습니다: ${addToCartError}`);
+      setCartActionMessage("カートへの追加に失敗しました。");
     }
   }, [addToCartLoading, addToCartDone, addToCartError]);
 
   if (!me) {
-    cartStatusMessage = "장바구니에 담겼는지 여부를 확인하려면 로그인을 해 주세요.";
+    cartStatusMessage = "カートへの追加状況を確認するには、ログインしてください。";
   } else {
     if (loadCartItemsLoading) {
-      cartStatusMessage = "장바구니에 담겼는지 여부를 확인 중입니다.";    
+      cartStatusMessage = "カートへの追加状況を確認中...";    
     } else if (loadCartItemsDone && cartItems && cartItems.length === 0) {
-      cartStatusMessage = "장바구니는 비어 있습니다.";     
+      cartStatusMessage = "カートは空です。";     
     } else if (loadCartItemsDone && cartItems && !cartItems.some(item => Number(item.product_id) === Number(productId))) {
-      cartStatusMessage = "장바구니에 담긴 적이 없는 상품입니다.";
+      cartStatusMessage = "この商品はまだカートに追加されていません。";
     } else if (loadCartItemsDone && cartItems && cartItems.some(item => Number(item.product_id) === Number(productId))) {
-      cartStatusMessage = "장바구니에 이미 담긴 상품입니다.";
+      cartStatusMessage = "この商品はすでにカートに追加されています。";
     } else if (loadCartItemsError) {
-      cartStatusMessage = "장바구니에 담겼는지 확인하는 과정에서 에러가 발생하였습니다.";
+      cartStatusMessage = "カートの確認中にエラーが発生しました。";
     }
   }
 
   if (loadProductDetailLoading) {
-    return <CommonLayout title="상품 상세">
-      <div>Product Detail Loading...</div>
+    return <CommonLayout title="商品情報">
+      <div>商品情報を読み込み中...</div>
     </CommonLayout>
   } else if (loadProductDetailDone && (productDetail === null)) {
-    return <CommonLayout title="상품 상세">
-      <div>상품 정보가 없습니다.</div>
+    return <CommonLayout title="商品情報">
+      <div>商品情報が存在しません。</div>
     </CommonLayout>    
   } else if (loadProductDetailDone && (productDetail.status === 0)) {
-    return <CommonLayout title="상품 상세">
-      <div>상품이 판매 중지 상태입니다.</div>
+    return <CommonLayout title="商品情報">
+      <div>この商品は販売停止中です。</div>
     </CommonLayout>        
   } else if (loadProductDetailDone && productDetail) {
-    return <CommonLayout title="상품 상세">
+    return <CommonLayout title="商品情報">
       <>
         <Col md={16} style={{ backgroundColor: "orange" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -134,14 +134,14 @@ const ProductDetail = () => {
         <Col md={8} style={{ backgroundColor: "green" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div>{productDetail.product_name}</div>
-            <div>{productDetail.price}엔</div>
-            <div>{productDetail.stock}개 남음</div>
-            <div>상태: {productDetail.status === 0 ? "판매 중지" : "판매 중"}</div>
+            <div>{productDetail.price}円</div>
+            <div>残り{productDetail.stock}個</div>
+            <div>状態：{productDetail.status === 0 ? "販売停止中" : "販売中"}</div>
             <div>
               <Button onClick={() => setQuantity(quantity - 1)} disabled={quantity <= 1}>-</Button>
                 {quantity}
               <Button onClick={() => setQuantity(quantity + 1)} disabled={quantity >= productDetail.stock}>+</Button><br/>
-              <Button type="primary" onClick={handleAddClick}>장바구니 담기</Button>
+              <Button type="primary" onClick={handleAddClick}>カートに追加</Button>
             </div>
             { cartStatusMessage && (
               <div>
@@ -158,8 +158,8 @@ const ProductDetail = () => {
       </>
     </CommonLayout>     
   } else if (!loadProductDetailDone && loadProductDetailError) {
-    return <CommonLayout title="상품 상세">
-      <div>상품 정보를 불러올 수 없습니다: {loadProductDetailError}</div>
+    return <CommonLayout title="商品情報">
+      <div>商品情報を読み込めませんでした。</div>
     </CommonLayout>       
   }
 };

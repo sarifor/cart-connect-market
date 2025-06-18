@@ -58,7 +58,7 @@ const OrderHistory = () => {
   }, {});
   
   return (
-    <CommonLayout title="주문 이력">
+    <CommonLayout title="注文履歴">
       <Col md={16} style={{ backgroundColor: "orange" }}>
         <div 
           style={{ 
@@ -72,21 +72,21 @@ const OrderHistory = () => {
 
           {/* 비로그인 사용자면 */}
           { !me ? (
-            <div style={{ padding: "10px" }}>로그인을 해 주세요.</div>
+            <div style={{ padding: "10px" }}>ログインしてください。</div>
 
           // 회원이고, loadOrdersLoading true, loadOrdersDone false면,
           ) : loadOrdersLoading && !loadOrdersDone ? (
-            <div style={{ padding: "10px" }}>주문 이력 로딩 중...</div>
+            <div style={{ padding: "10px" }}>注文履歴を読み込み中...</div>
 
           // 회원이고, loadOrdersDone false이고, loadOrdersError면
           ) : !loadOrdersDone && loadOrdersError ? (
             <>
               <div style={{ padding: "10px" }}>
-                주문 이력을 불러올 수 없습니다.
+                注文履歴を読み込めませんでした。
               </div>
               <div style={{ padding: "10px" }}>
                 <Button type="primary" style={{ width: '100px' }} onClick={handleGoBackClick} >
-                  돌아가기
+                  戻る
                 </Button>
               </div>
             </>
@@ -95,11 +95,11 @@ const OrderHistory = () => {
           ) : loadOrdersDone && orders && orders.length === 0 ? (
             <>
               <div style={{ padding: "10px" }}>
-                주문 이력이 없습니다.
+                注文履歴がありません。
               </div>
               <div style={{ padding: "10px" }}>
                 <Button type="primary" style={{ width: '100px' }} onClick={handleGoBackClick} >
-                  돌아가기
+                  戻る
                 </Button>
               </div>
             </>
@@ -128,7 +128,7 @@ const OrderHistory = () => {
 
               <div style={{ padding: "10px" }}>
                 <Button type="primary" style={{ width: '100px' }} onClick={handleGoBackClick} >
-                  돌아가기
+                  戻る
                 </Button>
               </div>
             </>

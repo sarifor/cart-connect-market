@@ -13,7 +13,7 @@ const getOrders = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인
     if (!req.session.member) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 로그인한 회원의 모든 주문 조회 (+ 주문 상세, 상품 정보, 상품 이미지 정보)
@@ -61,7 +61,7 @@ const getOrderDetail = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인
     if (!req.session.member) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 클라이언트로부터 받은 주문 ID 확인
@@ -87,7 +87,7 @@ const getOrderDetail = async (req, res, next) => {
     });
 
     if (!orderDetail) {
-      return res.status(404).send('주문 상세 정보를 찾을 수 없습니다.');
+      return res.status(404).send('注文情報が見つかりません。');
     }
 
     // JSON 가공
@@ -104,13 +104,13 @@ const getOrderDetail = async (req, res, next) => {
 
     // 지불 방법 수정
     const paymentMap = {
-      1: '신용카드',
+      1: 'クレジットカード',
       2: '代引き',
-      3: '프로모션 코드',
-      4: '쿠폰',
+      3: 'プロモーションコード',
+      4: 'クーポン',
     };
 
-    orderDetailJson.payment = paymentMap[orderDetailJson.payment] || '알 수 없음';
+    orderDetailJson.payment = paymentMap[orderDetailJson.payment] || '不明';
 
     // 상품 총 개수, 상품 총 가격, 세금 계산
     const itemQuantityTotal = orderDetailJson.OrderDetails.reduce((acc, cur) => acc + cur.quantity, 0);
@@ -133,7 +133,7 @@ const getOrderSummary = async (req, res, next) => {
   try {
     // 로그인한 회원인지 확인
     if (!req.session.member) {
-      return res.status(401).send("로그인이 필요합니다.");
+      return res.status(401).send("ログインが必要です。");
     }
 
     // 로그인한 회원의 모든 주문 조회 (+ 주문 상세, 상품 정보, 공개 장바구니 정보)

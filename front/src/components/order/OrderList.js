@@ -22,22 +22,22 @@ const OrderList = ({ order }) => {
 
       <div style={{ display: "flex", flexDirection: "column", rowGap: "5px" }}>
         <div>
-          주문일: {new Date(order.created_at).toLocaleDateString('ja-JP', {
+          注文日：{new Date(order.created_at).toLocaleDateString('ja-JP', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
           })}
         </div>
-        <div>내용: {order.OrderDetails?.[0]?.Product?.product_name} {order.OrderDetails?.length > 1 && ("외")}</div>
-        <div>총액: {order.total}엔</div>
+        <div>内容：{order.OrderDetails?.[0]?.Product?.product_name} {order.OrderDetails?.length > 1 && ("他")}</div>
+        <div>合計：{order.total}円</div>
         
         <div>
-          상태: {
-            order.status === 0 ? "주문 취소" :
-            order.status === 1 ? "결제 완료" : 
-            order.status === 2 ? "배송 중" : 
-            order.status === 3 ? "배송 완료" :
-            "알 수 없음"
+          状態：{
+            order.status === 0 ? "キャンセル済み" :
+            order.status === 1 ? "決済済み" : 
+            order.status === 2 ? "配送中" : 
+            order.status === 3 ? "配送済み" :
+            "不明"
           }
         </div>
 

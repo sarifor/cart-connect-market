@@ -16,8 +16,8 @@ const ReviewItemList = ({ item }) => {
       <div style={{ display: "flex", flexDirection: "column", rowGap: "5px" }}>
         <div>{item.Product.product_name}</div>
         <div>{item.Product.description}</div>
-        <div>{item.Product.price}엔</div>
-        <div>{item.quantity}개</div>
+        <div>{item.Product.price}円</div>
+        <div>{item.quantity}個</div>
       </div>
 
     </div>    

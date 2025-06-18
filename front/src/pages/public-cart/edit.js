@@ -130,10 +130,10 @@ const PublicCartEdit = () => {
 
   const handleUpdateClick = () => {
     if (!title || !content) {
-      alert("제목과 내용을 모두 입력해 주세요.");
+      alert("タイトルと内容の両方を入力してください。");
       return;
     } else if ([...title].length > 20 || [...content].length > 50) {
-      alert("제목은 20자 이내로, 본문은 50자 이내로 작성해 주세요.");
+      alert("タイトルは20文字以内、本文は50文字以内で入力してください。");
       return;
     } else {
       dispatch({
@@ -155,31 +155,31 @@ const PublicCartEdit = () => {
 
   if (!me) {
     mainContent = <div style={{ padding: "30px" }}>
-      <div>로그인을 해 주세요.</div>
+      <div>ログインしてください。</div>
       <div style={{ display: "flex", flexDirection: "row", columnGap: "10px", marginTop: "10px" }}>
-        <Button style={{ width: '100px' }} onClick={handleGoBackClick}>돌아가기</Button>
-        <Button style={{ width: '100px' }} onClick={handleLoginClick}>로그인</Button>
+        <Button style={{ width: '100px' }} onClick={handleGoBackClick}>戻る</Button>
+        <Button style={{ width: '100px' }} onClick={handleLoginClick}>ログインする</Button>
       </div>      
     </div>
   } else if (me && publicCartDetail.member_id && me.member_id !== publicCartDetail.member_id) {
     mainContent = <div style={{ padding: "30px" }}>
-      <div>작성자 본인이 아니면 수정할 수 없습니다.</div>
-      <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>돌아가기</Button></div>
+      <div>投稿者ご本人でないと編集できません。</div>
+      <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>戻る</Button></div>
     </div>
   } else {
     if (loadPublicCartDetailLoading && !loadPublicCartDetailDone) {
       mainContent = <div style={{ padding: "30px" }}>
-        공개 장바구니 상세 정보 로딩 중...
+        公開カート情報を読み込み中...
       </div>
     } else if (!loadPublicCartDetailDone && loadPublicCartDetailError) {
       mainContent = <div style={{ padding: "30px" }}>
-        <div>공개 장바구니 상세 정보를 불러올 수 없습니다.</div>
-        <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>돌아가기</Button></div>
+        <div>公開カートの情報を取得できませんでした。</div>
+        <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>戻る</Button></div>
       </div>
     } else if (loadPublicCartDetailDone && publicCartDetail.Order.OrderDetails && publicCartDetail.Order.OrderDetails.length === 0) {
       mainContent = <div style={{ padding: "30px" }}>
-        <div>공개 장바구니 상세 정보가 존재하지 않습니다.</div>
-        <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>돌아가기</Button></div>
+        <div>公開カートの情報が存在しません。</div>
+        <div style={{ marginTop: '10px' }}><Button onClick={handleGoBackClick}>戻る</Button></div>
       </div>
     } else if (loadPublicCartDetailDone && publicCartDetail.Order.OrderDetails && publicCartDetail.Order.OrderDetails.length > 0) {
       mainContent = <PublicCartEditForm 
@@ -202,15 +202,15 @@ const PublicCartEdit = () => {
   let updateStatusMessage;
 
   if (updatePublicCartLoading && !updatePublicCartDone) {
-    updateStatusMessage = '전송 중...';
+    updateStatusMessage = '更新中...';
   } else if (!updatePublicCartDone && updatePublicCartError) {
-    updateStatusMessage = '전송 중 오류가 발생하였습니다.';
+    updateStatusMessage = '更新中にエラーが発生しました。';
   } else if (updatePublicCartDone) {
     updateStatusMessage = '';
   }
 
   return (
-    <CommonLayout title='공개 장바구니 수정'>
+    <CommonLayout title='公開カートの編集'>
       <Col xs={24} sm={24} md={24} lg={24} style={{ backgroundColor: 'orange', maxWidth: 600 }}>
         {mainContent}
         <div 

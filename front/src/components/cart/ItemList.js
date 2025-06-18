@@ -51,7 +51,7 @@ const ItemList = ({ item }) => {
       <div style={{ display: "flex", flexDirection: "column", rowGap: "5px" }}>
         <div>{item.Product.product_name}</div>
         <div>{item.Product.description}</div>
-        <div>{item.Product.price}엔</div>
+        <div>{item.Product.price}円</div>
 
         <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
           <Button onClick={handleDecrementClick}>-</Button>
@@ -62,7 +62,7 @@ const ItemList = ({ item }) => {
         </div>
 
         <div>
-          <Button type="primary" onClick={handleDeleteClick}>삭제</Button>
+          <Button type="primary" onClick={handleDeleteClick}>削除</Button>
         </div>
       </div>
 

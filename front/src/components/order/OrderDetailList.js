@@ -23,8 +23,8 @@ const OrderDetailList = ({ detail }) => {
 
       <div style={{ display: "flex", flexDirection: "column", rowGap: "5px" }}>
         <div>{detail.Product.product_name}</div>
-        <div>{detail.purchase_price}엔</div>
-        <div>{detail.quantity}개</div>
+        <div>{detail.purchase_price}円</div>
+        <div>{detail.quantity}個</div>
       </div>
 
     </div>

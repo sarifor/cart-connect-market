@@ -256,7 +256,7 @@ const Order = mysql.define(
     payment: {
       type: DataTypes.TINYINT,
       allowNull: false,
-      comment: '1: 신용카드, 2: 물건 수령 시 현금 결제, 3: 프로모션 코드, 4: 쿠폰',
+      comment: '１：クレジットカード、２：代引き、３：プロモーションコード、４：クーポン',
     },
     receiver: {
       type: DataTypes.STRING(20),
@@ -281,7 +281,7 @@ const Order = mysql.define(
     status: {
       type: DataTypes.TINYINT,
       allowNull: false,
-      comment: '0: 주문 취소, 1: 결제 완료, 2: 배송 중, 3: 배송 완료',
+      comment: '０：キャンセル済み、１：決済済み、２：配送中、３：配送済み',
     },
   }, 
   {

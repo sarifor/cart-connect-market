@@ -81,19 +81,19 @@ const PublicCartDetail = () => {
 
   const handleLikeClick = () => {
     if (!me) {
-      alert("'좋아요'를 누르려면 로그인을 해 주세요.");
+      alert("「いいね！」をつけるにはログインが必要です。");
     } else if (me && me.member_id === publicCartDetail.member_id) {
-      alert("본인 게시물에는 '좋아요'를 누를 수 없습니다.");
+      alert("自分の投稿には「いいね！」をつけられません。");
     } else {
-      alert("'좋아요' 기능 구현 예정");
+      alert("「いいね！」機能は準備中です。");
     }
   };
 
   const handleCopyClick = () => {
     if (!me) {
-      alert("복사 기능을 이용하려면 로그인을 해 주세요.");
+      alert("コピーをするにはログインが必要です。");
     } else if (me && me.member_id === publicCartDetail.member_id) {
-      alert("본인 게시물의 상품은 복사할 수 없습니다.");
+      alert("自分で投稿した商品はコピーできません。");
     } else {
       dispatch({
         type: copyCartRequest.type,
@@ -104,13 +104,13 @@ const PublicCartDetail = () => {
 
   const handleUpdateClick = () => {
     if (!me) {
-      alert('공개 장바구니를 수정하려면 로그인을 해 주세요.');
+      alert('公開カートを編集するにはログインが必要です。');
 
       router.push('/auth/login').then(() => {
         dispatch(resetPublicCartState());
       });
     } else if (me && me.member_id !== publicCartDetail.member_id) {
-      alert('작성자 본인이 아니면 수정할 수 없습니다.');
+      alert('投稿者ご本人のみ編集できます。');
       return;
     } else if (me && me.member_id === publicCartDetail.member_id) {
       router.push(`/public-cart/edit?id=${publicCartId}`).then(() => {
@@ -120,7 +120,7 @@ const PublicCartDetail = () => {
   };
 
   return (
-    <CommonLayout title='공개 장바구니 상세 정보'>
+    <CommonLayout title='公開カート情報'>
       <>
         <Col md={16} style={{ backgroundColor: 'orange' }}>
           <div 
@@ -135,18 +135,18 @@ const PublicCartDetail = () => {
             {/* 비로그인 사용자/열람자 회원/작성자 회원이고, loadPublicCartDetailLoading true, loadOrderDetailDone false면, */}
             { loadPublicCartDetailLoading && !loadPublicCartDetailDone ? (
               <div style={{ padding: "10px" }}>
-                공개 장바구니 상세 정보 로딩 중...
+                公開カート情報を読み込み中...
               </div>
 
             // 비로그인 사용자/열람자 회원/작성자 회원이고, loadPublicCartDetailDone false이고, loadPublicCartDetailError면,
             ) : !loadPublicCartDetailDone && loadPublicCartDetailError ? (
               <>
                 <div style={{ padding: "10px" }}>
-                  공개 장바구니 상세 정보가 존재하지 않거나 불러올 수 없습니다.
+                  公開カートの情報が存在しないか、読み込めませんでした。
                 </div>
                 <div style={{ padding: "10px" }}>
                   <Button type="primary" style={{ width: '100px' }} onClick={handlePublicCartListClick} >
-                    목록으로
+                    一覧へ戻る
                   </Button>
                 </div>
               </>
@@ -155,11 +155,11 @@ const PublicCartDetail = () => {
             ) : loadPublicCartDetailDone && publicCartDetail.Order.OrderDetails && publicCartDetail.Order.OrderDetails.length === 0 ? (
               <>
                 <div style={{ padding: "10px" }}>
-                  공개 장바구니 상세 정보가 존재하지 않습니다.
+                  公開カートの情報が存在しません。
                 </div>
                 <div style={{ padding: "10px" }}>
                   <Button type="primary" style={{ width: '100px' }} onClick={handlePublicCartListClick} >
-                    목록으로
+                    一覧へ戻る
                   </Button>
                 </div>
               </>
@@ -177,7 +177,7 @@ const PublicCartDetail = () => {
                     {/* 작성자 회원에게만 '수정' '삭제' 버튼 보임 */}
                     { me && me.member_id === publicCartDetail.member_id ? (
                       <div style={{ padding: "10px", display: 'flex', gap: '15px' }}>
-                        <div style={{ cursor: "pointer"}} onClick={handleUpdateClick}>수정</div> <Link href="" title="기능 준비 중">삭제</Link>
+                        <div style={{ cursor: "pointer"}} onClick={handleUpdateClick}>編集</div> <Link href="" title="準備中">削除</Link>
                       </div>
                     ): null}
                   </div>

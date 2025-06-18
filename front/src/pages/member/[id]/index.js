@@ -21,7 +21,7 @@ const MyPage = () => {
   }, [me]);
 
   return (
-    <CommonLayout title="마이 페이지">
+    <CommonLayout title="マイページ">
       <div 
         style={{ 
           display: "flex", 
@@ -30,8 +30,8 @@ const MyPage = () => {
           rowGap: "10px"
         }}
       >
-        <Link href={`/member/${memberId}/profile`}>회원 정보</Link>
-        <Link href={"/order/history"}>주문 이력</Link>
+        <Link href={`/member/${memberId}/profile`}>会員情報</Link>
+        <Link href={"/order/history"}>注文履歴</Link>
       </div>
     </CommonLayout>
   );

@@ -3,7 +3,7 @@ import CommonLayout from "../components/CommonLayout";
 
 const Home = () => {
   return (
-    <CommonLayout title="메인 화면">
+    <CommonLayout title="ホーム">
       <div>{/* 스크롤을 보기 위해 넣은 더미 데이터. 내용 자체는 본 앱과 관계 없음 */}
 
         Alice, a young girl, sits bored by a riverbank and spots a White Rabbit with a pocket watch and waistcoat lamenting that he is late. Surprised, Alice follows him down a rabbit hole, which sends her into a lengthy plummet but to a safe landing. Inside a room with a table, she finds a key to a tiny door, beyond which is a garden. While pondering how to fit through the door, she discovers a bottle labelled "Drink me". Alice drinks some of the bottle's contents, and to her astonishment, she shrinks small enough to enter the door. However, she had left the key upon the table and cannot reach it. Alice then discovers and eats a cake labelled "Eat me", which causes her to grow to a tremendous size. Unhappy, Alice bursts into tears, and the passing White Rabbit flees in a panic, dropping a fan and two gloves. Alice uses the fan for herself, which causes her to shrink once more and leaves her swimming in a pool of her own tears. Within the pool, Alice meets various animals and birds, who convene on a bank and engage in a "Caucus Race" to dry themselves. Following the end of the race, Alice inadvertently frightens the animals away by discussing her cat.
