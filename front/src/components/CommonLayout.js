@@ -110,8 +110,11 @@ const CommonLayout = ({ title, children }) => {
         {children}
       </Row>
 
-      <Footer style={{ textAlign: 'center' }}>
-        ©2025 Sarifor. All rights reserved. [GitHub] [Qiita] [ご意見をどうぞ！]
+      <Footer style={{ display: "flex", flexDirection: "row", justifyContent: 'center', columnGap: "10px" }}>
+        <div>©2025 Sarifor. All rights reserved.</div>
+        <a href="https://github.com/sarifor" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://qiita.com/sarifor" target="_blank" rel="noopener noreferrer">Qiita</a>
+        <a href="https://forms.gle/gfZxSvzLnBdbe1KQ9" target="_blank" rel="noopener noreferrer">ご意見をどうぞ！</a>        
       </Footer>
     </div>
   )
