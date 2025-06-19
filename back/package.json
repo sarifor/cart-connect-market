@@ -7,8 +7,12 @@
     "npm": "10.8.2"
   },
   "scripts": {
-    "dev": "cross-env ENABLE_SQL=true PORT=4000 nodemon app",
-    "start": "cross-env NODE_ENV=production PORT=80 npx pm2 start app.js"
+    "dev": "cross-env NODE_ENV=development ENABLE_SQL=true PORT=4000 nodemon app",
+    "start": "cross-env NODE_ENV=production PORT=80 npx pm2 start app.js",
+    "dev-migration": "cross-env NODE_ENV=development npx sequelize db:migrate --env development",
+    "dev-migration-undo": "cross-env NODE_ENV=development npx sequelize db:migrate:undo --env development",    
+    "prod-migration": "cross-env NODE_ENV=production npx sequelize db:migrate --env production",
+    "prod-migration-undo": "cross-env NODE_ENV=production npx sequelize db:migrate:undo --env production"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
