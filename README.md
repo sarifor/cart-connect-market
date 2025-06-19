@@ -70,6 +70,7 @@
 - 上記の開発環境と同様の構成であること
 
 ### インストール
+- Development環境の準備方法のみを説明します。
 
 ```bash
 # リポジトリをクローン
@@ -82,10 +83,20 @@ npm install
 cd back
 npm install
 
-# 環境変数を設定
-backディレクトリに.envファイルを作成し、以下を追加してください。
-DB_PASSWORD = あなたのMySQLパスワード
-ENABLE_SQL = false
+# データベースを作成
+CREATE DATABASE `mysql_ccm_dev`;
+/*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
+/*!80016 DEFAULT ENCRYPTION='N' */;
+
+# 環境変数ファイルを作成
+cd back
+touch .env.development
+
+# 環境変数の追加
+DB_NAME = 'mysql_ccm_dev'
+DB_USER = 'root'
+DB_HOST = 'localhost'
+DB_PASSWORD = ご自身のMySQLパスワード
 
 # アプリケーションを起動
 cd front
