@@ -3,5 +3,8 @@
 # dependencies
 /node_modules
 
-# misc
+# security
 .env
+.env.development
+.env.test
+.env.production

@@ -7,5 +7,8 @@
 /.next/
 /out/
 
-# misc
+# security
 .env
+.env.development
+.env.test
+.env.production
