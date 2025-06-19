@@ -1,3 +1,7 @@
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development',
+});
+
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -5,7 +9,6 @@ const session = require('express-session');
 const path = require('path');
 const { mysql } = require('./config/db');
 const { executeSQL } = require('./scripts/sql-runner');
-require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT;

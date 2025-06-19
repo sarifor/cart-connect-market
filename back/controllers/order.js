@@ -1,5 +1,4 @@
 const { Order, OrderDetail, Product, ProductImage, PublicCart } = require('../config/db');
-require('dotenv').config();
 
 let BASE_URL;
 

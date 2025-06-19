@@ -1,6 +1,5 @@
 const { Category, Product, ProductImage } = require('../config/db');
 const { Op } = require('sequelize');
-require('dotenv').config();
 
 let BASE_URL;
 
