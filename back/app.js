@@ -104,7 +104,7 @@ const connectDB = async() => {
 const syncDB = async () => {
   try {
     if (process.env.NODE_ENV === 'production') {
-      await mysql.sync();
+      await mysql.sync({ logging: false });
       console.log('All models are synced');
     } else {
       await mysql.sync({ force: true });
