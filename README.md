@@ -95,6 +95,7 @@ DB_NAME = 'mysql_ccm_dev'
 DB_USER = 'root'
 DB_HOST = 'localhost'
 DB_PASSWORD = ご自身のMySQLパスワード
+SESSION_SECRET = 安全なランダム文字列
 
 # アプリケーションを起動
 cd front
