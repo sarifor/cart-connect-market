@@ -41,7 +41,9 @@ const login = async (req, res, next) => {
       return res.status(401).json("会員が存在しません。");
     }
 
-    if (reqPassword !== member.password) {
+    const passwordMatch = await bcrypt.compare(reqPassword, member.password);
+
+    if (!passwordMatch) {
       return res.status(401).json("パスワードが一致しません。");
     }
 
