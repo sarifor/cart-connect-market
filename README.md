@@ -84,9 +84,7 @@ cd back
 npm install
 
 # データベースを作成
-CREATE DATABASE `mysql_ccm_dev`;
-/*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
-/*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE `mysql_ccm_dev` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 
 # 環境変数ファイルを作成
 cd back
