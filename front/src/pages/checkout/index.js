@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 let backURL;
 
 if (process.env.NODE_ENV === 'production') {
-  backURL = 'http://ccm-api.sarifor.net';
+  backURL = 'https://ccm-api.sarifor.net';
 } else {
   backURL = 'http://localhost:4000';
 }

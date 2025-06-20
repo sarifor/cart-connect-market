@@ -3,7 +3,7 @@ const { Order, OrderDetail, Product, ProductImage, PublicCart } = require('../co
 let BASE_URL;
 
 if (process.env.NODE_ENV === 'production') {
-  BASE_URL = 'http://ccm-api.sarifor.net';  
+  BASE_URL = 'https://ccm-api.sarifor.net';  
 } else {
   BASE_URL = 'http://localhost:4000';
 }

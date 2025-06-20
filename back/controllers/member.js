@@ -78,7 +78,7 @@ const logout = (req, res, next) => {
       res.clearCookie("connect.sid", { 
         path: "/",
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: "lax",
         domain: ".sarifor.net",
       });

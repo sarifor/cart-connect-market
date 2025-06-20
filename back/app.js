@@ -26,8 +26,10 @@ const {
 // A. 허용할 클라이언트 주소 (ChatGPT)
 // Q. production 모드의 session/ cookie/ sameSite에는 lax? none?
 if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+  
   app.use(cors({
-    origin: 'http://ccm.sarifor.net',
+    origin: 'https://ccm.sarifor.net',
     credentials: true,
   }));
 
@@ -37,10 +39,10 @@ if (process.env.NODE_ENV === 'production') {
     name: 'connect.sid',
     saveUninitialized: false,
     resave: false,
-    secret: "test",
+    secret: process.env.SESSION_SECRET,
     cookie: {
       httpOnly: true,
-      secure: false,
+      secure: true,
       maxAge: 1000 * 60 * 60 * 24,
       sameSite: "lax",
       domain: '.sarifor.net',
@@ -58,7 +60,7 @@ if (process.env.NODE_ENV === 'production') {
     name: 'connect.sid',
     saveUninitialized: false,
     resave: false,
-    secret: "test",
+    secret: process.env.SESSION_SECRET,
     cookie: {
       httpOnly: true,
       secure: false,
