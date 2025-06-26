@@ -16,6 +16,9 @@ const initialState = {
   updatePublicCartLoading: false,
   updatePublicCartDone: false,
   updatePublicCartError: null,  
+  updateLikeLoading: false,
+  updateLikeDone: false,
+  updateLikeError: null,
   publicCarts: [],
   publicCartsNetwork: [],
   publicCartDetail: [],
@@ -109,6 +112,27 @@ export const publicCartSlice = createSlice({
       state.updatePublicCartDone = false;
       state.updatePublicCartError = action.payload;
     },    
+    updateLikeRequest: (state) => {
+      state.updateLikeLoading = true;
+      state.updateLikeDone = false;
+      state.updateLikeError = null;
+    },
+    updateLikeSuccess: (state, action) => {
+      state.updateLikeLoading = false;
+      state.updateLikeDone = true;
+      state.updateLikeError = null;
+      if (state.publicCartDetail) {
+        state.publicCartDetail.likedMemberIds = action.payload;
+        state.publicCartDetail.likeCount = action.payload.length;
+      } else {
+        state.publicCartDetail.likedMemberIds = [];
+      }
+    },
+    updateLikeFailure: (state, action) => {
+      state.updateLikeLoading = false;
+      state.updateLikeDone = false;
+      state.updateLikeError = action.payload;
+    },    
     resetPublicCartState: () => {
       return initialState;
     }
@@ -131,6 +155,9 @@ export const {
   updatePublicCartRequest,
   updatePublicCartSuccess,
   updatePublicCartFailure,  
+  updateLikeRequest,
+  updateLikeSuccess,
+  updateLikeFailure,
   resetPublicCartState,
 } = publicCartSlice.actions;
 

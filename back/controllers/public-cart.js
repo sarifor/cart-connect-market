@@ -203,6 +203,19 @@ const getPublicCartDetail = async (req, res, next) => {
     const itemQuantityTotal = publicCartDetailJson.Order.OrderDetails.reduce((acc, cur) => acc + cur.quantity, 0);
     const itemPriceTotal = publicCartDetailJson.Order.OrderDetails.reduce((acc, cur) => acc + (cur.purchase_price * cur.quantity), 0);
 
+    // 「いいね！」をつけた会員の情報取得
+    const likedMemberIds = await Like.findAll({
+      where: {
+        public_cart_id: publicCartId,
+        status: 1,
+      },
+      attributes: ['member_id'],
+      // transaction: transaction,
+      raw: true,        
+    });     
+
+    const likedMemberIdsArray = likedMemberIds.map(item => item.member_id);
+
     // 좋아요 개수 계산
     const likeCount = await Like.count({
       where: {
@@ -215,6 +228,7 @@ const getPublicCartDetail = async (req, res, next) => {
     publicCartDetailJson.itemQuantityTotal = itemQuantityTotal;
     publicCartDetailJson.itemPriceTotal = itemPriceTotal;
     publicCartDetailJson.likeCount = likeCount;
+    publicCartDetailJson.likedMemberIds = likedMemberIdsArray;
     
     // 클라이언트에게 주문 데이터 응답
     return res.status(200).json(publicCartDetailJson);
@@ -352,4 +366,107 @@ const updatePublicCart = async (req, res, next) => {
   }
 };
 
-module.exports = { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail, postPublicCart, updatePublicCart };
+const updateLike = async (req, res, next) => {
+  // トランザクションを手動開始
+  const transaction = await mysql.transaction();
+
+  try {
+    // ログイン会員か確認
+    if (!req.session.member) {
+      return res.status(401).send("ログインが必要です。");
+    }    
+
+    // クライアントからのデータ取得
+    const { publicCartId } = req.params;
+
+    // 公開カートを検索
+    const result = await PublicCart.findOne({
+      where: {
+        public_cart_id: publicCartId,
+        deleted_at: null,
+      },
+      attributes: ['public_cart_id', 'member_id'],
+      transaction: transaction,
+      raw: true,
+    });
+
+    // 公開カートが存在しなかったら
+    if (!result || !result.public_cart_id) {
+      await transaction.rollback();
+
+      return res.status(400).send("公開カートのデータが存在しません。");
+    
+    // 投稿者と「いいね！」をつけた人が同じだったら
+    } else if (result.member_id === req.session.member.member_id) {
+      await transaction.rollback();
+
+      return res.status(400).send("自分の投稿には「いいね！」をつけられません。");
+    } else {
+      // 「いいね！」情報を取得
+      const likeResult = await Like.findOne({
+        where: {
+          public_cart_id: publicCartId,
+          member_id: req.session.member.member_id,
+        },
+        attributes: ['like_id', 'status'],
+        transaction: transaction,
+        raw: true,
+      });
+
+      // なかったら生成
+      if (!likeResult || !likeResult.like_id) {
+        await Like.create(
+          {
+            public_cart_id: publicCartId,
+            member_id: req.session.member.member_id,
+            status: 1,
+          },
+          {
+            transaction: transaction,
+          }
+        );
+      
+      // 存在すれば更新（トグル）
+      } else {      
+        await Like.update(
+          {
+            status: likeResult.status === 1 ? 0 : 1,
+          },
+          {
+            where: {
+              like_id: likeResult.like_id,
+            },
+            transaction: transaction,            
+          }
+        );      
+      };
+
+      const likedMemberIds = await Like.findAll({
+        where: {
+          public_cart_id: publicCartId,
+          status: 1,
+        },
+        attributes: ['member_id'],
+        transaction: transaction,
+        raw: true,        
+      });
+
+      // トランザクションをコミット
+      await transaction.commit();
+
+      const likedMemberIdsArray = likedMemberIds.map(item => item.member_id);
+      console.log(likedMemberIdsArray);
+      
+      // 応答
+      return res.status(200).json(likedMemberIdsArray);
+    }
+  } catch (error) {
+    await transaction.rollback();
+
+    console.error("updateLikeエラー：", error);
+
+    return res.status(500).send("サーバエラーが発生しました。");
+  }
+};
+
+module.exports = { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail, postPublicCart, updatePublicCart, updateLike, };

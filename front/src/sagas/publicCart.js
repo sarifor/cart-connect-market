@@ -17,6 +17,9 @@ import {
   updatePublicCartRequest,
   updatePublicCartSuccess,
   updatePublicCartFailure,  
+  updateLikeRequest,
+  updateLikeSuccess,
+  updateLikeFailure,
 } from '@/reducers/publicCart';
 
 let backURL;
@@ -162,6 +165,33 @@ function* updatePublicCart(action) {
   }
 }
 
+async function updateLikeAPI(data) {
+  const response = await axios.patch(`${backURL}/public-cart/${data.publicCartId}/like`, {}, { withCredentials: true });
+
+  return response;
+}
+
+function* updateLike(action) {
+  try {
+    yield delay(1000);
+
+    const response = yield call(updateLikeAPI, action.data);
+
+    if (response.status === 200) {
+      yield put(updateLikeSuccess(response.data));
+      return;
+    } else {
+      throw new Error("「いいね！」の更新に失敗しました。");
+    }
+  } catch (error) {
+    yield put(updateLikeFailure(
+      (error.response?.data && Object.keys(error.response.data).length > 0)
+      ? error.response.data
+      : error.message      
+    ));
+  }
+}
+
 function* watchLoadPublicCarts() {
   yield takeEvery(loadPublicCartsRequest.type, loadPublicCarts);
 }
@@ -182,6 +212,10 @@ function* watchUpdatePublicCart() {
   yield takeEvery(updatePublicCartRequest.type, updatePublicCart);
 }
 
+function* watchUpdateLike() {
+  yield takeEvery(updateLikeRequest.type, updateLike);
+}
+
 export default function* publicCartSaga() {
   yield all([
     fork(watchLoadPublicCarts),
@@ -189,5 +223,6 @@ export default function* publicCartSaga() {
     fork(watchLoadPublicCartDetail),
     fork(watchPostPublicCart),
     fork(watchUpdatePublicCart),    
+    fork(watchUpdateLike),
   ]);
 }

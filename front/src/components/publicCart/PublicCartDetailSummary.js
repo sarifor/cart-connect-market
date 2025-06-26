@@ -1,17 +1,22 @@
 import { Button, Modal } from 'antd';
-import { HeartOutlined } from '@ant-design/icons';
+import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 
 // Q. Modal을 포탈 방식(부모 스타일에 영향 안 받음)으로 수정하려면?
 // Q. 결과 메시지 3초 뒤에 사라지게 하는 효과 추가? (useEffect 사용)
 // Q. 구매할 수 없는 상품일 때 안내 메시지 표시?
 const PublicCartDetailSummary = ({ 
+  loggedInId,
   itemQuantityTotal, itemPriceTotal, isModalOpen,
   copyCartLoading, copyCartDone, copyCartError,
   handlePublicCartListClick, handleLikeClick, handleCopyClick,
   handleOkClick, handleCancelClick,
   nickname, orderCreatedAt, publicCartCreatedAt,
-  likeCount,
+  likeCount, publicCartDetail,
+  updateLikeLoading, updateLikeDone, updateLikeError,
 }) => {
+
+  const isLiked = (publicCartDetail.likedMemberIds || []).includes(loggedInId);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", padding: "20px", rowGap: "5px" }}>
       <div style={{ fontWeight: "bold", borderBottom: "1px solid black" }}>
@@ -46,7 +51,12 @@ const PublicCartDetailSummary = ({
 
           <Button type="primary" onClick={handleLikeClick}>
             <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '2px' }}>
-              {likeCount}<HeartOutlined style={{ marginTop: "2px" }} />
+              {likeCount}
+              {isLiked ? (
+                <HeartFilled style={{ marginTop: "2px" }} />
+              ) : (
+                <HeartOutlined style={{ marginTop: "2px" }} />
+              )}
             </span>
           </Button>
 
@@ -72,6 +82,12 @@ const PublicCartDetailSummary = ({
 
           { copyCartDone && (
             <div>コピーが完了しました。</div>
+          )}  
+          { updateLikeLoading && !updateLikeDone && (
+            <div>「いいね！」更新中...</div>
+          )}
+          { !updateLikeDone && updateLikeError && (
+            <div>「いいね！」更新に失敗しました。</div>
           )}        
         </div>
 

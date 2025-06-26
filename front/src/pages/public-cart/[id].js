@@ -4,7 +4,7 @@ import PublicCartDetailList from '@/components/publicCart/PublicCartDetailList';
 import PublicCartDetailSummary from '@/components/publicCart/PublicCartDetailSummary';
 import { Col, Button } from 'antd';
 import Link from 'next/link';
-import { loadPublicCartDetailRequest, resetPublicCartState } from '@/reducers/publicCart.js';
+import { loadPublicCartDetailRequest, updateLikeRequest, resetPublicCartState } from '@/reducers/publicCart.js';
 import { copyCartRequest, resetCartState } from '@/reducers/cart';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -14,6 +14,9 @@ const PublicCartDetail = () => {
     loadPublicCartDetailLoading,
     loadPublicCartDetailDone,
     loadPublicCartDetailError,
+    updateLikeLoading,
+    updateLikeDone,
+    updateLikeError,
     publicCartDetail,
   } = useSelector(state => state.publicCart);
 
@@ -85,7 +88,10 @@ const PublicCartDetail = () => {
     } else if (me && me.member_id === publicCartDetail.member_id) {
       alert("自分の投稿には「いいね！」をつけられません。");
     } else {
-      alert("「いいね！」機能は準備中です。");
+      dispatch({
+        type: updateLikeRequest.type,
+        data: { publicCartId },
+      });
     }
   };
 
@@ -127,7 +133,7 @@ const PublicCartDetail = () => {
             style={{ 
               display: 'flex', 
               flexDirection: 'column',
-              maxWidth: 600,
+              maxWidth: 650,
               width: '100%',
               padding: '20px'
             }}
@@ -177,7 +183,7 @@ const PublicCartDetail = () => {
                     {/* 작성자 회원에게만 '수정' '삭제' 버튼 보임 */}
                     { me && me.member_id === publicCartDetail.member_id ? (
                       <div style={{ padding: "10px", display: 'flex', gap: '15px' }}>
-                        <div style={{ cursor: "pointer"}} onClick={handleUpdateClick}>編集</div> <Link href="" title="準備中">削除</Link>
+                        <div style={{ cursor: "pointer"}} onClick={handleUpdateClick}>編集</div> <div title="準備中">削除</div>
                       </div>
                     ): null}
                   </div>
@@ -204,6 +210,7 @@ const PublicCartDetail = () => {
         { loadPublicCartDetailDone && publicCartDetail.Order.OrderDetails && publicCartDetail.Order.OrderDetails.length > 0 ? (
           <Col md={8}>
             <PublicCartDetailSummary
+              loggedInId={ me ? me.member_id : null }
               nickname={publicCartDetail.Member.nickname}
               orderCreatedAt={publicCartDetail.Order.created_at}
               publicCartCreatedAt={publicCartDetail.created_at}
@@ -213,6 +220,10 @@ const PublicCartDetail = () => {
               copyCartLoading={copyCartLoading}
               copyCartDone={copyCartDone}
               copyCartError={copyCartError}
+              updateLikeLoading={updateLikeLoading}
+              updateLikeDone={updateLikeDone}
+              updateLikeError={updateLikeError}              
+              publicCartDetail={publicCartDetail}
               isModalOpen={isModalOpen}
               handlePublicCartListClick={handlePublicCartListClick}
               handleLikeClick={handleLikeClick}
