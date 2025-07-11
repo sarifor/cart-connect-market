@@ -109,6 +109,6 @@ http://localhost:3000
 ```
 
 ## 関連リンク（予定）
-- [ポートフォリオ]()
-- [企画書・設計書]()
-- [回顧録]()
+- [ポートフォリオ](https://drive.google.com/file/d/1fF-BtKPWQemP5h8E7spMAnCvyGoK6Uju/view?usp=sharing)
+- 画書・設計書
+- 回顧録
