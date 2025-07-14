@@ -21,7 +21,7 @@ const initialState = {
   updateLikeError: null,
   publicCarts: [],
   publicCartsNetwork: [],
-  publicCartDetail: [],
+  publicCartDetail: {},
 };
 
 export const publicCartSlice = createSlice({
@@ -68,7 +68,7 @@ export const publicCartSlice = createSlice({
       state.loadPublicCartDetailLoading = true;
       state.loadPublicCartDetailDone = false;
       state.loadPublicCartDetailError = null;
-      state.publicCartDetail = [];
+      state.publicCartDetail = {};
     },
     loadPublicCartDetailSuccess: (state, action) => {
       state.loadPublicCartDetailLoading = false;
@@ -80,7 +80,7 @@ export const publicCartSlice = createSlice({
       state.loadPublicCartDetailLoading = false;
       state.loadPublicCartDetailDone = false;
       state.loadPublicCartDetailError = action.payload;
-      state.publicCartDetail = [];
+      state.publicCartDetail = {};
     },
     postPublicCartRequest: (state) => {
       state.postPublicCartLoading = true;
