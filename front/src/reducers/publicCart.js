@@ -121,7 +121,7 @@ export const publicCartSlice = createSlice({
       state.updateLikeLoading = false;
       state.updateLikeDone = true;
       state.updateLikeError = null;
-      if (state.publicCartDetail) {
+      if (state.publicCartDetail.Order?.OrderDetails?.length > 0) {
         state.publicCartDetail.likedMemberIds = action.payload;
         state.publicCartDetail.likeCount = action.payload.length;
       } else {
