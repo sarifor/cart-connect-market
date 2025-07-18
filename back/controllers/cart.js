@@ -40,39 +40,38 @@ const getModifiedCart = async (memberId) => {
   }
 };
 
-// Q. 에러 핸들링 중앙화?
+// Q. エラーハンドリングを1か所にまとめて管理？
 const getCart = async (req, res, next) => {
   try {
-    // 로그인한 회원인지 확인하고,
+    // ログイン会員か確認
     if (!req.session.member) {
       return res.status(401).send("ログインが必要です。");
     }
 
-    // 응답으로 장바구니 목록 반환
     const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
+    // カートリスト応答
     return res.status(200).json(modifiedCart);
   } catch (error) {
     return res.status(500).send(error);
   }
 };
 
-// Q. incrementCart로 수정할까?
-// Q. decrementCart와의 공통 로직을 별도의 함수로 빼낸다면 어떤 이름이 좋을까?
-// Q. existingCart -> alreadyInCart로 고칠까?
+// Q. incrementCartに修正？
+// Q. existingCartをalreadyInCartに改名？
 const addCart = async (req, res, next) => {
   try {
-    // 로그인한 회원인지 확인하고,
+    // ログイン会員か確認
     if (!req.session.member.member_id) {
       return res.status(401).send("ログインが必要です。");
     }
 
-    // 클라이언트로부터 상품 ID와 수량 확보
+    // クライアントからの商品IDと数量
     const idAndCount = req.body;
     const productId = Number(idAndCount.productId);
     const productQuantity = Number(idAndCount.quantity);
 
-    // 상품 테이블을 조회하여, 판매 중인지 체크함
+    // 商品テーブルを照会して販売中かどうかを確認
     const existingProduct = await Product.findOne({
       where: {
         product_id: productId,
@@ -82,14 +81,14 @@ const addCart = async (req, res, next) => {
       raw: true,
     });
 
-    // 판매 중이 아니면 처리 중단하고, 
+    // 販売中でない場合は処理を中断
     if (!existingProduct) {
       return res.status(401).send('購入できない商品です。');
     }
 
-    // 판매 중이라면 장바구니 테이블에 저장
-    // - 이미 담긴 상품이면 수량 갱신
-    // - 없으면 새 레코드 추가
+    // 販売中であればカートテーブルに保存
+    // - すでに保存済みの商品であれば数量を更新
+    // - なければ新しいレコードを追加
     const existingCart = await Cart.findOne({
       where: {
         member_id: req.session.member.member_id,
@@ -119,7 +118,7 @@ const addCart = async (req, res, next) => {
       });      
     }
 
-    // 응답으로 장바구니 목록 반환
+    // カートリスト応答
     const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
     return res.status(200).json(modifiedCart);
@@ -128,20 +127,20 @@ const addCart = async (req, res, next) => {
   }
 };
 
-// Q. existingCart -> alreadyInCart로 고칠까?
+// Q. existingCart -> alreadyInCartに改名？
 const decrementCart = async (req, res, next) => {
   try {
-    // 로그인한 회원인지 확인하고,
+    // ログイン会員か確認
     if (!req.session.member.member_id) {
       return res.status(401).send("ログインが必要です。");
     }
 
-    // 클라이언트로부터 상품 ID와 수량 받음
+    // クライアントからの商品IDと数量
     const idAndCount = req.body;
     const productId = Number(idAndCount.productId);
     const productQuantity = Number(idAndCount.quantity);
 
-    // 상품 테이블을 조회하여, 판매 중인지 체크
+    // 商品テーブルを照会して販売中かどうかを確認
     const existingProduct = await Product.findOne({
       where: {
         product_id: productId,
@@ -151,12 +150,12 @@ const decrementCart = async (req, res, next) => {
       raw: true,
     });
 
-    // 판매 중이 아니면 처리 중단 
+    // 販売中でない場合は処理を中断
     if (!existingProduct) {
       return res.status(401).send('購入できない商品です。');
     }
 
-    // 이미 담긴 상품인가 검증
+    // すでに保存済みの商品かどうか確認
     const existingCart = await Cart.findOne({
       where: {
         member_id: req.session.member.member_id,
@@ -165,7 +164,7 @@ const decrementCart = async (req, res, next) => {
       raw: true,
     });
 
-    // 수량이 0 이하이면 장바구니에서 상품을 삭제하고, 아니라면 상품 수량 감소 처리만 하기
+    // 数量が0以下の場合はカートから商品を削除し、そうでなければ商品の数量を減らすだけ
     if (existingCart) {
       const newQuantity = existingCart.quantity - productQuantity;
 
@@ -191,7 +190,7 @@ const decrementCart = async (req, res, next) => {
       }
     }
 
-    // 응답으로 장바구니 목록 반환
+    // カートリスト応答
     const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
     return res.status(200).json(modifiedCart);
@@ -202,15 +201,15 @@ const decrementCart = async (req, res, next) => {
 
 const deleteCart = async (req, res, next) => {
   try {
-    // 로그인한 회원인지 확인하고,
+    // ログイン会員か確認
     if (!req.session.member.member_id) {
       return res.status(401).send("ログインが必要です。");
     }
 
-    // 클라이언트로부터 상품 ID 확보
+    // クライアントからの商品ID
     const productId = Number(req.body.productId);
 
-    // 장바구니에서 상품 삭제   
+    // カートから商品を削除  
     await Cart.destroy({
       where: {
         member_id: req.session.member.member_id,
@@ -218,7 +217,7 @@ const deleteCart = async (req, res, next) => {
       }
     });
 
-    // 응답으로 장바구니 목록 반환
+    // カートリスト応答
     const modifiedCart = await getModifiedCart(req.session.member.member_id);
 
     return res.status(200).json(modifiedCart);
@@ -227,22 +226,22 @@ const deleteCart = async (req, res, next) => {
   }
 };
 
-// Q. 재고 유무도 조건 포함?
+// Q. 在庫の有無も条件に含むべき？
 const copyCart = async (req, res, next) => {
-  // 트랜잭션 수동 시작
+  // トランザクション手動スタート
   const transaction = await mysql.transaction();
 
   try {
-    // 로그인한 회원인지 확인 
+    // ログイン会員か確認 
     if (!req.session.member.member_id) {
       await transaction.rollback();
       return res.status(401).send("ログインが必要です。");
     }
 
-    // 클라이언트로부터 공개 장바구니 ID 확보
+    // クライアントからの公開カートID
     const { publicCartId } = req.body;
     
-    // 공개 장바구니 -> 주문 -> 주문 상세 -> 상품 테이블을 조회하여, 판매 중인 상품 구매 이력만 필터링
+    // 公開カート、注文、注文詳細、商品テーブルの順に照会し、販売中の商品購入履歴のみ抽出
     const existingProducts = await PublicCart.findOne({
       where: {
         public_cart_id: publicCartId,
@@ -266,13 +265,13 @@ const copyCart = async (req, res, next) => {
       ]
     }, { transaction: transaction });
 
-    // 판매 중인 상품이 없으면 처리 중단
+    // 販売中の商品がない場合は処理を中断
     if (!existingProducts) {
       await transaction.rollback();
       return res.status(400).send('購入可能な商品がありません。');
     }
 
-    // 상품 ID, 수량 세트 배열 생성
+    // 商品IDと数量セット配列を生成
     const productIdAndQuantity = existingProducts.Order.OrderDetails.map((item) => {
       return {
         product_id: item.product_id, 
@@ -280,7 +279,7 @@ const copyCart = async (req, res, next) => {
       };
     });
 
-    // 로그인 회원의 장바구니에 이미 있는 상품, 없는 상품 나누기
+    // 「ログイン会員のカートに保存済みの商品」と「そうではない商品」を分離
     const alreadyInCart = [];
     const notInCart = [];
 
@@ -299,7 +298,7 @@ const copyCart = async (req, res, next) => {
       }
     }
 
-    // 장바구니에 이미 담긴 상품 -> 수량 갱신, 공개 장바구니 ID 기록
+    // カートに保存済みの商品は数量更新・公開カートID記録
     if (alreadyInCart.length > 0) {
       for (const item of alreadyInCart) {
 
@@ -328,7 +327,7 @@ const copyCart = async (req, res, next) => {
       }
     } 
     
-    // 장바구니에 없는 상품 -> 새 레코드 추가, 공개 장바구니 ID 기록
+    // カートにない商品はレコード追加・公開カートID記録
     if (notInCart.length > 0) {
       for (const item of notInCart) {     
         await Cart.create({
@@ -343,7 +342,7 @@ const copyCart = async (req, res, next) => {
 
     await transaction.commit();
 
-    // 200 상태만 응답
+    // 200ステータスのみ応答
     return res.sendStatus(200);
   } catch (error) {
     await transaction.rollback();
