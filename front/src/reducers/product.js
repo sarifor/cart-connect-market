@@ -10,9 +10,13 @@ const initialState = {
   loadProductDetailLoading: false,
   loadProductDetailDone: false,
   loadProductDetailError: null,
+  loadTopSellingProductsLoading: false,
+  loadTopSellingProductsDone: false, 
+  loadTopSellingProductsError: null,
   categories: null,
   products: null,
   productDetail: null,
+  topSellingProducts: [],
 };
 
 export const productSlice = createSlice({
@@ -55,6 +59,24 @@ export const productSlice = createSlice({
       state.loadProductDetailLoading = false;
       state.loadProductDetailError = action.payload;      
     },
+    loadTopSellingProductsRequest: (state) => {
+      state.loadTopSellingProductsLoading = true;
+      state.loadTopSellingProductsDone = false;
+      state.loadTopSellingProductsError = null;
+      state.topSellingProducts = [];
+    },
+    loadTopSellingProductsSuccess: (state, action) => {
+      state.loadTopSellingProductsLoading = false;
+      state.loadTopSellingProductsDone = true;
+      state.loadTopSellingProductsError = null;
+      state.topSellingProducts = action.payload;
+    },
+    loadTopSellingProductsFailure: (state, action) => {
+      state.loadTopSellingProductsLoading = false;
+      state.loadTopSellingProductsDone = false;
+      state.loadTopSellingProductsError = action.payload;
+      state.topSellingProducts = [];
+    },
     resetProductState: () => {
       return initialState;
     }
@@ -71,6 +93,9 @@ export const {
   loadProductDetailRequest,
   loadProductDetailSuccess,
   loadProductDetailFailure,  
+  loadTopSellingProductsRequest,
+  loadTopSellingProductsSuccess,
+  loadTopSellingProductsFailure,
   resetProductState,
 } = productSlice.actions;
 

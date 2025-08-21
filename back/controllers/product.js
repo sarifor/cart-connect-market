@@ -1,5 +1,5 @@
-const { Category, Product, ProductImage } = require('../config/db');
-const { Op } = require('sequelize');
+const { Category, Product, ProductImage, OrderDetail } = require('../config/db');
+const { Op, col, literal } = require('sequelize');
 
 let BASE_URL;
 
@@ -125,9 +125,72 @@ const getProductsByCategory = async (req, res, next) => {
   }
 };
 
+const getTopSellingProducts = async (req, res, next) => {
+  try {
+    // 基本商品
+    const BASIC_PRODUCT_IDS = [45, 46, 47, 48, 62, 63, 64, 65, 72, 73, 74, 75, 76, 77, 78, 79, 87];
+
+    // 販売数
+    const sales_quantity = `
+      CASE
+        WHEN OrderDetail.product_id IN (${BASIC_PRODUCT_IDS.join(',')}) THEN OrderDetail.quantity * 0.25
+        ELSE OrderDetail.quantity
+      END
+    `;
+
+    // 注文詳細テーブルからデータ照会
+    const topSellingProducts = await OrderDetail.findAll({
+      attributes: [
+        [col('Product.product_id'), 'id'],
+        [col('Product.product_name'), 'name'],
+        [col('Product.emoji'), 'emoji'],
+        [col('Product.created_at'), 'created_at'],
+        [literal(`SUM(${sales_quantity})`), 'total_sales'],
+        // [fn('MIN', col('Product->ProductImages.src')), 'img_src'],
+      ],
+      include: [{
+        model: Product,
+        attributes: [],        
+        required: true,
+        where: { status: 1},
+        include: [{
+          model: ProductImage,
+          attributes: [],
+          required: false,
+        }]
+      }],
+      group: [col('Product.product_id'), col('Product.product_name'), col('Product.emoji')],
+      order: [[literal('total_sales'), 'DESC'], [col('Product.created_at'), 'DESC']],
+      limit: 8,
+      raw: true,
+      subQuery: false,
+    });
+
+    // 商品イメージのsrc更新
+    // const modifiedTopSellingProducts = topSellingProducts.map(product => ({
+    //   ...product,
+    //   img_src: `${BASE_URL}${product.img_src}`
+    // }));
+
+    // 販売順位追加
+    const modifiedTopSellingProducts = topSellingProducts.map((product, index) => ({
+        ...product,
+        rank: `${index + 1}位${index < 3 ? '👑' : ''}`,
+    }));
+
+    // データ応答
+    return res.status(200).json(modifiedTopSellingProducts);
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json(error);
+  }
+};
+
 module.exports = { 
   productTest,
   getProduct, 
   getCategories, 
-  getProductsByCategory
+  getProductsByCategory,
+  getTopSellingProducts,
 };

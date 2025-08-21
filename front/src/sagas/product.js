@@ -11,6 +11,9 @@ import {
   loadProductDetailRequest,
   loadProductDetailSuccess,
   loadProductDetailFailure,  
+  loadTopSellingProductsRequest,
+  loadTopSellingProductsSuccess,
+  loadTopSellingProductsFailure,
 } from '@/reducers/product';
 
 let backURL;
@@ -84,6 +87,33 @@ function* loadProductDetail(action) {
   }
 }
 
+function loadTopSellingProductsAPI() {
+  const topSellingProducts = axios.get(`${backURL}/product/top-selling`);
+
+  return topSellingProducts;
+}
+
+function* loadTopSellingProducts() {
+  try {
+    yield delay(1000);
+
+    const topSellingProducts = yield call(loadTopSellingProductsAPI);
+
+    if (topSellingProducts.data.length === 0 || topSellingProducts.data.length > 0 ) {
+      yield put(loadTopSellingProductsSuccess(topSellingProducts.data));
+
+      return;
+    }
+
+  } catch (error) {
+    yield put(loadTopSellingProductsFailure(
+      (error.response?.data && Object.keys(error.response.data).length > 0)
+      ? error.response.data
+      : error.message      
+    ));
+  }
+}
+
 function* watchLoadCategories() {
   yield takeEvery(loadCategoriesRequest.type, loadCategories);
 }
@@ -96,10 +126,15 @@ function* watchLoadProductDetail() {
   yield takeEvery(loadProductDetailRequest.type, loadProductDetail);
 }
 
+function* watchLoadTopSellingProducts() {
+  yield takeEvery(loadTopSellingProductsRequest.type, loadTopSellingProducts);
+}
+
 export default function* productSaga() {
   yield all([
     fork(watchLoadCategories),
     fork(watchLoadProducts),
     fork(watchLoadProductDetail),
+    fork(watchLoadTopSellingProducts),
   ]);
 }

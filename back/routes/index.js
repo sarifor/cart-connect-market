@@ -11,7 +11,7 @@ const { login, me, logout, signup } = require('../controllers/member');
 const { getCart, addCart, decrementCart, deleteCart, copyCart } = require('../controllers/cart');
 const { createOrder, getShippingAddress, getServerTime } = require('../controllers/checkout');
 const { getOrders, getOrderDetail, getOrderSummary } = require('../controllers/order');
-const { productTest, getProduct, getCategories, getProductsByCategory } = require('../controllers/product');
+const { productTest, getProduct, getCategories, getProductsByCategory, getTopSellingProducts } = require('../controllers/product');
 const { getPublicCarts, getPublicCartsNetworkByLikes, getPublicCartDetail, postPublicCart, updatePublicCart, updateLike, } = require('../controllers/public-cart');
 
 
@@ -43,6 +43,7 @@ orderRouter.get('/:orderId', getOrderDetail);
 // Q. getProduct를 getProductDetail로 바꿀까?
 productRouter.get('/', productTest);
 productRouter.get('/category', getCategories);
+productRouter.get('/top-selling', getTopSellingProducts);
 productRouter.get('/category/:categoryId', getProductsByCategory);
 productRouter.get('/:productId', getProduct);
 
