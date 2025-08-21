@@ -43,7 +43,11 @@ const CommonLayout = ({ title, children }) => {
   };
 
   return (
-    <div>
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      minHeight: '100vh',
+    }}>
       <div
         style={{
           display: "flex",
@@ -106,11 +110,17 @@ const CommonLayout = ({ title, children }) => {
         </header>
       </Row>
 
-      <Row>
+      <Row style={{ flex: 1 }}>
         {children}
       </Row>
 
-      <Footer style={{ display: "flex", flexDirection: "row", justifyContent: 'center', columnGap: "10px" }}>
+      {/* Q. Antd FooterのMarginを0にする方法？ */}
+      <Footer style={{ 
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: 'center',
+        columnGap: "10px",
+      }}>
         <div>©2025 Sarifor. All rights reserved.</div>
         <a href="https://github.com/sarifor" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a href="https://qiita.com/sarifor" target="_blank" rel="noopener noreferrer">Qiita</a>
