@@ -31,25 +31,27 @@ const Home = () => {
     content = <div style={{ width: '400px', paddingLeft: '40px' }}>ランキングデータがありません。</div>;
   } else if (loadTopSellingProductsDone && topSellingProducts && topSellingProducts.length > 0) {
     content = <div style={{ width: '400px', paddingLeft: '40px' }}>
-      {/* コラム名 */}
-      <div style={{ display: 'flex', flexDirection: 'row', padding: '3px', borderBottom: "1px solid silver" }} >
-        <span style={{ flexBasis: '60px' }}>順位</span>
-        <span style={{ flex: 1 }}>商品</span>
-        <span style={{ flex: 1, textAlign: 'right' }}>販売数</span>
-      </div>
-
-      {/* データ */}
-      <ol style={{ display: 'flex', flexDirection: 'column', rowGap: '10px', padding: '0px', width: '400px', listStyle: 'none' }}>
-        {topSellingProducts.map((product) => {
-          return (
-            <li style={{ display: 'flex', flexDirection: 'row', padding: '3px', paddingRight: '10px', borderBottom: "1px solid silver" }} >
-              <span style={{ flexBasis: '60px' }}>{product.rank}</span>
-              <span style={{ flex: 1 }}>{product.name} {product.emoji}</span>
-              <span style={{ flex: 1, textAlign: 'right' }}>{Math.trunc(product.total_sales)}</span>
-            </li>
-          )
-        })}
-      </ol>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr style={{ borderBottom: "1px solid silver" }}>
+            <th style={{ width: '60px', padding: '10px', textAlign: 'left' }}>順位</th>
+            <th style={{ padding: '10px', textAlign: 'left' }}>商品</th>
+            <th style={{ padding: '10px', textAlign: 'right' }}>販売数</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          {topSellingProducts.map((product) => {
+            return (
+              <tr key={product.id} style={{ borderBottom: "1px solid silver" }}>
+                <td style={{ width: '60px', padding: '10px', textAlign: 'left' }}>{product.rank}</td>
+                <td style={{ padding: '10px', textAlign: 'left' }}>{product.name} {product.emoji}</td>
+                <td style={{ padding: '10px', textAlign: 'right' }}>{Math.trunc(product.total_sales)}</td>
+              </tr>
+            )
+          })}          
+        </tbody>
+      </table>
     </div>;
 
   } else {
