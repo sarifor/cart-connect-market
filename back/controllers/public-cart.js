@@ -62,62 +62,151 @@ const getPublicCarts = async (req, res, next) => {
 };
 
 // 공개 장바구니 연결 관계 네트워크 데이터 조회
-// Q. label에 공개 장바구니 '제목'을 표시할까?
 // Q. 탈퇴 회원의 공개 장바구니를 안 보이게 하려면?
 const getPublicCartsNetworkByLikes = async (req, res, next) => {
   try {
-    // 공개 장바구니 '좋아요' 전체 이력 조회
+    // 1️⃣ 회원별 -> 최신 좋아요 장바구니 3개 연결
+
+    // 공개 장바구니 '좋아요' 전체 이력 조회 (갱신일 기준 내림차순)
     const likes = await Like.findAll({
       where: { status: 1 },
-      order: [['updated_at', 'ASC']],
+      order: [['updated_at', 'DESC']],
       raw: true,
     });
-    
-    // 노드 구성
-    // - 노드 = 공개 장바구니
-    // - 노드는 가장 마지막에 '좋아요' 한 회원 그룹으로 분류
-    const publicCartToLastMemberMap = {};
 
-    likes.forEach(({ member_id, public_cart_id }) => {
-      publicCartToLastMemberMap[public_cart_id] = member_id;
-    });
+    // 회원 기준으로 좋아요 한 공개 장바구니 분류 (최근 3개까지만)
+    // - memberRecentLikedCarts: 누가 어떤 '장바구니'를 좋아했는가
+    const memberRecentLikedCarts = new Map();
 
-    const nodes = Object.entries(publicCartToLastMemberMap).map(([ publicCartId, memberId ]) => ({
-      id: `public-cart-${publicCartId}`,
-      label: `カート${publicCartId}`,
-      shape: "dot",
-      group: `member-${memberId}`,
-    }));
-
-
-    // 사용자별 '좋아요' 한 공개 장바구니 분류
-    const memberToFinalLikedPublicCarts = {};
-
-    likes.forEach(({ member_id, public_cart_id }) => {
-      if (publicCartToLastMemberMap[public_cart_id] === member_id) {
-        if (!memberToFinalLikedPublicCarts[member_id]) {
-          memberToFinalLikedPublicCarts[member_id] = [];
-        }
-        if (!memberToFinalLikedPublicCarts[member_id].includes(public_cart_id)) {
-          memberToFinalLikedPublicCarts[member_id].push(public_cart_id);
-        }
+    likes.forEach(({ member_id, public_cart_id, updated_at }) => {
+      if (!memberRecentLikedCarts.has(member_id)) {
+        memberRecentLikedCarts.set(member_id, []);
       }
+
+      memberRecentLikedCarts.get(member_id).push({ public_cart_id, updated_at });
     });
 
+    // 가장 최근에 좋아요 한 3개만 남김
+    // - 각 회원별로 공개 장바구니 아이디를 updated_at 내림차순 정렬 후 작업
+    for (const [memberId, carts] of memberRecentLikedCarts) {
+      carts.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+      memberRecentLikedCarts.set(memberId, carts.slice(0, 3));
+    }
 
-    // 엣지 구성
-    // - 회원별로 '좋아요' 한 공개 장바구니를, '좋아요' 갱신 일시 순으로 연결
+    // 각 회원의 좋아요 공개 장바구니 3개 간 연결 생성
     const edges = [];
 
-    for (const [ member_id, public_carts_ids ] of Object.entries(memberToFinalLikedPublicCarts)) {
-      for (let i = 0; i < public_carts_ids.length - 1; i++) {
-        const from = `public-cart-${public_carts_ids[i]}`;
-        const to = `public-cart-${public_carts_ids[i + 1]}`;
-        edges.push({ from, to, group: `member-${member_id}` });
+    for (const [memberId, publiccartidAndUpdatedat] of memberRecentLikedCarts) {
+      for (let i = 0; i < publiccartidAndUpdatedat.length - 1; i++) {
+        const from = `public-cart-${publiccartidAndUpdatedat[i].public_cart_id}`;
+        const to = `public-cart-${publiccartidAndUpdatedat[i + 1].public_cart_id}`;
+
+        edges.push({
+          from,
+          to,
+          group: `member-${memberId}`,
+        });
       }
     }
 
-    // 로그인 회원이 가장 최근에 '좋아요' 누른 공개 장바구니 아이디 조회
+    // 2️⃣ 같은 장바구니를 좋아요 한 최신 회원 2명 기준으로 -> 장바구니 연결
+
+    // 장바구니별 좋아요 한 회원 역매핑
+    const likedMembersByCart = new Map();
+
+    for (const [memberId, likedCarts] of memberRecentLikedCarts) {
+      for (const { public_cart_id, updated_at } of likedCarts) {
+        if (!likedMembersByCart.has(public_cart_id)) {
+          likedMembersByCart.set(public_cart_id, []);
+        }
+
+        likedMembersByCart.get(public_cart_id).push({
+          member_id: Number(memberId),
+          updated_at,
+        });
+      }
+    }
+
+    // 각 장바구니별 최신 좋아요 2명만 유지
+    // - 회원 목록별 updated_at 기준 내림차순 정렬 후, 작업
+    for (const [cartId, memberInfos] of likedMembersByCart) {
+      // updated_at 기준 내림차순 정렬
+      memberInfos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+      // 최신 2명만 남기고 member_id만 추출
+      const latestTwo = memberInfos.slice(0, 2).map(m => m.member_id);
+
+      likedMembersByCart.set(cartId, latestTwo);
+    }
+
+    // 공통 관심 기반 연결 생성
+    // - 같은 공개 장바구니를 좋아요 한 최신 2명 회원의 ‘공개 장바구니’ 간 연결 생성
+    const edgeSet = new Set();
+
+    for (const [, members] of likedMembersByCart) {
+      if (members.length > 1) {
+        const [m1, m2] = members; // 이미 최신순이므로 그대로 사용
+
+        // 각 회원이 좋아요 한 공개 장바구니 목록 가져오기
+        const carts1 = memberRecentLikedCarts.get(m1) || [];
+        const carts2 = memberRecentLikedCarts.get(m2) || [];
+
+        // 각 회원이 가장 마지막에 좋아요 한 공개 장바구니 간 엣지 만들기
+        if (carts1.length && carts2.length) {
+          // from, to는 가장 마지막(즉, 최신) 장바구니
+          const from = Number(carts1[carts1.length - 1].public_cart_id);
+          const to = Number(carts2[carts2.length - 1].public_cart_id);
+
+          // console.log(`회원 1 '${m1}'의 마지막 장바구니는 ${from}, 회원 2 '${m2}'의 마지막 장바구니는 ${to}`); // ok
+
+          // 자기 자신에게 이어지지 않고, 중복되지 않으면 엣지 추가
+          if (from !== to) {
+            const key = [from, to].sort((a, b) => a - b).join('-');
+
+            if (!edgeSet.has(key)) {
+              edgeSet.add(key);
+              edges.push({
+                from,
+                to,
+                group: 'shared-link',
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // 3️⃣ 최종 노드 생성
+    // - 정제된 데이터를 사용하기 위해 엣지를 만든 다음 노드 작성
+    // - publicCartOwnerMap: 이 장바구니는 '누구'의 관심사인가
+    const publicCartOwnerMap = new Map();
+
+    for (const [memberId, carts] of memberRecentLikedCarts) {
+      for (const { public_cart_id, updated_at } of carts) {
+        const existing = publicCartOwnerMap.get(public_cart_id);
+
+        // 아직 없거나, 더 최신이면 갱신
+        if (!existing || new Date(updated_at) > new Date(existing.updated_at)) {
+          publicCartOwnerMap.set(public_cart_id, {
+            memberId: Number(memberId),
+            updated_at,
+          });
+        }
+      }
+    }
+
+    const nodes = [];
+
+    for (const [publicCartId, { memberId }] of publicCartOwnerMap) {
+      nodes.push({
+        id: `public-cart-${publicCartId}`,
+        label: `カート${publicCartId}`,
+        shape: "dot",
+        group: `member-${memberId}`,
+      });
+    }
+
+    // 4️⃣ 로그인 회원의 최신 좋아요 ID 공개 장바구니 아이디 수집
     // - Q. 다른 회원의 '좋아요' 노드 타래 맨 끝에 붙게 하려면?
     let latestLikedPublicCartId;
 
@@ -137,10 +226,11 @@ const getPublicCartsNetworkByLikes = async (req, res, next) => {
       latestLikedPublicCartId = latestLikedPublicCart?.public_cart_id || null;
     }
 
-    // 공개 장바구니 연결 관계 네트워크 데이터 응답
+    // 5️⃣ 데이터 응답
     return res.status(200).json({ nodes, edges, latestLikedPublicCartId });
   } catch (error) {
     console.log(error);
+    
     return res.status(500).send(error);
   }
 };
