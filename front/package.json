@@ -6,7 +6,6 @@
     "node": "20.18.3",
     "npm": "10.8.2"
   },
-  "type": "module",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "cross-env NODE_ENV=production next build",
